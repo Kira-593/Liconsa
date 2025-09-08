@@ -1,4 +1,4 @@
-	<!DOCTYPE html>
+<!DOCTYPE html>
 	<html lang="es">
 	<head>
 		<meta charset="UTF-8">
@@ -12,53 +12,64 @@
 		<header class="text-center my-4">
 			<h1>MENÚ PRINCIPAL</h1>
 			<div class="app-name">
-				<span>SIGC</span>
+				<span>Departamentos</span>
 			</div>
 		</header>
 
 		<main class="container">
 			<section class="menu">
 				<div class="menu-column">
-					<a href= "../../php/index.php" class="opc">
-						<img src="../imagenes/chofer.png" height="70" width="80" align="left" class="icono">
-						<span>CHOFERES</span>
-					</a>
-
 					<a href="../../camiones/php/camP.php" class="opc">
 						<img src="../imagenes/camion.png" height="70" width="80" align="left" class="icono">
-						<span>CAMIONES</span>
+						<span>ACTIVIDADES DEL SUBCOMITE</span>
 					</a>
-
+					<a href= "../../php/index.php" class="opc">
+						<img src="../imagenes/chofer.png" height="70" width="80" align="left" class="icono">
+						<span>PRADRÓN DE BENEFICIARIOS</span>
+					</a>
+					<a href="../../camiones/php/camP.php" class="opc">
+						<img src="../imagenes/camion.png" height="70" width="80" align="left" class="icono">
+						<span>ALMACÉN</span>
+					</a>
 					<a href= "../../cargas/php/cargasP.php" class="opc">
 						<img src="../imagenes/carga.png" height="70" width="80" align="left" class="icono">
-						<span>CARGAS</span>
+						<span>ELABORACIÓN</span>
 					</a>
-
+				</div>
+				<div class="menu-column">
 					<a href= "../../empresa/php/empresaP.php" class="opc">
 						<img src="../imagenes/empresa.png" height="70" width="80" align="left" class="icono">
-						<span>EMPRESA</span>
+						<span>ENVASADO</span>
 					</a>
-				</div>	
-
-				<div class="menu-column">
 					<a href= "../../horariosL/php/horarioP.php" class="opc">
 						<img src="../imagenes/horario.png" height="70" width="80" align="left" class="icono">
-						<span>HORARIOS LABORALES</span>
+						<span>DISTRIBUCIÓN</span>
 					</a>
-
 					<a href= "../../mantenimiento/php/mantenimientoP.php" class="opc">
 						<img src="../imagenes/mantenimiento.png" height="70" width="80" align="left" class="icono">
 						<span>MANTENIMIENTO</span>
 					</a>
-
 					<a href= "../../rutas/php/rutasP.php" target="_blank" class="opc">
 						<img src="../imagenes/ruta.png" height="70" width="80" align="left" class="icono">
-						<span>RUTAS</span>
+						<span>GESTIÓN DEL TRABAJO</span>
 					</a>
-
+				</div>
+				<div class="menu-column">
 					<a href= "../../reporte/php/reporteP.php" class="opc">
 						<img src="../imagenes/reporte.png" height="70" width="80" align="left" class="icono">
-						<span>REPORTE</span>
+						<span>CONTROL DE CALIDAD</span>
+					</a>
+					<a href= "../../reporte/php/reporteP.php" class="opc">
+						<img src="../imagenes/reporte.png" height="70" width="80" align="left" class="icono">
+						<span>ADQUISICIONES</span>
+					</a>
+					<a href= "../../reporte/php/reporteP.php" class="opc">
+						<img src="../imagenes/reporte.png" height="70" width="80" align="left" class="icono">
+						<span>INFORMÁTICA</span>
+					</a>
+					<a href= "../../horariosL/php/horarioP.php" class="opc">
+						<img src="../imagenes/horario.png" height="70" width="80" align="left" class="icono">
+						<span>RECURSOS FINANCIEROS</span>
 					</a>
 				</div>
 			</section>
