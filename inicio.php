@@ -14,7 +14,7 @@
         <div class="contenedor__todo">
             <div class="caja__trasera">
                 <div class="caja__trasera-login">
-                    <h3>¿Ya tienes una cuenta?</h3>
+                    <h3>?</h3>
                     <p>Inicia sesión para entrar en la página</p>
                     <button id="btn__iniciar-sesion">Iniciar Sesión</button>
                 </div>
