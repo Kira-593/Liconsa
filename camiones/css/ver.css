@@ -1,0 +1,91 @@
+/* Estilos generales */
+body {
+    background:linear-gradient(white,#6aa2e3,rgb(48, 48, 224)); 
+    font-family: Arial, sans-serif;
+    color: gray;
+    margin: 0;
+}
+.logo{
+    height: 200px;
+    width: 200px;
+    position: absolute;
+    top:1px;
+    right:1px;
+}
+
+/* Contenedor de la página */
+.contenedor {
+    max-width: 800px;
+    margin: 155px auto;
+    padding: 20px;
+    background-color: rgba(0, 0, 0, 0.8);
+    border-radius: 10px;
+    text-align: center;
+}
+
+/* Títulos */
+h1, h2 {
+    color: beige;
+    font-size: 1.5em;
+}
+
+/* Tabla de información */
+.info-tabla {
+    width: 100%;
+    margin-top: 20px;
+    border-collapse: collapse;
+}
+
+.info-tabla td {
+    padding: 8px;
+    font-size: 1em;
+    text-align: left;
+}
+
+.info-tabla td:first-child {
+    font-weight: bold;
+}
+
+/* Links y botones */
+.links {
+    margin-top: 20px;
+}
+
+.links a {
+    font-size: 1.2em;
+    text-decoration: none;
+    margin: 0 15px;
+}
+
+.links img {
+    vertical-align: middle;
+    margin-left: 10px;
+}
+
+input[type="submit"]:hover{
+    background-color: #ccff66;
+    color: #000;
+}
+
+input[type="reset"]:hover {
+    background-color: brown;
+    color: #000;
+}
+
+.btn {
+    display: inline-block;
+    padding: 10px 20px;
+    font-size: 1.2em;
+    color: white;
+    background-color: gray;
+    border: none;
+    border-radius: 5px;
+    text-decoration: none;
+    transition: background-color 0.3s ease;
+    cursor: pointer;
+}
+
+.btn:hover {
+    background-color: yellowgreen;
+    color: #000;
+}

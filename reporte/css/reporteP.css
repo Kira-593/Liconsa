@@ -1,0 +1,74 @@
+/* Fondo y estilo general */
+body {
+    background-image: url('../Imagenes/logo.png'), url('../Imagenes/logo.png');
+    background-repeat: no-repeat, no-repeat;
+    background-size: 10%, 10%;
+    background-position: left top, right top;
+    font-family: Arial, sans-serif;
+    color: rgb(101, 101, 101);
+    
+}
+
+body::after {
+    content: "";
+    position: absolute;
+    top: 35%;
+    left: 0;
+    right: 50%;
+    width: 100%;
+    height: 100%;
+    background-image: url('../Imagenes/marcaagua.png'); /* Replace with your watermark image */
+    background-repeat: no-repeat; /* Adjust repeat as needed */
+    background-position: center center;
+    background-size: 1000px, 1000px;
+    opacity: 0.2; /* Adjust opacity to control visibility */
+    pointer-events: none; /* Prevent clicks on the watermark */
+  }
+
+/* Encabezado principal */
+h1 {
+    color: gray;
+    text-align: center;
+    margin-top: 30px;
+}
+
+/* Tabla de datos */
+table {
+    margin: 45px auto; /* Center the table horizontally */
+    border-collapse: collapse;
+    max-width: 100%;
+    overflow: hidden;
+}
+
+table, td, th {
+    border: 2px solid brown;
+    padding: 4px;
+    text-align: center;
+    font-size: 17.8px;
+    max-width: 80%;
+}
+
+th {
+    color: brown;
+}
+
+/* Estilo para el enlace de la imagen de inicio */
+a img {
+    margin-top: 20px;
+}
+
+.btn-primary {
+    padding: 10px 20px;
+    font-size: 1em;
+    cursor: pointer;
+    background-color: gray;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    transition: 0.3s;
+}
+
+.btn-primary:hover {
+    background-color: #ccff66;
+    color: #000;
+}

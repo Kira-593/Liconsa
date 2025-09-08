@@ -1,0 +1,75 @@
+body {
+    background:linear-gradient(white,#6aa2e3,rgb(48, 48, 224)); 
+    font-family: Arial, sans-serif;
+    color: gray;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+
+    /* Asegura que el fondo cubra toda la ventana */
+    min-height: 100vh;
+    background-size: cover;
+    margin: 0;
+}
+
+.logo{
+    height: 200px;
+    width: 200px;
+    position: absolute;
+    top:1px;
+    right:1px;
+}
+
+.contenedor {
+    background-color: rgba(0, 0, 0, 0.8);
+    border-radius: 15px;
+    padding: 15px;
+    max-width: 500px;
+    width: 90%;
+    box-shadow: 0 0 15px rgba(255, 255, 255, 0.3);
+    margin: 100px 0; /* Margen superior e inferior */
+}
+
+h1 {
+    color: beige;
+    font-size: 2em;
+}
+
+select, input[type="submit"] {
+    font-size: 1em;
+    padding: 1px;
+    margin-top: 10px;
+}
+
+select {
+    width: 23%;
+    padding: 8px;
+    border-radius: 5px;
+    border: 1px solid brown;
+    background-color: #333;
+    color: white;
+    margin-top: 15px;
+}
+
+input[type="submit"] {
+    padding: 10px 20px;
+    font-size: 1em;
+    cursor: pointer;
+    background-color: gray;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    margin-top: 20px;
+    transition: 0.3s;
+}
+
+input[type="submit"]:hover {
+    background-color: #ccff66;
+    color: #000;
+}
+
+a img {
+    margin-top: 20px;
+}
+
