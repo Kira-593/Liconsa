@@ -1,6 +1,5 @@
 body {
-
-    background: linear-gradient(rgb(255, 254, 254), #eae4e4, rgb(241, 234, 234)); 
+    background: radial-gradient(circle, rgb(255, 254, 254), #eae4e4, rgb(241, 234, 234)); 
     font-family: NotoSans;
     color: #541E2C;
     text-align: center;
@@ -9,7 +8,7 @@ body {
     display: flex;
     flex-direction: column;
     justify-content: center;
-    align-items: center;
+    align-items: center;    
 }
 
 .menu {
@@ -34,7 +33,7 @@ body {
     text-decoration: none;
     font-size: 1.2em;
     width: 100%;          /* Para hacer que cada elemento ocupe el ancho completo del contenedor */
-    max-width: 300px;     /* Limita el ancho máximo del contenedor para alineación */
+    max-width: 400px;     /* Limita el ancho máximo del contenedor para alineación */
     justify-content: left;
     padding: 10px 20px;
     background-color: rgba(0, 0, 0, 0.716); /* Fondo semitransparente para mayor legibilidad */
@@ -50,6 +49,7 @@ body {
     margin-right: 10px;
 }
 
+
 .btn{
     background-color: #541E2C;
 }
@@ -58,24 +58,10 @@ body {
     border: none !important; /* Quita el borde */
     box-shadow: none !important; /* Quita el sombreado al hacer clic */
     border-radius: 20px !important; /* Más redondeado */
-
 }
 
 .btn:hover{
     background-color: #A5802D;
-}
-
-.app-name {
-    display: inline-block;
-    background-color: rgba(0, 0, 0, 0.5); /* Fondo semitransparente */
-    color: white;
-    font-size: 2rem; /* Tamaño de fuente más pequeño */
-    padding: 5px 15px; /* Espaciado interno */
-    border-radius: 15px; /* Bordes redondeados */
-    margin-top: 10px; /* Separación del título */
-    font-weight: bold; /* Texto en negrita */
-    text-transform: uppercase; /* Texto en mayúsculas */
-    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.3); /* Sombra para darle profundidad */
 }
 
 .logo-superior {
