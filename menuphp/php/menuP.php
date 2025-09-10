@@ -26,11 +26,11 @@
 					<img src="../imagenes/actividades del subcomite.png" height="70" width="80" align="left" class="icono">
 					<span>ACTIVIDADES DEL SUBCOMITE</span>
 				</a>
-				<a href= "../../php/Padron.php" class="opc">
+				<a href= "../../padron/php/PadronP.php" class="opc">
 					<img src="../imagenes/padron de bene.png" height="70" width="80" align="left" class="icono">
 					<span>PRADRÓN DE BENEFICIARIOS</span>
 				</a>
-				<a href="../../camiones/php/camP.php" class="opc">
+				<a href="../../Almacen/php/AlmacenP.php" class="opc">
 					<img src="../imagenes/almacen.png" height="70" width="80" align="left" class="icono">
 					<span>ALMACÉN</span>
 				</a>
@@ -58,19 +58,19 @@
 				</a>
 			</div>
 			<div class="menu-column">
-				<a href= "../../reporte/php/reporteP.php" class="opc">
+				<a href= "../../Control de Calidad/php/ControlP.php" class="opc">
 					<img src="../imagenes/control de calidad.png" height="70" width="80" align="left" class="icono">
 					<span>CONTROL DE CALIDAD</span>
 				</a>
-				<a href= "../../reporte/php/reporteP.php" class="opc">
+				<a href= "../../Adquisiciones/php/AdquisicionesP.php" class="opc">
 					<img src="../imagenes/adquisiciones.png" height="70" width="80" align="left" class="icono">
 					<span>ADQUISICIONES</span>
 				</a>
-				<a href= "../../reporte/php/reporteP.php" class="opc">
+				<a href= "../../Informatica/php/InformaticaP.php" class="opc">
 					<img src="../imagenes/informatica.png" height="70" width="80" align="left" class="icono">
 					<span>INFORMÁTICA</span>
 				</a>
-				<a href= "../../horariosL/php/horarioP.php" class="opc">
+				<a href= "../../Recursos/php/RecursosP.php" class="opc">
 					<img src="../imagenes/recursos financieros.png" height="70" width="80" align="left" class="icono">
 					<span>RECURSOS FINANCIEROS</span>
 				</a>

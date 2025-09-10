@@ -54,14 +54,9 @@ body {
 }
 
 .btn-danger {
-    border: none !important;
-    box-shadow: none !important;
-    border-radius: 20px !important;
-    width: 150px;           /* Tamaño fijo para todos los botones */
-    height: 40px;           /* Altura fija */
-    display: inline-flex;   /* Centra el contenido */
-    align-items: center;
-    justify-content: center;
+    border: none !important; /* Quita el borde */
+    box-shadow: none !important; /* Quita el sombreado al hacer clic */
+    border-radius: 20px !important; /* Más redondeado */
 }
 
 .btn:hover{

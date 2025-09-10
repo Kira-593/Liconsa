@@ -1,0 +1,55 @@
+body {
+	background:linear-gradient(white,#6aa2e3,rgb(48, 48, 224)); 
+	color: #ccff66;
+}
+
+.contenedor {
+	text-align: center;
+	margin-top: 50px;
+}
+
+.mensaje {
+	font-size: 24px;
+	margin: 20px;
+	padding: 10px;
+	border-radius: 5px;
+	width: fit-content;
+	margin-left: auto;
+	margin-right: auto;
+}
+
+.correcto {
+	color: yellowgreen;
+}
+
+.error {
+	color: #ff6666;
+}
+
+input[type="submit"]:hover{
+    background-color: #ccff66;
+    color: #000;
+}
+
+input[type="reset"]:hover {
+    background-color: brown;
+    color: #000;
+}
+
+.btn {
+    display: inline-block;
+    padding: 10px 20px;
+    font-size: 1.2em;
+    color: white;
+    background-color: gray;
+    border: none;
+    border-radius: 5px;
+    text-decoration: none;
+    transition: background-color 0.3s ease;
+    cursor: pointer;
+}
+
+.btn:hover {
+    background-color: yellowgreen;
+	color: #000;
+}

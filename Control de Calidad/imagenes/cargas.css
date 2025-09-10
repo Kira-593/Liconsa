@@ -1,7 +1,7 @@
 body {
-    background: radial-gradient(circle, rgb(255, 254, 254), #eae4e4, rgb(241, 234, 234)); 
-    font-family: NotoSans;
-    color: #541E2C;
+    background: radial-gradient(circle, #ff0000, #fc5656, #fe7070, #fda9a9); 
+    font-family: Arial, sans-serif;
+    color: beige;
     text-align: center;
     margin: 0;
     height: 100vh; /* Asegura que el body ocupe toda la altura de la ventana */
@@ -50,38 +50,9 @@ body {
 }
 
 .btn{
-    background-color: #541E2C;
-}
-
-.btn-danger {
-    border: none !important;
-    box-shadow: none !important;
-    border-radius: 20px !important;
-    width: 150px;           /* Tamaño fijo para todos los botones */
-    height: 40px;           /* Altura fija */
-    display: inline-flex;   /* Centra el contenido */
-    align-items: center;
-    justify-content: center;
+    background-color: #ff0000;
 }
 
 .btn:hover{
-    background-color: #A5802D;
-}
-
-.logo-superior {
-    position: absolute;
-    top: 30px;
-    left: 20px;
-    width: 30%; /* Ajusta el tamaño según tu preferencia */
-    height: auto;
-    z-index: 10;
-}
-
-.logo-sgc {
-    position: absolute;
-    top: -175px; /* Más arriba que 0px */
-    right: 20px;
-    width: 30%; /* Ajusta el tamaño según tu preferencia */
-    height: auto;
-    z-index: 10;
+    background-color: #877777;
 }

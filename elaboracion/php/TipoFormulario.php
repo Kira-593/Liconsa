@@ -19,33 +19,21 @@
 	<main class="container">
 		<section class="menu">
 			<div class="menu-column">
-				<a href= "TipoFormulario.php" class="opc">
-					<img src="../imagenes/registro.png" height="70" width="80" align="left" class="icono">
-					<span>FORMULARIOS</span>
+				<a href= "FormPDC.php" class="opc">
+					<img src="../imagenes/FPS.png" height="70" width="80" align="left" class="icono">
+					<span>Producción, Despacho y Consumo</span>
 				</a>
 
-				<a href= "Consulta.php" class="opc">
-					<img src="../imagenes/consulta.png" height="70" width="80" align="left" class="icono">
-					<span>CONSULTA DE FORMULARIOS</span>
+				<a href= "FormMermas.php" class="opc">
+					<img src="../imagenes/mermas.png" height="70" width="80" align="left" class="icono">
+					<span>Mermas de Plietireno</span>
 				</a>
 
 			</div>	
-
-			<div class="menu-column">
-            <a href= "Modificación.php" class="opc">
-					<img src="../imagenes/modificacion.png" height="70" width="80" align="left" class="icono">
-					<span>MODIFICACIÓN DE FORMULARIOS</span>
-				</a>
-                
-				<a href= "Bajas.php" class="opc">
-					<img src="../imagenes/eliminar.png" height="70" width="80" align="left" class="icono">
-					<span>ELIMINACIÓN DE FORMULARIOS</span>
-				</a>
-
-			</div>
 		</section>
 		<br>
 		<a href= "../../menuphp/php/menuP.php" class="btn btn-danger">Menú principal</a>
+		<a href= "elaboracionP.php" class="btn btn-danger">Regresar</a>
 	</main>
 </body>
 </html>
