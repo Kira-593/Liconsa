@@ -12,7 +12,7 @@
 <body>
 <main class="container">
 
-    <h1>Registro de Cargas</h1>
+    <h1>Formulario de Mermas</h1>
     <section class="registro">
         <form method="post" action="Guardar.php">
         <div class="registro-container">
@@ -23,8 +23,8 @@
                 </div>
                 <div>
                     <label>Productos</label><br><br>
-                    <label for="Leche_FrisaK">Leche_Frisa:</label>
-                    <input type="number" id="Leche_FrisaK" name="Leche_FrisaK" placeholder="Kilos" required>
+                    <label for="Leche_FrisiaK">Leche Frisia:</label>
+                    <input type="number" id="Leche_FrisiaK" name="Leche_FrisiaK" placeholder="Kilos" required>
                 </div>
                 <div>
                     <label for="porcentajeTF">Total porcentaje:</label>
@@ -38,33 +38,13 @@
                     <label for="porcentajeTA">Total porcentaje:</label>
                     <input type="number" id="porcentajeTA" name="porcentajeTA" placeholder="%" required>
                 </div>
-                <div>
-                    <label for="Peso">Peso:</label>
-                    <input type="number" id="Peso" name="Peso" placeholder="200.5" required>
-                </div>
-                <div>
-                    <label for="ID_CA">ID camion:</label>
-                    <select id="ID_CA" name="ID_CA" required>
-                        <?php
-                        include "Conexion.php";
-
-                        // Consulta para obtener los camiones
-                        $query = "SELECT ID_CA, Marca FROM camiones";
-                        $res = mysqli_query($link, $query);
-
-                        while ($fila = mysqli_fetch_array($res)) {
-                            echo "<option value='" . $fila['ID_CA'] . "'>" . $fila['ID_CA'] . " - " . $fila['Marca'] . "</option>";
-                        }
-                        ?>
-                    </select>
-                </div>
             <div class="form-buttons">
                 <input type="submit" name="g" value="Guardar">
                 <input type="reset" name="b" value="Limpiar">
             </div>
         </form>
     </section>
-    <a href="cargasP.php" class="home-link">
+    <a href="TipoFormulario.php" class="home-link">
         <img src="../imagenes/home.png" height="100" width="90">
     </a>
 </main>

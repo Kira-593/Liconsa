@@ -6,7 +6,7 @@
     <script src="../js/cargas.js"></script>
     <script src="../js/SumaT.js"></script>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-	<link rel="stylesheet" href="../css/formPDC.css">
+	<link rel="stylesheet" href="../css/formEn.css">
     <img src="../imagenes/AgriculturaLogo.png" class="logo-superior" alt="Logo Agricultura">
 	<img src="../imagenes/sgc.png" class="logo-sgc" alt="Logo SGC">	
     
@@ -14,7 +14,7 @@
 <body>
 <main class="container">
 
-    <h1>Formulario de Producción</h1>
+    <h1>Formulario de Envases Rotos</h1>
     <section class="registro">
         <form method="post" action="Guardar.php">
         <div class="registro-container">
@@ -41,13 +41,17 @@
                     <input type="date" id="Mes" name="Mes" required>
                 </div>
                 <div>
-                    <label>Productos</label><br><br>
-                    <label for="Leche_Frisia">Leche Frisia:</label>
-                    <input type="number" id="Leche_Frisia" name="Leche_Frisia" placeholder="Litros" required>
+                    <label>Motivo</label><br><br>
+                    <label for="DF">Defecto de fabricación:</label>
+                    <input type="number" id="DF" name="DF" placeholder="Litros" required>
                 </div>
                 <div>
-                    <label for="Leche_Abasto">Leche de Abasto:</label>
-                    <input type="number" id="Leche_Abasto" name="Leche_Abasto" placeholder="Litros" required>
+                    <label for="MC">Manejo de canastilla:</label>
+                    <input type="number" id="MC" name="MC" placeholder="Litros" required>
+                </div>
+                <div>
+                    <label for="MI">De manera intencional:</label>
+                    <input type="number" id="MI" name="MI" placeholder="Litros" required>
                 </div>
                 <div>
                     <label for="Total">Total:</label>

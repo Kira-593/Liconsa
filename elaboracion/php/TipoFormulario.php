@@ -29,6 +29,16 @@
 					<span>Mermas de Plietireno</span>
 				</a>
 
+				<a href= "FormEnvase.php" class="opc">
+					<img src="../imagenes/envases.png" height="70" width="80" align="left" class="icono">
+					<span>Envases Rotos</span>
+				</a>
+
+				<a href= "FormSubG.php" class="opc">
+					<img src="../imagenes/subgerencia.png" height="70" width="80" align="left" class="icono">
+					<span>Sub Gerencia de Operaciones</span>
+				</a>
+
 			</div>	
 		</section>
 		<br>
