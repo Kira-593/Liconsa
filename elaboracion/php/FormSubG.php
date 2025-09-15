@@ -4,6 +4,8 @@
 	<title>Registro</title>
 	<meta charset="UTF-8">
     <script src="../js/cargas.js"></script>
+    <script src="../js/SumaAprovechamieto.js"></script>
+    <script src="../js/Multiplicaciondias.js"></script>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
 	<link rel="stylesheet" href="../css/FormSubG.css">
     <img src="../imagenes/AgriculturaLogo.png" class="logo-superior" alt="Logo Agricultura">
@@ -74,6 +76,71 @@
                     <label for="ProduccionTP">Produccion con LPD Estandarizado</label>
                     <input type="number" id="ProduccionTP" name="ProduccionTP" placeholder="Litros" required>
                 </div>
+                <hr>
+                <div>
+                    <label>Estandarización de leche</label><br><br>
+                    <label for="ContenidoTC">Contenido de Solidos Grasos en el Producto Terminado:</label>
+                    <input type="number" id="ContenidoTC" name="ContenidoTC" placeholder="Gramos/Litros" required>
+                </div>
+                 <hr>
+                <div>
+                    <label>Aprovechamiento de la capacidad utilizada</label><br><br>
+                    <label for="DiasOTD">Dias Operativos:</label>
+                    <input type="number" id="DiasOTD" name="DiasOTD" placeholder="Dias" required>
+                </div>
+                 <div>
+                    <label for="CapacidadITC">Capacidad Instalada Estandar de Maquina:</label>
+                    <input type="number" id="CapacidadITC" name="CapacidadITC" placeholder="Litros/Dias" required>
+                </div>
+                <div>
+                    <label for="TotalCapacidad">Total Capacidad por Mes:</label>
+                    <input type="number" id="TotalCapacidad" name="TotalCapacidad" placeholder="Litros" required>
+                </div>
+            
+                <div>
+                    <label for="ProduccionATP">Producción Abasto:</label>
+                    <input type="number" id="ProduccionATP" name="ProduccionATP" placeholder="Litros" required>
+                </div>
+                 <div>
+                    <label for="ProduccionFTP">Producción Frisia:</label>
+                    <input type="number" id="ProduccionFTP" name="ProduccionFTP" placeholder="Litros" required>
+                </div>
+                <div>
+                    <label for="TotalProduccion">Total de Producción por mes:</label>
+                    <input type="number" id="TotalProduccion" name="TotalProduccion" placeholder="Litros" required>
+                </div>
+                <hr>
+                 <div>
+                    <label>Productos Utilizados en la Limpieza Química de Lineas y Equipos de Proceso</label><br><br>
+                    <label for="DiasATD">Dias Operativos Acumulados hasta el mes:</label>
+                    <input type="number" id="DiasATD" name="DiasATD" placeholder="Dias" required>
+                </div>
+                <div>
+                    <label for="HidroxidoTH">Hidroxido de sodio:</label>
+                    <input type="number" id="HidroxidoTH" name="HidroxidoTH" placeholder="Kg/Mes" required>
+                </div>
+                 <div>
+                    <label for="TotalATT">Total Anual:</label>
+                    <input type="number" id="TotalATT" name="TotalATT" placeholder="Kg" required>
+                </div>
+                <div>
+                    <label for="AcumuladoCTA">Acumulado consumo diario:</label>
+                    <input type="number" id="AcumuladoCTA" name="AcumuladoCTA" placeholder="Kg" required>
+                </div>
+
+                <div>
+                    <label for="AcidoFTA">Acido Fosfórico:</label>
+                    <input type="number" id="AcidoFTA" name="AcidoFTA" placeholder="Kg/Mes" required>
+                </div>
+                 <div>
+                    <label for="TotalATT">Total Anual:</label>
+                    <input type="number" id="TotalATT" name="TotalATT" placeholder="Kg" required>
+                </div>
+                <div>
+                    <label for="AcumuladoCTA">Acumulado consumo diario:</label>
+                    <input type="number" id="AcumuladoCTA" name="AcumuladoCTA" placeholder="Kg" required>
+                </div>
+               
                 
 
                 <div>

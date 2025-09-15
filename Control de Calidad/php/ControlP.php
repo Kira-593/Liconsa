@@ -19,7 +19,7 @@
 	<main class="container">
 		<section class="menu">
 			<div class="menu-column">
-				<a href= "registro.php" class="opc">
+				<a href= "TipoFormulario.php" class="opc">
 					<img src="../imagenes/registro.png" height="70" width="80" align="left" class="icono">
 					<span>FORMULARIO</span>
 				</a>
