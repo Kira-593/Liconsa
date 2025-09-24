@@ -5,7 +5,7 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>Tipo de Formulario</title>
 	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-	<link rel="stylesheet" href="../css/mantenimientoP.css">
+	<link rel="stylesheet" href="../css/tipoformulario.css">
 	<img src="../imagenes/AgriculturaLogo.png" class="logo-superior" alt="Logo Agricultura">
 	<img src="../imagenes/sgc.png" class="logo-sgc" alt="Logo SGC">	
 
@@ -18,24 +18,26 @@
 
 	<main class="container">
     <section class="menu">
+    <div class="menu-columns">
+        <!-- Columna izquierda -->
         <div class="menu-column">
-            <a href="FormCons.php" class="opc">
-                <img src="../imagenes/energia.png" height="70" width="80" align="left" class="icono">
-                <span>Consumo y Producción</span>
+            <a href="FormMaterial.php" class="opc">
+                <img src="../imagenes/material.png" height="70" width="80" class="icono">
+                <span>Existencias de material</span>
             </a>
-             <a href="FormConsEnergia.php" class="opc">
-                <img src="../imagenes/electric.png" height="70" width="80" align="left" class="icono">
-                <span>Consumo de Energía</span>
+            <a href="FormVenta.php" class="opc">
+                <img src="../imagenes/ventaleche.png" height="70" width="80" class="icono">
+                <span>Venta de Leche</span>
             </a>
-             <a href="FormAguaP.php" class="opc">
-                <img src="../imagenes/water.png" height="70" width="80" align="left" class="icono">
-                <span>Consumo de Agua Para Proceso</span>
-            </a>
-        
-    </section>
+        </div>
+
+    
+    </div>
+</section>
+
     <br>
     <a href="../../menuphp/php/menuP.php" class="btn btn-danger">Menú principal</a>
-    <a href="mantenimientoP.php" class="btn btn-danger">Regresar</a>
+    <a href="Adquisiciones.php" class="btn btn-danger">Regresar</a>
 </main>
 </body>
 </html>
