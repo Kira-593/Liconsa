@@ -25,7 +25,7 @@
             </a>
             <a href="FormMermas.php" class="opc">
                 <img src="../imagenes/mermas.png" height="70" width="80" align="left" class="icono">
-                <span>Mermas de Plietireno</span>
+                <span>Mermas de Plolietileno</span>
             </a>
         </div>
         <div class="menu-column">
@@ -35,7 +35,7 @@
             </a>
             <a href="FormSubG.php" class="opc">
                 <img src="../imagenes/subgerencia.png" height="70" width="80" align="left" class="icono">
-                <span>Sub Gerencia de Operaciones</span>
+                <span>Subgerencia de Operaciones</span>
             </a>
         </div>
     </section>

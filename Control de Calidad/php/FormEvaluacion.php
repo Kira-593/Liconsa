@@ -16,7 +16,7 @@
     <h1>Formulario de Evaluacion del desempeño</h1>
     
     <section class="registro">
-        <form method="post" action="Guardar.php">
+        <form method="post" action="GuardarEva.php">
         <div class="registro-container">
             <div class="registro-column">
 

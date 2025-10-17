@@ -80,3 +80,91 @@ body {
     height: auto;
     z-index: 10;
 }
+
+/* Estilos para los iconos de permisos */
+.icono-palomita {
+    position: absolute;
+    right: 15px;
+    color: #28a745;
+    font-size: 1.2em;
+}
+
+.icono-candado {
+    position: absolute;
+    right: 15px;
+    color: #ffd700;
+    font-size: 1.2em;
+}
+
+/* Estilos para opciones habilitadas y bloqueadas */
+.opc.habilitado {
+    background-color: rgba(0, 0, 0, 0.716);
+    cursor: pointer;
+}
+
+.opc.bloqueado {
+    background-color: rgba(128, 128, 128, 0.5);
+    cursor: not-allowed;
+    opacity: 0.7;
+}
+
+.opc.habilitado:hover {
+    background-color: #646060;
+}
+
+.opc.bloqueado:hover {
+    background-color: rgba(128, 128, 128, 0.5);
+}
+
+/* Asegurar que las opciones tengan posición relativa para los iconos absolutos */
+/* Estilos para los iconos de permisos */
+.icono-palomita {
+    position: absolute;
+    right: 15px;
+    color: #28a745;
+    font-size: 1.2em;
+}
+
+.icono-candado {
+    position: absolute;
+    right: 15px;
+    color: #ffd700;
+    font-size: 1.2em;
+}
+
+/* Estilos para opciones habilitadas y bloqueadas */
+.opc.habilitado {
+    background-color: rgba(0, 0, 0, 0.716);
+    cursor: pointer;
+}
+
+.opc.bloqueado {
+    background-color: rgba(128, 128, 128, 0.5);
+    cursor: not-allowed;
+    opacity: 0.7;
+}
+
+.opc.habilitado:hover {
+    background-color: #646060;
+}
+
+.opc.bloqueado:hover {
+    background-color: rgba(128, 128, 128, 0.5);
+}
+
+/* Asegurar que las opciones tengan posición relativa para los iconos absolutos */
+.opc {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: white;
+    text-decoration: none;
+    font-size: 1.2em;
+    width: 100%;
+    max-width: 300px;
+    justify-content: left;
+    padding: 10px 20px;
+    border-radius: 8px;
+    transition: background-color 0.3s;
+}

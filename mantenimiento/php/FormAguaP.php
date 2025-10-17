@@ -16,7 +16,7 @@
 
     <h1>Formulario de Consumo de Agua Para Proceso</h1>
     <section class="registro">
-        <form method="post" action="Guardar.php">
+        <form method="post" action="GuardarAguaP.php">
         <div class="registro-container">
             <div class="registro-column">
                 <div>

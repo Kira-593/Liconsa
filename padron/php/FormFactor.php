@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-	<title>Registro</title>
+	<title>Factor de Retiro</title>
 	<meta charset="UTF-8">
     <script src="../js/cargas.js"></script>
     <script src="../js/SumaT.js"></script>
@@ -17,23 +17,14 @@
     <h1>Factor de Retiro</h1>
     
     <section class="registro">
-        <form method="post" action="Guardar.php">
+        <form method="post" action="GuardarFactor.php">
         <div class="registro-container">
             <div class="registro-column">
                 <div>
                     <label for="Indicador">Tipo de Leche</label>
-                     <select id="Indicador" name="Indicador" required>
-                        <?php
-                        include "Conexion.php";
-
-                        // Consulta para obtener los camiones
-                        $query = "SELECT ID_CA, Marca FROM camiones";
-                        $res = mysqli_query($link, $query);
-
-                        while ($fila = mysqli_fetch_array($res)) {
-                            echo "<option value='" . $fila['ID_CA'] . "'>" . $fila['ID_CA'] . " - " . $fila['Marca'] . "</option>";
-                        }
-                        ?>
+                    <select id="Indicador" name="Indicador" required>
+                        <option value="Liquida de Abasto">Liquida de Abasto</option>
+                        <option value="Polvo de Abasto">Polvo de Abasto</option>
                     </select>
                 </div>
 

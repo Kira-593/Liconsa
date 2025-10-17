@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-	<title>Registro de Leche</title>
+	<title>Registro</title>
 	<meta charset="UTF-8">
     <script src="../js/cargas.js"></script>
     <script src="../js/SumaT.js"></script>
@@ -16,13 +16,13 @@
     <h1>Formulario de Captación de Leche</h1>
     
     <section class="registro">
-        <form method="post" action="Guardar.php">
+        <form method="post" action="GuardarRCT.php">
         <div class="registro-container">
             <div class="registro-column">
 
                 <div>
-                    <label for="Proveedor">Proveedor:</label>
-                    <input type="text" id="Proveedor" name="Proveedor" placeholder="Ej. Nombre, locacion, periodo" required>
+                    <label for="Provedor">Provedor:</label>
+                    <input type="text" id="Provedor" name="Provedor" placeholder="Ej. Nombre, locacion, periodo" required>
                 </div>
 
                 <div>

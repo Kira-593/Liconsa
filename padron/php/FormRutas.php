@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-	<title>Registro</title>
+	<title>Rutas de Distribución</title>
 	<meta charset="UTF-8">
     <script src="../js/cargas.js"></script>
     <script src="../js/SumaT.js"></script>
@@ -17,7 +17,7 @@
     <h1>Rutas de Distribución y Litros Desplazados</h1>
     
     <section class="registro">
-        <form method="post" action="Guardar.php">
+        <form method="post" action="GuardarRutas.php">
         <div class="registro-container">
             <div class="registro-column">
 

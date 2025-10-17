@@ -17,7 +17,7 @@
     <h1>Depto. de Contabilidad</h1>
     
     <section class="registro">
-        <form method="post" action="Guardar.php">
+        <form method="post" action="GuardarContabilidad.php">
         <div class="registro-container">
             <div class="registro-column">
 
@@ -98,11 +98,11 @@
                     <input type="text" id="DisponibleMAOP" name="DisponibleMAOP" placeholder="$" required>
                 </div>
                 <div>
-                    <label for="TPCMASU">Total de Presupuesto Comprometido de los servicios Personales:</label>
+                    <label for="TPCMASU">Total de Presupuesto Comprometido de los Materiales y Suministros:</label>
                     <input type="text" id="TPCMASU" name="TPCMASU" placeholder="$" required>
                 </div>
                  <div>
-                    <label for="TPDMASU">Total de Presupuesto Disponible de los servicios Personales:</label>
+                    <label for="TPDMASU">Total de Presupuesto Disponible de los Materiales y Suministros:</label>
                     <input type="text" id="TPDMASU" name="TPDMASU" placeholder="$" required>
                 </div>
                 <div>
@@ -205,8 +205,8 @@
                     
                     <hr>
                     <label>Recursos Fiscales Mensuales</label><br><br>
-                    <label for="ComprometidoMAOB">Se Recibió:</label>
-                    <input type="text" id="ComprometidoMAOB" name="ComprometidoMAOB" placeholder="$" required>
+                    <label for="ComprometidoVentas">Se Recibió:</label>
+                    <input type="text" id="ComprometidoVentas" name="ComprometidoVentas" placeholder="$" required>
                 </div>
                 <div>
                     <label for="ObservacionesVentas">Observaciones Acerca de ventas, Costos y Gastos:</label><br><br>

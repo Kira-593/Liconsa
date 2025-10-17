@@ -3,7 +3,7 @@
 	$host="localhost";
 	$usu="root";
 	$pas="";
-	$bd="camioneros";
+	$bd="liconsa";
 	
 	$link=mysqli_connect($host, $usu, $pas) or die ("Parametros de conexión incorrectos");
 	mysqli_select_db($link, $bd);

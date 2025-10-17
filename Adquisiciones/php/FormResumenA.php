@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-	<title>Registro</title>
+	<title>Adquisiciones</title>
 	<meta charset="UTF-8">
     <script src="../js/cargas.js"></script>
     <script src="../js/SumaT.js"></script>
@@ -17,7 +17,7 @@
     <h1>Resumen de Adquisiciones</h1>
     
     <section class="registro">
-        <form method="post" action="Guardar.php">
+        <form method="post" action="GuardarResumenA.php">
         <div class="registro-container">
             <div class="registro-column">
 
@@ -36,7 +36,7 @@
                 </div>
                  <div>
                     <label for="MontoSIT">Monto sin Iva:</label>
-                    <input type="number" id="MontoSIT" name="MontoSIT" placeholder="Ej. $33,434.48" required>
+                    <input type="number" id="MontoSIT" name="MontoSIT" placeholder="Ej. $33,434.48" required step="any">
                 </div>
                 <div>
                     <label for="LPAD">(LP,I3P,AD):</label>
@@ -48,7 +48,7 @@
                 </div>
                  <div>
                     <label for="MontoSIT">Total Gerencia Estatal Tlaxcala:</label>
-                    <input type="number" id="MontoSIT" name="MontoSIT" placeholder="Ej. $7,736,698.35" required>
+                    <input type="number" id="MontoSIT" name="MontoSIT" placeholder="Ej. $7,736,698.35" required step="any">
                 </div>
                 <div class="form-buttons">
                 <input type="submit" name="g" value="Guardar">

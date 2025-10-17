@@ -16,24 +16,15 @@
 
     <h1>Formulario de FM</h1>
     
-    <section class="registro">
-        <form method="post" action="Guardar.php">
+    <section class="Registro">
+        <form method="post" action="GuardarFM.php">
         <div class="registro-container">
             <div class="registro-column">
                 <div>
                     <label for="Indicador">Indicador</label>
                      <select id="Indicador" name="Indicador" required>
-                        <?php
-                        include "Conexion.php";
-
-                        // Consulta para obtener los camiones
-                        $query = "SELECT ID_CA, Marca FROM camiones";
-                        $res = mysqli_query($link, $query);
-
-                        while ($fila = mysqli_fetch_array($res)) {
-                            echo "<option value='" . $fila['ID_CA'] . "'>" . $fila['ID_CA'] . " - " . $fila['Marca'] . "</option>";
-                        }
-                        ?>
+                        <option value="Analisis Fisicoquimico">Análisis Físicoquímico</option>
+                        <option value="Analisis Microbiologico">Análisis Microbiológico</option>
                     </select>
                 </div>
 

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-	<title>Registro de Leche</title>
+	<title>Registro</title>
 	<meta charset="UTF-8">
     <script src="../js/cargas.js"></script>
     <script src="../js/SumaT.js"></script>
@@ -17,24 +17,15 @@
     <h5>(Leche Fortificada y Frisia)</h5>
     
     <section class="registro">
-        <form method="post" action="Guardar.php">
+        <form method="post" action="GuardarNyP.php">
         <div class="registro-container">
             <div class="registro-column">
             
                 <div>
                     <label for="Indicador">Indicador</label>
                      <select id="Indicador" name="Indicador" required>
-                        <?php
-                        include "Conexion.php";
-
-                        // Consulta para obtener los camiones
-                        $query = "SELECT ID_CA, Marca FROM camiones";
-                        $res = mysqli_query($link, $query);
-
-                        while ($fila = mysqli_fetch_array($res)) {
-                            echo "<option value='" . $fila['ID_CA'] . "'>" . $fila['ID_CA'] . " - " . $fila['Marca'] . "</option>";
-                        }
-                        ?>
+                        <option value="Leche Fortificada 2L">Leche fortificada 2L</option>
+                        <option value="Leche Frisia 1L">Leche Frisia 1L</option>
                     </select>
                 </div>
 

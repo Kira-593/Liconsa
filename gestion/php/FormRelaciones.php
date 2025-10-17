@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-	<title>Registro</title>
+	<title>Relaciones Industriales</title>
 	<meta charset="UTF-8">
     <script src="../js/cargas.js"></script>
     <script src="../js/SumaT.js"></script>
@@ -17,7 +17,7 @@
     <h1>Relaciones Industriales</h1>
     
     <section class="registro">
-        <form method="post" action="Guardar.php">
+        <form method="post" action="GuardarRelaciones.php">
         <div class="registro-container">
             <div class="registro-column">
                 <div>
@@ -29,43 +29,43 @@
                     <label>Plantilla de Personal</label><br>
                     <hr>
                     <label for="NumeroTrabajadores">Numero de Trabajadores:</label>
-                    <input type="text" id="NumeroTrabajadores" name="NumeroTrabajadores" placeholder="EJ. 118 Personas" required>
+                    <input type="number" id="NumeroTrabajadores" name="NumeroTrabajadores" placeholder="EJ. 118" required>
                 </div>
                  <div>
                     <label for="TrabajadoresH">Cantidad de Trabajadores Hombres:</label>
-                    <input type="text" id="TrabajadoresH" name="TrabajadoresH" placeholder="EJ. 87 Hombres" required>
+                    <input type="number" id="TrabajadoresH" name="TrabajadoresH" placeholder="EJ. 87" required>
                 </div>
                 <div>
                     <label for="HombresConfianza">Cantidad de Hombres de Confianza:</label>
-                    <input type="text" id="HombresConfianza" name="HombresConfianza" placeholder="EJ. 87 Hombres" required>
+                    <input type="number" id="HombresConfianza" name="HombresConfianza" placeholder="EJ. 87" required>
                 </div>
                 <div>
                     <label for="HombresSindicato">Cantidad de Hombres de Sindicato:</label>
-                    <input type="text" id="HombresSindicato" name="HombresSindicato" placeholder="EJ. 87 Hombres" required>
+                    <input type="number" id="HombresSindicato" name="HombresSindicato" placeholder="EJ. 87" required>
                 </div>
                  <div>
                     <label for="TrabajadoresM">Cantidad de Trabajadoras Mujeres:</label>
-                    <input type="text" id="TrabajadoresM" name="TrabajadoresM" placeholder="EJ. 87 Mujeres" required>
+                    <input type="number" id="TrabajadoresM" name="TrabajadoresM" placeholder="EJ. 87" required>
                 </div>
                 <div>
                     <label for="MujeresConfianza">Cantidad de Mujeres de Confianza:</label>
-                    <input type="text" id="MujeresConfianza" name="MujeresConfianza" placeholder="EJ. 87 Mujeres" required>
+                    <input type="number" id="MujeresConfianza" name="MujeresConfianza" placeholder="EJ. 87" required>
                 </div>
                 <div>
                     <label for="MujeresSindicato">Cantidad de Mujeres de Sindicato:</label>
-                    <input type="text" id="MujeresSindicato" name="MujeresSindicato" placeholder="EJ. 87 Mujeres    " required>
+                    <input type="number" id="MujeresSindicato" name="MujeresSindicato" placeholder="EJ. 87" required>
                 </div>
                 <div>
                     <label for="TrabajadoresConfianza">Cantidad De Trabajadores de Confianza:</label>
-                    <input type="text" id="TrabajadoresConfianza" name="TrabajadoresConfianza" placeholder="EJ. 57 Trabajadores" required>
+                    <input type="number" id="TrabajadoresConfianza" name="TrabajadoresConfianza" placeholder="EJ. 57" required>
                 </div>
                 <div>
                     <label for="TrabajadoresSindicato">Cantidad De Trabajadores de Sindicato:</label>
-                    <input type="text" id="TrabajadoresSindicato" name="TrabajadoresSindicato" placeholder="EJ. 57 Trabajadores" required>
+                    <input type="number" id="TrabajadoresSindicato" name="TrabajadoresSindicato" placeholder="EJ. 57" required>
                 </div>
                 <div>
-                    <label for="Vacantes">Numero Total de Plazas Ocupadas:</label>
-                    <input type="text" id="NumeroPlazasOcupadas" name="NumeroPlazasOcupadas" placeholder="EJ. 117 Plazas" required>
+                    <label for="NumeroPlazasOcupadas">Numero Total de Plazas Ocupadas:</label>
+                    <input type="number" id="NumeroPlazasOcupadas" name="NumeroPlazasOcupadas" placeholder="EJ. 117" required>
                 </div>
                 <div>
                     <label for="VacantesTV">Vacantes:</label><br><br>

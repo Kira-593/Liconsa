@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-	<title>Registro</title>
+	<title>Materiales</title>
 	<meta charset="UTF-8">
     <script src="../js/cargas.js"></script>
     <script src="../js/SumaT.js"></script>
@@ -17,23 +17,14 @@
     <h1>Existencia de Materia Prima y Material de Envase</h1>
     
     <section class="registro">
-        <form method="post" action="Guardar.php">
+        <form method="post" action="GuardarMaterial.php">
         <div class="registro-container">
             <div class="registro-column">
                 <div>
                     <label for="Indicador">Material</label>
                      <select id="Indicador" name="Indicador" required>
-                        <?php
-                        include "Conexion.php";
-
-                        // Consulta para obtener los camiones
-                        $query = "SELECT ID_CA, Marca FROM camiones";
-                        $res = mysqli_query($link, $query);
-
-                        while ($fila = mysqli_fetch_array($res)) {
-                            echo "<option value='" . $fila['ID_CA'] . "'>" . $fila['ID_CA'] . " - " . $fila['Marca'] . "</option>";
-                        }
-                        ?>
+                        <option value="Existencias de Materia Prima">Existencias de Materia Prima</option>
+                        <option value="Existencias de Material de Envase">Existencias de Material de Envase</option>
                     </select>
                 </div>
 
@@ -44,7 +35,7 @@
                 <div>
                     <label></label>Cantidad Mensual<br><br>
                     <label for="CodigoTC">Codigo:</label>
-                    <input type="number" id="CodigoTC" name="CodigoTC" placeholder="Ej. 576" required>
+                    <input type="number" id="CodigoTC" name="CodigoTC" placeholder="Ej. 576" required step="any">
                 </div>
                 <div>
                     <label for="DescripcionTD">Descripcion:</label>
@@ -52,19 +43,19 @@
                 </div>
                  <div>
                     <label for="CantidadITC">Cantidad Inicial:</label>
-                    <input type="number" id="CantidadITC" name="CantidadITC" placeholder="Kg" required>
+                    <input type="number" id="CantidadITC" name="CantidadITC" placeholder="Kg" required step="any">
                 </div>
                 <div>
                     <label for="CantidadETC">Cantidad de Entradas:</label>
-                    <input type="number" id="CantidadETC" name="CantidadETC" placeholder="Kg" required>
+                    <input type="number" id="CantidadETC" name="CantidadETC" placeholder="Kg" required step="any">
                 </div>
                 <div>
                     <label for="CantidadCTC">Cantidad de Consumo:</label>
-                    <input type="number" id="CantidadCTC" name="CantidadCTC" placeholder="Kg" required>
+                    <input type="number" id="CantidadCTC" name="CantidadCTC" placeholder="Kg" required step="any">
                 </div>
                  <div>
                     <label for="CantidadFTC">Cantidad Final:</label>
-                    <input type="number" id="CantidadFTC" name="CantidadFTC" placeholder="Kg" required>
+                    <input type="number" id="CantidadFTC" name="CantidadFTC" placeholder="Kg" required step="any">
                 </div>
             </div>
              </div>

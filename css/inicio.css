@@ -7,11 +7,11 @@
 }
 
 body{
-    background-image: url(../Imagenes/inicio.png);
-    background-size: 50%;
-    background-repeat: repeat;
-    background-position: 40;
-    background-attachment: fixed;
+    background-image: url(../Imagenes/Principal.JPG);
+    background-size: 100%;
+    background-repeat: no-repeat;
+    background-position:0%;
+    background-attachment:unset;
 }
 
 main{
@@ -48,7 +48,7 @@ main{
 
 .caja__trasera div p,
 .caja__trasera button{
-    margin-top: 30px;
+    margin-top: 50px;
 }
 
 .caja__trasera div h3{
@@ -173,4 +173,21 @@ main{
     .contenedor__login-register form{
         position: relative;
     }
+}
+.logo-superior {
+    position: absolute;
+    top: 30px;
+    left: 20px;
+    width: 30%;
+    height: auto;
+    z-index: 10;
+}
+
+.logo-sgc {
+    position: absolute;
+    top: -175px;
+    right: 20px;
+    width: 30%;
+    height: auto;
+    z-index: 10;
 }

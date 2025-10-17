@@ -1,11 +1,10 @@
 body {
-
     background: linear-gradient(rgb(255, 254, 254), #eae4e4, rgb(241, 234, 234)); 
     font-family: NotoSans;
     color: #541E2C;
     text-align: center;
     margin: 0;
-    height: 100vh; /* Asegura que el body ocupe toda la altura de la ventana */
+    height: 100vh;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -33,21 +32,39 @@ body {
     color: white;
     text-decoration: none;
     font-size: 1.2em;
-    width: 100%;          /* Para hacer que cada elemento ocupe el ancho completo del contenedor */
-    max-width: 300px;     /* Limita el ancho máximo del contenedor para alineación */
+    width: 100%;
+    max-width: 300px;
     justify-content: left;
     padding: 10px 20px;
-    background-color: rgba(0, 0, 0, 0.716); /* Fondo semitransparente para mayor legibilidad */
+    background-color: rgba(0, 0, 0, 0.716);
     border-radius: 8px;
-    transition: background-color 0.3s;  
+    transition: background-color 0.3s;
+    position: relative;
 }
 
 .opc:hover {
     background-color: #646060;
 }
 
+.opc.bloqueado {
+    background-color: rgba(128, 128, 128, 0.5);
+    cursor: not-allowed;
+    opacity: 0.7;
+}
+
+.opc.bloqueado:hover {
+    background-color: rgba(128, 128, 128, 0.5);
+}
+
 .icono {
     margin-right: 10px;
+}
+
+.icono-candado {
+    position: absolute;
+    right: 15px;
+    color: #ffd700;
+    font-size: 1.2em;
 }
 
 .btn{
@@ -55,10 +72,9 @@ body {
 }
 
 .btn-danger {
-    border: none !important; /* Quita el borde */
-    box-shadow: none !important; /* Quita el sombreado al hacer clic */
-    border-radius: 20px !important; /* Más redondeado */
-
+    border: none !important;
+    box-shadow: none !important;
+    border-radius: 20px !important;
 }
 
 .btn:hover{
@@ -67,31 +83,38 @@ body {
 
 .app-name {
     display: inline-block;
-    background-color: rgba(0, 0, 0, 0.5); /* Fondo semitransparente */
+    background-color: rgba(0, 0, 0, 0.5);
     color: white;
-    font-size: 2rem; /* Tamaño de fuente más pequeño */
-    padding: 5px 15px; /* Espaciado interno */
-    border-radius: 15px; /* Bordes redondeados */
-    margin-top: 10px; /* Separación del título */
-    font-weight: bold; /* Texto en negrita */
-    text-transform: uppercase; /* Texto en mayúsculas */
-    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.3); /* Sombra para darle profundidad */
+    font-size: 2rem;
+    padding: 5px 15px;
+    border-radius: 15px;
+    margin-top: 10px;
+    font-weight: bold;
+    text-transform: uppercase;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.3);
 }
 
 .logo-superior {
     position: absolute;
     top: 30px;
     left: 20px;
-    width: 30%; /* Ajusta el tamaño según tu preferencia */
+    width: 30%;
     height: auto;
     z-index: 10;
 }
 
 .logo-sgc {
     position: absolute;
-    top: -175px; /* Más arriba que 0px */
+    top: -175px;
     right: 20px;
-    width: 30%; /* Ajusta el tamaño según tu preferencia */
+    width: 30%;
     height: auto;
     z-index: 10;
+}
+
+.icono-palomita {
+    position: absolute;
+    right: 15px;
+    color: #28a745;
+    font-size: 1.2em;
 }

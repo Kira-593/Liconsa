@@ -6,7 +6,7 @@ function limpiarCampos() {
     formulario.reset();
 
     // Elimina los valores precargados de los inputs
-    formulario.querySelectorAll('input[type="text"], input[type="number"]').forEach(input => {
+    formulario.querySelectorAll('input[type="text"], input[type="number"], input[type="date"], textarea').forEach(input => {
         input.value = '';
     });
 }

@@ -16,7 +16,7 @@
 
     <h1>Formulario de Consumo de Energía y Producción</h1>
     <section class="registro">
-        <form method="post" action="Guardar.php">
+        <form method="post" action="GuardarCons.php">
         <div class="registro-container">
             <div class="registro-column">
                 <div>
@@ -28,8 +28,8 @@
                     <input type="number" id="ProduccionLecheTP" name="ProduccionLecheTP" placeholder="Litros" required>
                 </div>
                 <div>
-                    <label for="ReduccionITR">Reducción(-) e Incremento(+):</label>
-                    <input type="number" id="ReduccionITR" name="ReduccionITR" placeholder="%" required>
+                    <label for="ReduccionITR_Leche">Reducción(-) e Incremento(+):</label>
+                    <input type="number" id="ReduccionITR_Leche" name="ReduccionITR_Leche" placeholder="%" required>
                 </div>
                 <hr>
     
@@ -42,8 +42,8 @@
                     <input type="number" id="EnergiaElectricaTEG" name="EnergiaElectricaTEG" placeholder="GJ" required>
                 </div>
                 <div>
-                    <label for="ReduccionITR">Reducción(-) e Incremento(+):</label>
-                    <input type="number" id="ReduccionITR" name="ReduccionITR" placeholder="%" required>
+                    <label for="ReduccionITR_Energia">Reducción(-) e Incremento(+):</label>
+                    <input type="number" id="ReduccionITR_Energia" name="ReduccionITR_Energia" placeholder="%" required>
                 </div>
                 <hr>
                 <div>
@@ -55,8 +55,8 @@
                     <input type="number" id="ConsumoDieselTPG" name="ConsumoDieselTPG" placeholder="GJ" required>
                 </div>
                 <div>
-                    <label for="ReduccionITR">Reducción(-) e Incremento(+):</label>
-                    <input type="number" id="ReduccionITR" name="ReduccionITR" placeholder="%" required>
+                    <label for="ReduccionITR_Diesel">Reducción(-) e Incremento(+):</label>
+                    <input type="number" id="ReduccionITR_Diesel" name="ReduccionITR_Diesel" placeholder="%" required>
                 </div>
                 <hr>
                
