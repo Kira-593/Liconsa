@@ -33,7 +33,7 @@
 
     <section class="registro">
         <!-- El formulario envía los datos al script HacerMaterial.php -->
-        <form action="HacerMaterial.php" method="POST" class="needs-validation" novalidate>
+        <form action="HacerMaterial.php" method="POST" class="needs-validation">
             <!-- Campo oculto para pasar el ID del registro a actualizar -->
             <input type="hidden" value="<?= $row['id'] ?? '' ?>" name="id"> 
         

@@ -51,7 +51,7 @@ include "Cerrar.php";
     
     <section class="registro">
         <!-- La acción del formulario se dirige a HacerGPS.php para la actualización -->
-        <form action="HacerGPS.php" method="POST" class="needs-validation" novalidate>
+        <form action="HacerGPS.php" method="POST" class="needs-validation">
             <!-- Campo oculto para pasar el ID del registro a actualizar -->
             <input type="hidden" value="<?= $row['id'] ?? '' ?>" name="id"> 
         

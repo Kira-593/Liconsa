@@ -2,7 +2,7 @@
 	include "Conexion.php";
 	
 	$ID = $_GET["sc"];
-	$query = "DELETE FROM mantenimiento WHERE ID_MAN='$ID'";
+	$query = "DELETE FROM c_resumenadquisiciones WHERE Id='$ID'";
 	mysqli_query($link, $query);
 ?>
 
@@ -10,10 +10,12 @@
 <head>
 	<meta charset="UTF-8">
 	<title>Eliminación</title>
-	<link rel="stylesheet" href="../css/eliminar.css">
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <img src="../imagenes/AgriculturaLogo.png" class="logo-superior" alt="Logo Agricultura">
+    <img src="../imagenes/sgc.png" class="logo-sgc" alt="Logo SGC">
+	<link rel="stylesheet" href="../css/eliminar.css">	
 </head>
 <body>
-<img src="../Imagenes/logo.png" class="logo">
 
 	<div class="contenedor">
 		<?php
@@ -27,7 +29,7 @@
 		<hr>
 		<a href='Bajas.php' class='btn'>REGRESAR A REALIZAR OTRA ELIMINACIÓN</a>
 		<br><br>
-		<a href='mantenimientoP.php'><img src='..\imagenes\home.png' height='100' width='90'></a>
+		<a href='AdquisicionesP.php'><img src='..\imagenes\home.png' height='100' width='90'></a>
 	</div>
 </body>
 </html>

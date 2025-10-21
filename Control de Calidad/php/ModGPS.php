@@ -27,7 +27,7 @@
             <select name="sc" required>
                 <?php
                 while ($fila = mysqli_fetch_array($res)) {
-                    echo "<option value='" . $fila['id'] . "'>" . $fila['id'] . " .- " . $fila['FechaDictamen'] . "</option>";
+                    echo "<option value='" . $fila['id'] . "'>" . $fila['id'] . " .- " . $fila['Mes'] . "</option>";
                 }
                 include "Cerrar.php";
                 ?>
@@ -35,7 +35,7 @@
             <input type="submit" name="elec" value="Buscar">
         </form>
 
-        <a href="MenuConsulta.php" class="link">
+        <a href="./MenuModifi.php" class="link">
             <img src="../imagenes/home.png" height="100" width="90" alt="Inicio">
         </a>
     </div>

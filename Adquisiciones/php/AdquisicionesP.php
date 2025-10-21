@@ -28,7 +28,7 @@ $es_admin = ($_SESSION['departamento'] === 'ADMIN');
                 <!-- FORMULARIOS - Siempre habilitado para todos -->
                 <a href="FormResumenA.php" class="opc habilitado">
                     <img src="../imagenes/registro.png" height="70" width="80" align="left" class="icono">
-                    <span>FORMULARIOS</span>
+                    <span>FORMULARIO</span>
                     <i class="fas fa-check icono-palomita"></i>
                 </a>
 
@@ -36,13 +36,13 @@ $es_admin = ($_SESSION['departamento'] === 'ADMIN');
                 <?php if ($es_admin): ?>
                     <a href="ConResumenA.php" class="opc habilitado">
                         <img src="../imagenes/consulta.png" height="70" width="80" align="left" class="icono">
-                        <span>CONSULTA DE FORMULARIOS</span>
+                        <span>CONSULTA DE FORMULARIO</span>
                         <i class="fas fa-check icono-palomita"></i>
                     </a>
                 <?php else: ?>
                     <div class="opc bloqueado">
                         <img src="../imagenes/consulta.png" height="70" width="80" align="left" class="icono">
-                        <span>CONSULTA DE FORMULARIOS</span>
+                        <span>CONSULTA DE FORMULARIO</span>
                         <i class="fas fa-lock icono-candado"></i>
                     </div>
                 <?php endif; ?>
@@ -53,13 +53,13 @@ $es_admin = ($_SESSION['departamento'] === 'ADMIN');
                 <?php if ($es_admin): ?>
                     <a href="Modificación.php" class="opc habilitado">
                         <img src="../imagenes/modificacion.png" height="70" width="80" align="left" class="icono">
-                        <span>MODIFICACIÓN DE FORMULARIOS</span>
+                        <span>MODIFICACIÓN DE FORMULARIO</span>
                         <i class="fas fa-check icono-palomita"></i>
                     </a>
                 <?php else: ?>
                     <div class="opc bloqueado">
                         <img src="../imagenes/modificacion.png" height="70" width="80" align="left" class="icono">
-                        <span>MODIFICACIÓN DE FORMULARIOS</span>
+                        <span>MODIFICACIÓN DE FORMULARIO</span>
                         <i class="fas fa-lock icono-candado"></i>
                     </div>
                 <?php endif; ?>
@@ -68,13 +68,13 @@ $es_admin = ($_SESSION['departamento'] === 'ADMIN');
                 <?php if ($es_admin): ?>
                     <a href="Bajas.php" class="opc habilitado">
                         <img src="../imagenes/eliminar.png" height="70" width="80" align="left" class="icono">
-                        <span>ELIMINACIÓN DE FORMULARIOS</span>
+                        <span>ELIMINACIÓN DE FORMULARIO</span>
                         <i class="fas fa-check icono-palomita"></i>
                     </a>
                 <?php else: ?>
                     <div class="opc bloqueado">
                         <img src="../imagenes/eliminar.png" height="70" width="80" align="left" class="icono">
-                        <span>ELIMINACIÓN DE FORMULARIOS</span>
+                        <span>ELIMINACIÓN DE FORMULARIO</span>
                         <i class="fas fa-lock icono-candado"></i>
                     </div>
                 <?php endif; ?>

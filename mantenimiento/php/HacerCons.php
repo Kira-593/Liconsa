@@ -63,7 +63,7 @@ mysqli_query($link, $query);
             include "Cerrar.php"; // Cierra la conexión a la DB
         ?>
         
-        <a href="ModConsumo.php" class="btn">Regresar a Modificar Consumo</a><br>
+        <a href="./ModCons.php" class="btn">Regresar a Modificar Consumo</a><br>
         <br><a href='MenuModifi.php'><img src='../imagenes/home.png' height='100' width='90'></a>
     </div>
 </body>

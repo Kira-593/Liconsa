@@ -35,7 +35,7 @@
             <input type="submit" name="elec" value="Buscar">
         </form>
 
-        <a href="MenuConsulta.php" class="link">
+        <a href="./MenuModifi.php" class="link">
             <img src="../imagenes/home.png" height="100" width="90" alt="Inicio">
         </a>
     </div>

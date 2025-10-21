@@ -52,7 +52,7 @@ mysqli_query($link, $query);
             include "Cerrar.php"; // Cierra la conexión a la DB
         ?>
         <!-- Enlaces de navegación actualizados para el contexto de Factor de Retiro -->
-         <a href="ModDistribucion.php" class="btn">Regresar a Actualizar Otro Formulario</a><br>
+         <a href="./ModFactor.php" class="btn">Regresar a Actualizar Otro Formulario</a><br>
         <br><a href='MenuModifi.php'><img src='../imagenes/home.png' height='100' width='90'></a>
     </div>
 </body>

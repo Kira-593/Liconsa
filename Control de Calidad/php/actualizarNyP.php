@@ -12,8 +12,6 @@ $ID = $_GET["sc"] ?? die("
 // La tabla se asume como 'c_contenidopeso' basándose en los nuevos campos.
 // Seleccionamos TODOS los campos para prellenar el formulario
 $query = "SELECT * FROM  c_contenidonetopesoenvase WHERE id='$ID'"; 
-// Nota: Para mayor seguridad, se recomienda usar sentencias preparadas (prepared statements)
-// en lugar de la concatenación directa de variables en la consulta.
 $res = mysqli_query($link, $query);
 
 if (!$res || mysqli_num_rows($res) == 0) {
@@ -36,9 +34,8 @@ include "Cerrar.php";
     <!-- Scripts JS originales -->
     <script src="../js/cargas.js"></script>
     <script src="../js/SumaT.js"></script>
-        <script src="../js/limpiar.js"></script>
-    <!-- Se remueve limpiar.js ya que el botón es 'reset' -->
-    
+
+    <script src="../js/limpiar.js"></script>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" xintegrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <!-- Se usa el CSS del formulario de Contenido Neto y Peso (formContenidoNyP.css) -->
     <link rel="stylesheet" href="../css/formContenidoNyP.css">
@@ -55,7 +52,7 @@ include "Cerrar.php";
     
     <section class="registro">
         <!-- La acción del formulario se dirige a un script de Actualización (ActualizarNyP.php) -->
-        <form action="HacerNyP.php" method="POST">
+        <form action="HacerNyP.php" method="POST" class="needs-validation">
             <!-- Campo oculto para pasar el ID del registro a actualizar -->
             <input type="hidden" value="<?= $row['id'] ?? '' ?>" name="id"> 
         
@@ -150,7 +147,7 @@ include "Cerrar.php";
     </section>
     
     <!-- Se mantiene el enlace de regreso -->
-    <a href="TipoFormulario.php" class="home-link">
+    <a href="./MenuModifi.php" class="home-link">
         <img src="../imagenes/home.png" height="100" width="90" alt="Volver a la página de inicio">
     </a>
 </main>

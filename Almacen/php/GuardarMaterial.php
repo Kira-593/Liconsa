@@ -42,7 +42,7 @@
             include "Cerrar.php";
         ?>
         <br><a href='FormMaterial.php' class='btn'>Realizar Otra Inserción</a><br>
-        <br><a href='php/TipoFormulario.php'><img src='../imagenes/home.png' height='100' width='90'></a>
+        <br><a href='TipoFormulario.php'><img src='../imagenes/home.png' height='100' width='90'></a>
     </div>
 </body>
 </html>

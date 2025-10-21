@@ -47,7 +47,7 @@
     ?>
 
     <!-- El formulario envía los datos a HacerConsEnergia.php (asumiendo que es el script de UPDATE) -->
-    <form method="post" action="HacerConsEnergia.php">
+    <form method="post" action="HacerConsEnergia.php" class="needs-validation">
         <!-- Campo oculto para pasar el ID del registro a actualizar -->
         <input type="hidden" value="<?= $row['id'] ?? '' ?>" name="id"> 
 
@@ -147,7 +147,7 @@
     <?php include "Cerrar.php"; // Cierra la conexión ?>
     
     <!-- Enlace de regreso adaptado al destino -->
-    <a href="TipoFormulario.php" class="home-link">
+    <a href="./MenuModifi.php" class="home-link">
         <img src="../imagenes/home.png" height="100" width="90">
     </a>
 

@@ -34,7 +34,7 @@
     ?>
 
     <!-- El formulario envía los datos al nuevo script HacerDistribucion.php -->
-    <form action="HacerDistribucion.php" method="POST" class="needs-validation" novalidate>
+    <form action="HacerDistribucion.php" method="POST" class="needs-validation">
         <!-- Campo oculto para pasar el ID del registro a actualizar -->
         <input type="hidden" value="<?= $row['id'] ?? '' ?>" name="id"> 
     
@@ -53,7 +53,7 @@
                 <div class="mb-3">
                     <label for="Mes">Mes:</label>
                     <!-- Asegúrate de que el tipo de input sea 'date' si el campo 'Mes' lo requiere -->
-                    <input type="date" id="Mes" name="Mes" class="form-control" value="<?= $row['Mes'] ?? '' ?>" required>
+                    <input type="date" id="Mes" name="Mes"  value="<?= $row['Mes'] ?? '' ?>" required>
                 </div>
                 
                 <h3 class="mt-4 mb-3">Meta Vs Alcance</h3>

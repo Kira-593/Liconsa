@@ -52,7 +52,7 @@ include "Cerrar.php";
     <section class="Registro">
         <!-- El formulario envía los datos al script que procesa la actualización -->
         <!-- Usamos 'ActualizarFM.php' como acción del script de actualización -->
-        <form action="HacerFM.php" method="POST" class="needs-validation" novalidate>
+        <form action="HacerFM.php" method="POST" class="needs-validation">
             <!-- Campo oculto para pasar el ID del registro a actualizar -->
             <input type="hidden" value="<?= $row['id'] ?? '' ?>" name="id"> 
         
@@ -113,7 +113,7 @@ include "Cerrar.php";
     </section>
     
     <!-- Se actualiza el enlace de regreso a TipoFormulario.php -->
-    <a href="TipoFormulario.php" class="home-link">
+    <a href="./MenuModifi.php" class="home-link">
         <img src="../imagenes/home.png" height="100" width="90" alt="Volver a la página de inicio">
     </a>
 </main>

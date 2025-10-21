@@ -16,7 +16,7 @@
         <h1>Formulario de Determinación</h1>
         
         <section class="registro">
-            <form method="post" action="HacerGPS.php">
+            <form method="post" action="GuardarGPS.php">
             <div class="registro-container">
                 <div class="registro-column">
                     <div>
@@ -34,15 +34,15 @@
                     </div>
                     <div>
                         <label for="Metodo">Método:</label>
-                        <input type="text" id="Metodo" name="Metodo" placeholder="MILKO SCAN" required>
+                        <input type="text" id="Metodo" name="Metodo" placeholder="Ej. MILKO SCAN" required>
                     </div>
                     <div>
                         <label for="Muestra">Muestra:</label>
-                        <input type="text" id="Muestra" name="Muestra" placeholder="Leche fortificada" required>
+                        <input type="text" id="Muestra" name="Muestra" placeholder="Ej. Leche fortificada" required>
                     </div>
                     <div>
                         <label for="ValorR">Valor de Referencia:</label>
-                        <input type="number" id="ValorR" name="ValorR" placeholder="30.52" required>
+                        <input type="number" id="ValorR" name="ValorR" placeholder="Ej. 30.52" required>
                     </div>
                     <div>
                         <label for="ValorMax">Valor Máximo:</label>
@@ -50,11 +50,11 @@
                     </div>
                     <div>
                         <label for="ValorMin">Valor Mínimo:</label>
-                        <input type="number" id="ValorMin" name="ValorMin" placeholder="13.3" required step="any">
+                        <input type="number" id="ValorMin" name="ValorMin" placeholder="Ej. 13.3" required step="any">
                     </div>
                     <div>
                         <label for="UnidadesKG">Promedio Mensual:</label>
-                        <input type="number" id="UnidadesKG" name="UnidadesKG" placeholder="84.84" required step="any">
+                        <input type="number" id="UnidadesKG" name="UnidadesKG" placeholder="Ej. 84.84" required step="any">
                     </div>
                     
 

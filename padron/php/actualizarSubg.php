@@ -26,7 +26,7 @@
         $row = mysqli_fetch_array($res);
         ?>
 
-        <form action="HacerSubg.php?action=hacer" method="POST" class="needs-validation" novalidate>
+        <form action="HacerSubg.php?action=hacer" method="POST" class="needs-validation">
             <input type="hidden" value="<?= $row['id'] ?? '' ?>" name="id"> 
         
         <div class="row mb-3">

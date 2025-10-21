@@ -44,7 +44,7 @@ include "Cerrar.php";
     
     <section class="registro">
         <!-- El formulario envía los datos al script HacerVenta.php -->
-        <form action="HacerVenta.php" method="POST" class="needs-validation" novalidate>
+        <form action="HacerVenta.php" method="POST" class="needs-validation">
             <!-- Campo oculto para pasar el ID del registro a actualizar -->
             <input type="hidden" value="<?= $row['id'] ?? '' ?>" name="id"> 
         

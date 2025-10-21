@@ -45,7 +45,7 @@ $row = mysqli_fetch_array($res);
     
     <section class="registro">
         <!-- El formulario envía los datos a HacerRelaciones.php para la actualización -->
-        <form method="post" action="HacerRelaciones.php" class="needs-validation" novalidate>
+        <form method="post" action="HacerRelaciones.php" class="needs-validation">
         
             <!-- Campo oculto para pasar el ID del registro a actualizar -->
             <input type="hidden" value="<?= $row['id'] ?? '' ?>" name="id"> 

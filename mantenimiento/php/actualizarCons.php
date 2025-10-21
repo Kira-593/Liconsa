@@ -123,7 +123,7 @@
     <?php include "Cerrar.php"; // Cierra la conexión ?>
     
     <!-- Enlace de regreso adaptado al destino del segundo archivo -->
-    <a href="TipoFormulario.php" class="home-link">
+    <a href="./MenuModifi.php" class="home-link">
         <img src="../imagenes/home.png" height="100" width="90">
     </a>
 

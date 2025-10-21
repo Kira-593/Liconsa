@@ -84,7 +84,7 @@ mysqli_query($link, $query);
             include "Cerrar.php"; // Cierra la conexión a la DB
         ?>
         <!-- Se actualizan los enlaces de regreso para reflejar el contexto de indicadores -->
-         <a href="ModDistribucion.php" class="btn">Regresar a Actualizar Otro Formulario</a><br>
+         <a href="./ModSubg.php" class="btn">Regresar a Actualizar Otro Formulario</a><br>
         <br><a href='MenuModifi.php'><img src='../imagenes/home.png' height='100' width='90'></a>
     </div>
 </body>

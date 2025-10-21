@@ -36,7 +36,7 @@
 
     <section class="registro">
         <!-- El formulario envía los datos al script HacerPDC.php (creado en la respuesta anterior) -->
-        <form action="HacerPDC.php" method="POST" class="needs-validation" novalidate>
+        <form action="HacerPDC.php" method="POST" class="needs-validation">
             <!-- Campo oculto para pasar el ID del registro a actualizar -->
             <input type="hidden" value="<?= $row['id'] ?? '' ?>" name="id"> 
         

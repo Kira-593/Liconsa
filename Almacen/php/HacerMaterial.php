@@ -61,8 +61,8 @@ mysqli_query($link, $query);
             include "Cerrar.php"; // Cierra la conexión a la DB
         ?>
         <!-- Enlaces de navegación actualizados para el contexto de Materiales -->
-        <a href="MenuModifi.php" class="btn">Regresar a Menú de Modificaciones</a><br>
-        <br><a href='AlmacenP.php'><img src='../imagenes/home.png' height='100' width='90'></a>
+        <a href="./ModMaterial.php" class="btn">Regresar a Menú de Modificaciones</a><br>
+        <br><a href='./MenuModifi.php'><img src='../imagenes/home.png' height='100' width='90'></a>
     </div>
 </body>
 </html>

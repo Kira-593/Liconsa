@@ -23,7 +23,7 @@
         <h1>Modificación de Información de los Formularios</h1>
         <p>Seleccione el ID del formulario.</p>
 
-        <form method="get" action="actualizarDistribucion.php">
+        <form method="get" action="actualizarRuta.php">
             <select name="sc" required>
                 <?php
                 while ($fila = mysqli_fetch_array($res)) {

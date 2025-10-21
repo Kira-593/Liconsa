@@ -34,7 +34,7 @@
 
     <!-- El formulario envía los datos al script HacerFactor.php para el UPDATE -->
     <section class="registro">
-        <form action="HacerFactor.php" method="POST" class="needs-validation" novalidate>
+        <form action="HacerFactor.php" method="POST" class="needs-validation">
             <!-- Campo oculto para pasar el ID del registro a actualizar -->
             <input type="hidden" value="<?= $row['id'] ?? '' ?>" name="id"> 
         

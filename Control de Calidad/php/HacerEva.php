@@ -68,7 +68,7 @@ mysqli_query($link, $query);
         ?>
         <!-- Enlaces de navegación actualizados para el contexto de Evaluación de Desempeño -->
         <!-- Se asume ModEva.php como la página para modificar otras evaluaciones -->
-        <a href="ModEva.php" class="btn btn-primary mt-3">Regresar a Modificar Otra Evaluación de Desempeño</a><br>
+        <a href="./ModEvaluacion.php" class="btn btn-primary mt-3">Regresar a Modificar Otra Evaluación de Desempeño</a><br>
         <!-- Se usa el enlace de regreso que se ve en el código destino -->
         <br><a href='MenuModifi.php'><img src='../imagenes/home.png' height='100' width='90' alt='Volver al menú de modificación'></a>
     </div>

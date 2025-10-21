@@ -20,7 +20,7 @@
 
 <body>
     <div class="contenedor">
-        <h1>Modificación de Información de los Formularios</h1>
+        <h1>Modificación de Información del Formulario</h1>
         <p>Seleccione el ID del formulario.</p>
 
         <form method="get" action="actualizar.php">

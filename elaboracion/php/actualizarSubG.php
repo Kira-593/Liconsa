@@ -45,7 +45,7 @@
 
     <section class="registro">
         <!-- El formulario envía los datos al script de actualización -->
-        <form action="HacerSubG.php" method="POST" class="needs-validation" novalidate>
+        <form action="HacerSubG.php" method="POST" class="needs-validation">
             <!-- Campo oculto para pasar el ID del registro a actualizar -->
             <input type="hidden" value="<?= get_value($row, 'id') ?>" name="id"> 
             

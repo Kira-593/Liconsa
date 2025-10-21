@@ -66,7 +66,7 @@ $es_admin = ($_SESSION['departamento'] === 'ADMIN');
                 
                 <!-- ELIMINACIÓN - Solo para ADMIN -->
                 <?php if ($es_admin): ?>
-                    <a href="Bajas.php" class="opc habilitado">
+                    <a href="MenuBajas.php" class="opc habilitado">
                         <img src="../imagenes/eliminar.png" height="70" width="80" align="left" class="icono">
                         <span>ELIMINACIÓN DE FORMULARIOS</span>
                         <i class="fas fa-check icono-palomita"></i>

@@ -78,7 +78,7 @@ mysqli_query($link, $query);
         ?>
         <!-- Enlaces de navegación actualizados para el contexto de Contenido Neto y Peso -->
         <!-- Asumimos un script de modificación para este contexto, por ejemplo: ModNyP.php -->
-        <a href="ModNyP.php" class="btn btn-primary mt-3">Regresar a Actualizar Otro Registro de Contenido Neto y Peso</a><br>
+        <a href="./ModContenidoNyP.php" class="btn btn-primary mt-3">Regresar a Actualizar Otro Registro de Contenido Neto y Peso</a><br>
         <!-- Se usa el enlace de regreso que se ve en el código destino -->
         <br><a href='MenuModifi.php'><img src='../imagenes/home.png' height='100' width='90' alt='Volver al menú de modificación'></a>
     </div>

@@ -53,7 +53,7 @@ include "Cerrar.php";
     
     <section class="registro">
         <!-- La acción del formulario se dirige al script de actualización para Evaluación (HacerEva.php) -->
-        <form action="HacerEva.php" method="POST" class="needs-validation" novalidate>
+        <form action="HacerEva.php" method="POST" class="needs-validation">
             <!-- Campo oculto para pasar el ID del registro a actualizar -->
             <input type="hidden" value="<?= $row['id'] ?? '' ?>" name="id"> 
         
@@ -111,7 +111,7 @@ include "Cerrar.php";
     </section>
     
     <!-- Se mantiene el enlace de regreso -->
-    <a href="TipoFormulario.php" class="home-link">
+    <a href="./MenuModifi.php" class="home-link">
         <img src="../imagenes/home.png" height="100" width="90" alt="Volver a la página de inicio">
     </a>
 </main>
