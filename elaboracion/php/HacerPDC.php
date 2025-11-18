@@ -1,4 +1,5 @@
 <?php
+date_default_timezone_set('America/Mexico_City');
 // Incluye la conexión a la base de datos
 include "Conexion.php";
 
@@ -6,26 +7,155 @@ include "Conexion.php";
 $ID = $_POST["id"] ?? ''; // ID es la clave para el UPDATE
 $Indicador = $_POST["Indicador"] ?? '';
 $Mes = $_POST["Mes"] ?? '';
-
-// Campos específicos de Producción (según la estructura de la tabla)
 $Leche_Frisia = $_POST["Leche_Frisia"] ?? '';
 $Leche_Abasto = $_POST["Leche_Abasto"] ?? '';
 $Total = $_POST["Total"] ?? '';
 
 
-// 2. Consulta para actualizar los datos en la tabla 'e_pdc' (Producción)
-// ADVERTENCIA: Esta consulta es VULNERABLE a Inyección SQL. 
-// Se recomienda encarecidamente usar sentencias preparadas en producción.
-$query = "UPDATE e_pdc SET
-            Indicador='$Indicador', 
-            Mes='$Mes', 
-            Leche_Frisia='$Leche_Frisia', 
-            Leche_Abasto='$Leche_Abasto', 
-            Total='$Total'
-          WHERE id='$ID'"; 
+// Procesar firma si se solicitó
+$firma_usuario = null;
+$fecha_firma = null;
+$firma_realizada = false;
+if (isset($_POST['firmar_documento']) && $_POST['firmar_documento'] == 'on') {
+    $clave_firma = $_POST['clave_firma'] ?? '';
+    
+    // CONEXIÓN A LA BASE DE DATOS DE USUARIOS
+    $servername = "localhost";
+    $username = "root";
+    $password = "";
+    $dbname_usuario = "usuario"; // Base de datos de usuarios
+    
+    $link_usuario = new mysqli($servername, $username, $password, $dbname_usuario);
+    
+    
+    // Verificar conexión a la base de datos de usuarios
+    if ($link_usuario->connect_error) {
+        echo "<script>
+            alert('Error de conexión a la base de datos de usuarios.');
+            window.history.back();
+        </script>";
+        include "Cerrar.php";
+        exit;
+    }
+    // Verificar la clave de firma en la base de datos de usuarios
+    $query_verificar_firma = "SELECT correo, claveF FROM users WHERE claveF = ? LIMIT 1";
+    $stmt_verificar = mysqli_prepare($link_usuario, $query_verificar_firma);
+    
+    if ($stmt_verificar) {
+        mysqli_stmt_bind_param($stmt_verificar, "s", $clave_firma);
+        mysqli_stmt_execute($stmt_verificar);
+        $result_verificar = mysqli_stmt_get_result($stmt_verificar);
+        
+        if ($result_verificar && mysqli_num_rows($result_verificar) > 0) {
+            $usuario_firma = mysqli_fetch_assoc($result_verificar);
+            $firma_usuario = $usuario_firma['correo'];
+            $fecha_firma = date('Y-m-d H:i:s');
+            $firma_realizada = true;
 
-// 3. Ejecutar la consulta
-mysqli_query($link, $query);
+            $query = "UPDATE e_pdc SET
+                        Indicador='$Indicador', 
+                        Mes='$Mes', 
+                        Leche_Frisia='$Leche_Frisia', 
+                        Leche_Abasto='$Leche_Abasto', 
+                        Total='$Total',
+                        firma_usuario='$firma_usuario',
+                        fecha_firma='$fecha_firma'
+                    WHERE id='$ID'";
+        } else {
+            echo "<script>
+                alert('Clave de firma inválida. No se pudo firmar el documento.');
+                window.history.back();
+                 </script>";
+                mysqli_stmt_close($stmt_verificar);
+                $link_usuario->close();
+                include "Cerrar.php";
+                exit;
+            }
+            mysqli_stmt_close($stmt_verificar);
+            $link_usuario->close();
+    } else {
+        echo "<script>
+            alert('Error al verificar la firma.');
+            window.history.back();
+        </script>";
+        $link_usuario->close();
+        include "Cerrar.php";
+        exit;
+    }
+} else {
+    // 2. Construir la consulta SQL sin firma
+    $query = "UPDATE e_pdc SET
+                Indicador='$Indicador', 
+                Mes='$Mes', 
+                Leche_Frisia='$Leche_Frisia', 
+                Leche_Abasto='$Leche_Abasto', 
+                Total='$Total'
+            WHERE id='$ID'";
+}
+
+if ($firma_realizada) {
+    // Consulta preparada CON firma
+    $query = "UPDATE e_pdc SET 
+                Indicador = ?, 
+                Mes = ?, 
+                Leche_Frisia = ?, 
+                Leche_Abasto = ?, 
+                Total = ?,
+                firma_usuario = ?,
+                fecha_firma = ?
+            WHERE id = ?";
+} else {
+    // Consulta preparada SIN firma
+    $query = "UPDATE e_pdc SET 
+                Indicador = ?, 
+                Mes = ?, 
+                Leche_Frisia = ?, 
+                Leche_Abasto = ?, 
+                Total = ?
+            WHERE id = ?";
+}
+
+
+    $stmt = mysqli_prepare($link, $query);
+
+    if (!$stmt) {
+        echo "<script>
+            alert('Error al preparar la consulta: " . mysqli_error($link) . "');
+            window.history.back();
+        </script>";
+        include "Cerrar.php";
+        exit;
+    }
+
+    if ($firma_realizada) {
+    // Vincular 8 parámetros (7 campos + id) para consulta CON firma
+    mysqli_stmt_bind_param($stmt, "ssssssss", 
+        $Indicador,
+        $Mes,
+        $Leche_Frisia,
+        $Leche_Abasto,
+        $Total,
+        $firma_usuario,
+        $fecha_firma,
+        $ID
+    );
+} else {
+    // Vincular 6 parámetros (5 campos + id) para consulta SIN firma
+    mysqli_stmt_bind_param($stmt, "ssssss", 
+        $Indicador,
+        $Mes,
+        $Leche_Frisia,
+        $Leche_Abasto,
+        $Total,
+        $ID
+    );
+}
+// Ejecutar la consulta preparada
+$ejecucion_exitosa = mysqli_stmt_execute($stmt);
+$filas_afectadas = mysqli_stmt_affected_rows($stmt);
+$error_sql = mysqli_stmt_error($stmt);
+
+mysqli_stmt_close($stmt);
 ?>
 
 <!DOCTYPE html>
@@ -41,19 +171,22 @@ mysqli_query($link, $query);
 </head>
 <body>
     <div class="contenedor">
-        <?php
-            // 4. Mostrar el resultado de la operación
-            if (mysqli_affected_rows($link) > 0) {
-                // Mensaje actualizado para Producción
-                echo "<div class='mensaje correcto'>Actualización de Producción correcta</div>";
-            } else {
-                 // Si no hubo filas afectadas, se revisa si hubo un error de SQL
-                if (mysqli_error($link)) {
-                    echo "<div class='mensaje error'>Actualización incorrecta. Error: " . mysqli_error($link) . "</div>";
+           <?php
+            // Mostrar el resultado de la operación
+            if ($ejecucion_exitosa) {
+                if ($filas_afectadas > 0) {
+                    $mensaje = "Actualización de Indicadores correcta";
+                    if ($firma_realizada) {
+                        $mensaje .= " y documento firmado exitosamente por: " . $firma_usuario;
+                    }
+                    echo "<div class='mensaje correcto'>$mensaje</div>";
                 } else {
                     echo "<div class='mensaje advertencia'>Actualización finalizada. No se detectaron cambios en el registro.</div>";
                 }
+            } else {
+                echo "<div class='mensaje error'>Actualización incorrecta. Error: " . $error_sql . "</div>";
             }
+            
             include "Cerrar.php"; // Cierra la conexión a la DB
         ?>
         <a href="ModPDC.php" class="btn">Regresar a Actualizar Otro Formulario</a><br>

@@ -4,7 +4,7 @@ body {
     color: #fcfcfc;
     text-align: center;
     margin: 0;
-    height: 120vh; /* Asegura que el body ocupe toda la altura de la ventana */
+    height: 620vh; /* Asegura que el body ocupe toda la altura de la ventana */
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -18,7 +18,7 @@ body {
     width: 50%;
     box-shadow: 0 0 15px rgba(255, 255, 255, 0.3);
     max-width: 500px; /* Ajusta según el diseño deseado */
-    margin: 3450px auto 20px auto; ;
+    margin: 100px auto 20px auto; ;
 }
 
 .registro-container {
@@ -115,4 +115,32 @@ input[type="button"]:hover {
     width: 30%; /* Ajusta el tamaño según tu preferencia */
     height: auto;
     z-index: 10;
+}
+
+/* Estilos para inputs deshabilitados */
+input[readonly],
+input[disabled],
+select[disabled],
+textarea[readonly] {
+    background-color: #333 !important;
+    opacity: 0.6 !important;
+    color: #ccc !important;
+    cursor: not-allowed !important;
+}
+
+/* Asegurar que el select tenga los mismos estilos base que los inputs */
+select {
+    width: 100%;
+    padding: 8px;
+    border-radius: 5px;
+    border: 1px solid brown;
+    background-color: #333;
+    color: white;
+    cursor: pointer;
+}
+
+/* Estilo para las opciones del select */
+select option {
+    background-color: #333;
+    color: white;
 }

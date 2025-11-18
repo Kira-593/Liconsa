@@ -24,7 +24,28 @@ if (!$res || mysqli_num_rows($res) == 0) {
 
 $row = mysqli_fetch_array($res);
 
-// Cierra la conexión después de obtener los datos
+// Permisos y estado de firma
+$solo_firma = !empty($row['permitir_firmar']) && empty($row['permitir_modificar']);
+$formulario_firmado = !empty($row['firma_usuario']);
+
+// Si solo está permitido firmar y ya está firmado, bloquear todo
+if ($solo_firma && $formulario_firmado) {
+        echo "<script>
+            alert('Este formulario ya ha sido firmado y no puede ser modificado.');
+            window.location.href = 'MenuModifi.php';
+        </script>";
+        exit();
+}
+
+// Si no tiene permisos de modificación ni firma
+if (empty($row['permitir_modificar']) && empty($row['permitir_firmar'])) {
+        echo "<script>
+            alert('No tienes permisos para modificar o firmar este formulario. Contacta al administrador.');
+            window.location.href = 'MenuModifi.php';
+        </script>";
+        exit();
+}
+
 include "Cerrar.php"; 
 ?>
 <!DOCTYPE html>
@@ -36,6 +57,7 @@ include "Cerrar.php";
     <script src="../js/cargas.js"></script>
     <script src="../js/SumaT.js"></script>
     <script src="../js/limpiar.js"></script>
+    <script src="../js/ValidacionFirma.js"></script>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" xintegrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <!-- Nuevo CSS para el formulario FM -->
     <link rel="stylesheet" href="../css/actualizarFM.css">
@@ -50,18 +72,26 @@ include "Cerrar.php";
     <h1>Modificar Formulario FM</h1>
     
     <section class="Registro">
-        <!-- El formulario envía los datos al script que procesa la actualización -->
-        <!-- Usamos 'ActualizarFM.php' como acción del script de actualización -->
-        <form action="HacerFM.php" method="POST" class="needs-validation">
-            <!-- Campo oculto para pasar el ID del registro a actualizar -->
-            <input type="hidden" value="<?= $row['id'] ?? '' ?>" name="id"> 
+    <!-- El formulario envía los datos al script que procesa la actualización -->
+    <!-- Usamos 'ActualizarFM.php' como acción del script de actualización -->
+    <form action="HacerFM.php" method="POST" class="needs-validation" id="formulario">
+                <!-- Campo oculto para pasar el ID del registro a actualizar -->
+                <input type="hidden" value="<?= $row['id'] ?? '' ?>" name="id"> 
+
+                <?php if ($formulario_firmado): ?>
+                <div class="alert alert-info">
+                    <strong>✅ Formulario Firmado</strong><br>
+                    Firmado por: <?= $row['firma_usuario'] ?><br>
+                    Fecha: <?= $row['fecha_firma'] ?>
+                </div>
+                <?php endif; ?>
         
             <div class="registro-container">
                 <div class="registro-column">
                     
                     <div>
                         <label for="Indicador">Indicador</label>
-                        <select id="Indicador" name="Indicador" required>
+                        <select id="Indicador" name="Indicador" required <?= ($solo_firma || $formulario_firmado) ? 'disabled' : '' ?>>
                             <!-- Preselecciona la opción actual de Análisis -->
                             <option value="Analisis Fisicoquimico" <?= ($row['Indicador'] == 'Analisis Fisicoquimico') ? 'selected' : '' ?>>Análisis Físicoquímico</option>
                             <option value="Analisis Microbiologico" <?= ($row['Indicador'] == 'Analisis Microbiologico') ? 'selected' : '' ?>>Análisis Microbiológico</option>
@@ -71,7 +101,7 @@ include "Cerrar.php";
                     <div>
                         <label for="Mes">Mes:</label>
                         <!-- type="date" para el campo Mes -->
-                        <input type="date" id="Mes" name="Mes" value="<?= $row['Mes'] ?? '' ?>" required>
+                        <input type="date" id="Mes" name="Mes" value="<?= $row['Mes'] ?? '' ?>" <?= ($solo_firma || $formulario_firmado) ? 'readonly' : '' ?> required>
                     </div>
                     
                     <h3 class="mt-4 mb-3">Cantidades de Análisis</h3>
@@ -79,35 +109,78 @@ include "Cerrar.php";
                     <div>
                         <label for="Cantidad_insumos">Cantidad de Insumos:</label>
                         <!-- Nuevo campo: Cantidad_insumos -->
-                        <input type="number" id="Cantidad_insumos" name="Cantidad_insumos" value="<?= $row['Cantidad_insumos'] ?? '' ?>" placeholder="Cantidad" required step="any">
+                        <input type="number" id="Cantidad_insumos" name="Cantidad_insumos" value="<?= $row['Cantidad_insumos'] ?? '' ?>" placeholder="Cantidad" <?= ($solo_firma || $formulario_firmado) ? 'readonly' : '' ?> required step="any">
                     </div>
                     <div>
                         <label for="ProductosT">Productos Terminados:</label>
                         <!-- Nuevo campo: ProductosT -->
-                        <input type="number" id="ProductosT" name="ProductosT" value="<?= $row['ProductosT'] ?? '' ?>" placeholder="Cantidad" required step="any">
+                        <input type="number" id="ProductosT" name="ProductosT" value="<?= $row['ProductosT'] ?? '' ?>" placeholder="Cantidad" <?= ($solo_firma || $formulario_firmado) ? 'readonly' : '' ?> required step="any">
                     </div>
                     <div>
                         <label for="ControlesD">Controles Diversos:</label>
                         <!-- Nuevo campo: ControlesD -->
-                        <input type="number" id="ControlesD" name="ControlesD" value="<?= $row['ControlesD'] ?? '' ?>" placeholder="Cantidad" required step="any">
+                        <input type="number" id="ControlesD" name="ControlesD" value="<?= $row['ControlesD'] ?? '' ?>" placeholder="Cantidad" <?= ($solo_firma || $formulario_firmado) ? 'readonly' : '' ?> required step="any">
                     </div>
                     <div>
                         <label for="MaterialesA">Materiales auxiliares:</label>
                         <!-- Nuevo campo: MaterialesA -->
-                        <input type="number" id="MaterialesA" name="MaterialesA" value="<?= $row['MaterialesA'] ?? '' ?>" placeholder="Cantidad" required step="any">
+                        <input type="number" id="MaterialesA" name="MaterialesA" value="<?= $row['MaterialesA'] ?? '' ?>" placeholder="Cantidad" <?= ($solo_firma || $formulario_firmado) ? 'readonly' : '' ?> required step="any">
                     </div>
                     <div>
                         <label for="Total">Total:</label>
                         <!-- Nuevo campo: Total -->
-                        <input type="number" id="Total" name="Total" value="<?= $row['Total'] ?? '' ?>" placeholder="Cantidad" required step="any">
+                        <input type="number" id="Total" name="Total" value="<?= $row['Total'] ?? '' ?>" placeholder="Cantidad" <?= ($solo_firma || $formulario_firmado) ? 'readonly' : '' ?> required step="any">
                     </div>
                 </div>
             </div>
             
+            <!-- SECCIÓN DE FIRMA -->
+            <div class="firma-section mt-4 p-3 border rounded">
+                <h4>Firma Digital</h4>
+
+                <?php if ($row['permitir_firmar'] && !$formulario_firmado): ?>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="clave_firma">Clave de Firma:</label>
+                            <input type="password" id="clave_firma" name="clave_firma" class="form-control"
+                                placeholder="Ingrese su clave única de firma" <?= !$row['permitir_firmar'] ? 'readonly' : '' ?>>
+                            <small>Ingrese su clave única de firma para validar este formulario.</small>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="confirmar_clave">Confirmar Clave:</label>
+                            <input type="password" id="confirmar_clave" name="confirmar_clave" class="form-control"
+                                placeholder="Confirme su clave de firma" <?= !$row['permitir_firmar'] ? 'readonly' : '' ?>>
+                        </div>
+                    </div>
+
+                    <div class="form-check mb-3">
+                        <label class="form-check-label" for="firmar_documento" style="display:inline-flex;align-items:center;gap:6px;cursor:pointer;">
+                            <input type="checkbox" id="firmar_documento" name="firmar_documento" class="form-check-input" <?= !$row['permitir_firmar'] ? 'readonly' : '' ?> required>
+                            Deseo firmar este documento digitalmente
+                        </label>
+                    </div>
+                <?php elseif ($formulario_firmado): ?>
+                    <div class="alert alert-success">
+                        <strong>✅ Documento Firmado</strong><br>
+                        Este formulario fue firmado por: <strong><?= $row['firma_usuario'] ?></strong><br>
+                        Fecha de firma: <strong><?= $row['fecha_firma'] ?></strong>
+                    </div>
+                <?php else: ?>
+                    <div class="alert alert-warning">
+                        <strong>⚠️ Firma no disponible</strong><br>
+                        No tienes permisos para firmar este documento o la firma no está habilitada.
+                    </div>
+                <?php endif; ?>
+            </div>
+
             <div class="form-buttons mt-4">
-                <input type="submit" name="g" value="Guardar Cambios">
-                <!-- Se cambia a type="reset" y valor "Limpiar" para coincidir con el formulario de destino -->
-                <input type="button" name="b" value="Limpiar" onclick="limpiarCampos()">
+                <?php if (!$formulario_firmado): ?>
+                    <input type="submit" name="g" value="Guardar Cambios">
+                    <input type="button" name="b" value="Limpiar" onclick="limpiarCampos()"
+                    <?= ($solo_firma) ? 'disabled' : '' ?>>
+                <?php else: ?>
+                    <div class="alert alert-warning">Este formulario ya ha sido firmado y no puede ser modificado.</div>
+                <?php endif; ?>
             </div>
         </form>
     </section>

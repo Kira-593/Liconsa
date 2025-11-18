@@ -9,7 +9,7 @@ $es_admin = ($_SESSION['departamento'] === 'ADMIN');
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Padron</title>
+    <title>Recursos</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <link rel="stylesheet" href="../css/recursosP.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
@@ -49,21 +49,11 @@ $es_admin = ($_SESSION['departamento'] === 'ADMIN');
             </div>    
 
             <div class="menu-column">
-                <!-- MODIFICACIÓN - Solo para ADMIN -->
-                <?php if ($es_admin): ?>
                     <a href="MenuModifi.php" class="opc habilitado">
                         <img src="../imagenes/modificacion.png" height="70" width="80" align="left" class="icono">
                         <span>MODIFICACIÓN DE FORMULARIOS</span>
                         <i class="fas fa-check icono-palomita"></i>
-                    </a>
-                <?php else: ?>
-                    <div class="opc bloqueado">
-                        <img src="../imagenes/modificacion.png" height="70" width="80" align="left" class="icono">
-                        <span>MODIFICACIÓN DE FORMULARIOS</span>
-                        <i class="fas fa-lock icono-candado"></i>
-                    </div>
-                <?php endif; ?>
-                
+                    </a>                
                 <!-- ELIMINACIÓN - Solo para ADMIN -->
                 <?php if ($es_admin): ?>
                     <a href="MenuBajas.php" class="opc habilitado">

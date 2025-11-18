@@ -1,4 +1,6 @@
 <?php
+date_default_timezone_set('America/Mexico_City');
+
 // Incluye la conexión a la base de datos
 include "Conexion.php";
 
@@ -13,34 +15,145 @@ $LPAD = $_POST["LPAD"] ?? '';
 $EmpresaATE = $_POST["EmpresaATE"] ?? '';
 $TotalGET = $_POST["TotalGET"] ?? ''; // Total Gerencia Estatal Tlaxcala (asumido como el segundo campo numérico)
 
+// Procesar firma si se solicitó
+$firma_usuario = null;
+$fecha_firma = null;
+$firma_realizada = false;
+if (isset($_POST['firmar_documento']) && $_POST['firmar_documento'] == 'on') {
+    $clave_firma = $_POST['clave_firma'] ?? '';
+    
+    // CONEXIÓN A LA BASE DE DATOS DE USUARIOS
+    $servername = "localhost";
+    $username = "root";
+    $password = "";
+    $dbname_usuario = "usuario"; // Base de datos de usuarios
+    
+    $link_usuario = new mysqli($servername, $username, $password, $dbname_usuario);
+    
+    
+    // Verificar conexión a la base de datos de usuarios
+    if ($link_usuario->connect_error) {
+        echo "<script>
+            alert('Error de conexión a la base de datos de usuarios.');
+            window.history.back();
+        </script>";
+        include "Cerrar.php";
+        exit;
+    }
+    // Verificar la clave de firma en la base de datos de usuarios
+    $query_verificar_firma = "SELECT correo, claveF FROM users WHERE claveF = ? LIMIT 1";
+    $stmt_verificar = mysqli_prepare($link_usuario, $query_verificar_firma);
+    
+    if ($stmt_verificar) {
+        mysqli_stmt_bind_param($stmt_verificar, "s", $clave_firma);
+        mysqli_stmt_execute($stmt_verificar);
+        $result_verificar = mysqli_stmt_get_result($stmt_verificar);
+        
+        if ($result_verificar && mysqli_num_rows($result_verificar) > 0) {
+            $usuario_firma = mysqli_fetch_assoc($result_verificar);
+            $firma_usuario = $usuario_firma['correo'];
+            $fecha_firma = date('Y-m-d H:i:s');
+            $firma_realizada = true;
 
-// ************** INICIO DE MITIGACIÓN SQL INJECTION ******************
-// Se recomienda ENCARECIDAMENTE usar sentencias preparadas en producción.
-// Usamos mysqli_real_escape_string para mitigar la vulnerabilidad en este ejemplo.
-$ID_e = mysqli_real_escape_string($link, $ID);
-$Mes_e = mysqli_real_escape_string($link, $Mes);
-$CodigoTC_e = mysqli_real_escape_string($link, $CodigoTC);
-$DescripcionBTD_e = mysqli_real_escape_string($link, $DescripcionBTD);
-$MontoSIT_e = mysqli_real_escape_string($link, $MontoSIT);
-$LPAD_e = mysqli_real_escape_string($link, $LPAD);
-$EmpresaATE_e = mysqli_real_escape_string($link, $EmpresaATE);
-$TotalGET_e = mysqli_real_escape_string($link, $TotalGET);
-// ************** FIN DE MITIGACIÓN SQL INJECTION ******************
+            $query = "UPDATE c_resumenadquisiciones SET
+                        Mes= ?, 
+                        CodigoTC=?,
+                        DescripcionBTD=?,
+                        MontoSIT=?,
+                        LPAD=?,
+                        EmpresaATE=?,
+                        TotalGET=?
+                    WHERE id=?";
+        } else {
+              echo "<script>
+                alert('Clave de firma inválida. No se pudo firmar el documento.');
+                window.history.back();
+                 </script>";
+                mysqli_stmt_close($stmt_verificar);
+                $link_usuario->close();
+                include "Cerrar.php";
+                exit;
+            }
+            mysqli_stmt_close($stmt_verificar);
+            $link_usuario->close();
+    } else {
+        echo "<script>
+            alert('Error al verificar la firma.');
+            window.history.back();
+        </script>";
+        $link_usuario->close();
+        include "Cerrar.php";
+        exit;
+    }
+} else {
+    // Si no se firma, preparamos el UPDATE sin campos de firma
 
+    $query = "UPDATE c_resumenadquisiciones SET
+                Mes= ?, 
+                CodigoTC= ?, 
+                DescripcionBTD= ?, 
+                MontoSIT= ?, 
+                LPAD= ?, 
+                EmpresaATE= ?, 
+                TotalGET= ?
+            WHERE id= ?";
+}
+if($firma_realizada) {
+    // 2. Preparar la consulta SQL con firma
+    $query = "UPDATE c_resumenadquisiciones SET
+                Mes= ?, 
+                CodigoTC= ?, 
+                DescripcionBTD= ?, 
+                MontoSIT= ?, 
+                LPAD= ?, 
+                EmpresaATE= ?, 
+                TotalGET= ?,
+                firma_usuario= ?,
+                fecha_firma= ?
+            WHERE id= ?";
+} else {
+   $query = "UPDATE c_resumenadquisiciones SET
+                Mes= ?, 
+                CodigoTC= ?, 
+                DescripcionBTD= ?, 
+                MontoSIT= ?, 
+                LPAD= ?, 
+                EmpresaATE= ?, 
+                TotalGET= ?
+            WHERE id= ?";
+}
+$stmt = mysqli_prepare($link, $query);
+if ($firma_realizada) {
+    mysqli_stmt_bind_param($stmt, "ssssssssss", 
+    $Mes, 
+    $CodigoTC, 
+    $DescripcionBTD, 
+    $MontoSIT, 
+    $LPAD, 
+    $EmpresaATE, 
+    $TotalGET, 
+    $firma_usuario, 
+    $fecha_firma, 
+    $ID
+);
+} else {
+    mysqli_stmt_bind_param($stmt, "ssssssss", 
+    $Mes, 
+    $CodigoTC, 
+    $DescripcionBTD, 
+    $MontoSIT, 
+    $LPAD, 
+    $EmpresaATE, 
+    $TotalGET, 
+    $ID
+);
+}
+// Ejecutar la consulta preparada
+    $ejecucion_exitosa = mysqli_stmt_execute($stmt);
+    $filas_afectadas = mysqli_stmt_affected_rows($stmt);
+    $error_sql = mysqli_stmt_error($stmt);
 
-// 2. Consulta para actualizar los datos en la tabla 'c_resumenadquisiciones' (asumida)
-$query = "UPDATE c_resumenadquisiciones SET
-            Mes='$Mes_e', 
-            CodigoTC='$CodigoTC_e', 
-            DescripcionBTD='$DescripcionBTD_e', 
-            MontoSIT='$MontoSIT_e', 
-            LPAD='$LPAD_e', 
-            EmpresaATE='$EmpresaATE_e', 
-            TotalGET='$TotalGET_e'
-          WHERE id='$ID_e'"; 
-
-// 3. Ejecutar la consulta
-mysqli_query($link, $query);
+    mysqli_stmt_close($stmt);
 ?>
 
 <html>
@@ -55,27 +168,29 @@ mysqli_query($link, $query);
 </head>
 <body>
     <div class="contenedor">
-        <?php
-            // 4. Mostrar el resultado de la operación
-            if (mysqli_affected_rows($link) > 0) {
-                // Mensaje actualizado para Resumen de Adquisiciones
-                echo "<div class='mensaje correcto'>Actualización del registro de Resumen de Adquisiciones (ID: $ID_e) correcta</div>";
-            } else {
-                 // Si no hubo filas afectadas, se revisa si hubo un error de SQL
-                if (mysqli_error($link)) {
-                    echo "<div class='mensaje error'>Actualización incorrecta. Error: " . mysqli_error($link) . "</div>";
+        < <?php
+            // Mostrar el resultado de la operación
+            if ($ejecucion_exitosa) {
+                if ($filas_afectadas > 0) {
+                    $mensaje = "Actualización de Indicadores correcta";
+                    if ($firma_realizada) {
+                        $mensaje .= " y documento firmado exitosamente por: " . $firma_usuario;
+                    }
+                    echo "<div class='mensaje correcto'>$mensaje</div>";
                 } else {
-                    // Mensaje actualizado para Resumen de Adquisiciones (sin cambios)
-                    echo "<div class='mensaje advertencia'>Actualización finalizada. No se detectaron cambios en el registro de Resumen de Adquisiciones (ID: $ID_e).</div>";
+                    echo "<div class='mensaje advertencia'>Actualización finalizada. No se detectaron cambios en el registro.</div>";
                 }
+            } else {
+                echo "<div class='mensaje error'>Actualización incorrecta. Error: " . $error_sql . "</div>";
             }
+            
             include "Cerrar.php"; // Cierra la conexión a la DB
         ?>
         <!-- Enlaces de navegación actualizados para el contexto de Adquisiciones -->
         <!-- Asumimos que la página para modificar otros registros es ModificarResumenA.php -->
         <a href="Modificación.php" class="btn btn-primary mt-3">Regresar a Actualizar Otro Resumen de Adquisiciones</a><br>
         <!-- El home link regresa al menú de modificación -->
-        <br><a href='Adquisiciones.php'><img src='../imagenes/home.png' height='100' width='90' alt='Volver al menú de modificación'></a>
+        <br><a href='AdquisicionesP.php'><img src='../imagenes/home.png' height='100' width='90' alt='Volver al menú de modificación'></a>
     </div>
 </body>
 </html>

@@ -60,7 +60,7 @@ input[type="date"] {
 
 /* Botones de formulario */
 input[type="submit"],
-input[type="reset"] {
+input[type="button"] {
     padding: 10px 20px;
     font-size: 1em;
     cursor: pointer;
@@ -119,4 +119,32 @@ input[type="button"]:hover {
 
 .btn:hover {
     background-color: yellowgreen;
+}
+
+/* Estilos para inputs deshabilitados */
+input[readonly],
+input[disabled],
+select[disabled],
+textarea[readonly] {
+    background-color: #333 !important;
+    opacity: 0.6 !important;
+    color: #ccc !important;
+    cursor: not-allowed !important;
+}
+
+/* Asegurar que el select tenga los mismos estilos base que los inputs */
+select {
+    width: 100%;
+    padding: 8px;
+    border-radius: 5px;
+    border: 1px solid brown;
+    background-color: #333;
+    color: white;
+    cursor: pointer;
+}
+
+/* Estilo para las opciones del select */
+select option {
+    background-color: #333;
+    color: white;
 }

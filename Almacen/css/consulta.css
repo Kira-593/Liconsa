@@ -79,3 +79,9 @@ input[type="submit"]:hover {
     display: inline-block;
     margin-top: 20px;
 }
+
+.firmado { background-color: #d4edda; color: #155724; }
+.completo { background-color: #cce7ff; color: #004085; }
+.modificar { background-color: #fff3cd; color: #856404; }
+.firmar { background-color: #d1ecf1; color: #0c5460; }
+.bloqueado { background-color: #f8d7da; color: #721c24; }

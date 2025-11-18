@@ -79,3 +79,64 @@ input[type="submit"]:hover {
     display: inline-block;
     margin-top: 20px;
 }
+
+option.firmado {
+            background-color: #d4edda;
+            color: #155724;
+            font-weight: bold;
+        }
+        
+        option.completo {
+            background-color: #cce7ff;
+            color: #004085;
+        }
+        
+        option.modificar {
+            background-color: #fff3cd;
+            color: #856404;
+        }
+        
+        option.firmar {
+            background-color: #d1ecf1;
+            color: #0c5460;
+        }
+        
+        option.bloqueado {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+        
+        /* Estilos para la leyenda */
+        .leyenda-permisos {
+            margin: 20px 0;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-radius: 5px;
+            border-left: 4px solid #007bff;
+        }
+        
+        .leyenda-permisos h3 {
+            margin-top: 0;
+            color: #007bff;
+        }
+        
+        .leyenda-permisos ul {
+            margin-bottom: 0;
+            padding-left: 20px;
+        }
+        
+        .leyenda-permisos li {
+            margin-bottom: 5px;
+        }
+        
+        .firmado, .completo, .modificar, .firmar, .bloqueado {
+            font-weight: bold;
+            padding: 2px 6px;
+            border-radius: 3px;
+        }
+        
+        .firmado { background-color: #d4edda; color: #155724; }
+        .completo { background-color: #cce7ff; color: #004085; }
+        .modificar { background-color: #fff3cd; color: #856404; }
+        .firmar { background-color: #d1ecf1; color: #0c5460; }
+        .bloqueado { background-color: #f8d7da; color: #721c24; }

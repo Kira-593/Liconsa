@@ -1,4 +1,6 @@
 <?php
+date_default_timezone_set('America/Mexico_City');
+
 // Incluye la conexión a la base de datos
 include "Conexion.php";
 
@@ -6,7 +8,6 @@ include "Conexion.php";
 // El operador ?? '' asegura que la variable siempre tenga un valor (cadena vacía si no se envía)
 $ID = $_POST["id"] ?? ''; // ID es la clave para el UPDATE
 
-// Campos de la tabla e_subgerencia_operaciones
 $Mes = $_POST["Mes"] ?? ''; 
 $LitrosFres = $_POST["LitrosFres"] ?? ''; 
 $SHp = $_POST["SHp"] ?? ''; 
@@ -34,69 +35,269 @@ $AcidoFTA = $_POST["AcidoFTA"] ?? '';
 $TotalATT_Acido = $_POST["TotalATT_Acido"] ?? ''; 
 $AcumuladoCTA_Acido = $_POST["AcumuladoCTA_Acido"] ?? ''; 
 
+// Procesar firma si se solicitó
+$firma_usuario = null;
+$fecha_firma = null;
+$firma_realizada = false;
+if (isset($_POST['firmar_documento']) && $_POST['firmar_documento'] == 'on') {
+    $clave_firma = $_POST['clave_firma'] ?? '';
+    
+    // CONEXIÓN A LA BASE DE DATOS DE USUARIOS
+    $servername = "localhost";
+    $username = "root";
+    $password = "";
+    $dbname_usuario = "usuario"; // Base de datos de usuarios
+    
+    $link_usuario = new mysqli($servername, $username, $password, $dbname_usuario);
+    
+    
+    // Verificar conexión a la base de datos de usuarios
+    if ($link_usuario->connect_error) {
+        echo "<script>
+            alert('Error de conexión a la base de datos de usuarios.');
+            window.history.back();
+        </script>";
+        include "Cerrar.php";
+        exit;
+    }
+    // Verificar la clave de firma en la base de datos de usuarios
+    $query_verificar_firma = "SELECT correo, claveF FROM users WHERE claveF = ? LIMIT 1";
+    $stmt_verificar = mysqli_prepare($link_usuario, $query_verificar_firma);
+    
+    if ($stmt_verificar) {
+        mysqli_stmt_bind_param($stmt_verificar, "s", $clave_firma);
+        mysqli_stmt_execute($stmt_verificar);
+        $result_verificar = mysqli_stmt_get_result($stmt_verificar);
+        
+        if ($result_verificar && mysqli_num_rows($result_verificar) > 0) {
+            $usuario_firma = mysqli_fetch_assoc($result_verificar);
+            $firma_usuario = $usuario_firma['correo'];
+            $fecha_firma = date('Y-m-d H:i:s');
+            $firma_realizada = true;
 
-// 2. Consulta preparada para actualizar los datos en la tabla 'e_subgerencia_operaciones'
-// Usamos sentencias preparadas para prevenir Inyección SQL.
-$query = "UPDATE e_subgerencia_operaciones SET
-    Mes=?, 
-    LitrosFres=?, 
-    SHp=?, 
-    SNGp=?, 
-    volumenTA=?, 
-    solidosTA=?, 
-    VolumenTC=?, 
-    TotalTC=?, 
-    VolumenTP=?, 
-    LecheTP=?, 
-    PorsentajeTP=?, 
-    ProduccionTP=?, 
-    ContenidoTC=?, 
-    DiasOTD=?, 
-    CapacidadITC=?, 
-    TotalCapacidad=?, 
-    ProduccionATP=?, 
-    ProduccionFTP=?, 
-    TotalProduccion=?, 
-    DiasATD=?, 
-    HidroxidoTH=?, 
-    TotalATT_Hidroxido=?, 
-    AcumuladoCTA_Hidroxido=?, 
-    AcidoFTA=?, 
-    TotalATT_Acido=?, 
-    AcumuladoCTA_Acido=?
-    WHERE id=?";
+            $query = "UPDATE e_subgerencia_operaciones SET
+                Mes=?, 
+                LitrosFres=?, 
+                SHp=?, 
+                SNGp=?, 
+                volumenTA=?, 
+                solidosTA=?, 
+                VolumenTC=?, 
+                TotalTC=?, 
+                VolumenTP=?, 
+                LecheTP=?, 
+                PorsentajeTP=?, 
+                ProduccionTP=?, 
+                ContenidoTC=?, 
+                DiasOTD=?, 
+                CapacidadITC=?, 
+                TotalCapacidad=?, 
+                ProduccionATP=?, 
+                ProduccionFTP=?, 
+                TotalProduccion=?, 
+                DiasATD=?, 
+                HidroxidoTH=?, 
+                TotalATT_Hidroxido=?, 
+                AcumuladoCTA_Hidroxido=?, 
+                AcidoFTA=?, 
+                TotalATT_Acido=?, 
+                AcumuladoCTA_Acido=?
+                WHERE id=?";
 
-// 3. Preparar y ejecutar la consulta
-// Se utiliza 's' (string) para todos los campos para simplificar el manejo de tipos, 
-// lo cual es seguro en sentencias preparadas.
+} else {
+            echo "<script>
+                alert('Clave de firma inválida. No se pudo firmar el documento.');
+                window.history.back();
+                 </script>";
+                mysqli_stmt_close($stmt_verificar);
+                $link_usuario->close();
+                include "Cerrar.php";
+                exit;
+            }
+            mysqli_stmt_close($stmt_verificar);
+            $link_usuario->close();
+    } else {
+        echo "<script>
+            alert('Error al verificar la firma.');
+            window.history.back();
+        </script>";
+        $link_usuario->close();
+        include "Cerrar.php";
+        exit;
+    }
+} else {
+    // Si no se firma, solo se actualizan los demás campos
+    $query = "UPDATE e_subgerencia_operaciones SET
+        Mes=?, 
+        LitrosFres=?, 
+        SHp=?, 
+        SNGp=?, 
+        volumenTA=?, 
+        solidosTA=?, 
+        VolumenTC=?, 
+        TotalTC=?, 
+        VolumenTP=?, 
+        LecheTP=?, 
+        PorsentajeTP=?, 
+        ProduccionTP=?, 
+        ContenidoTC=?, 
+        DiasOTD=?, 
+        CapacidadITC=?, 
+        TotalCapacidad=?, 
+        ProduccionATP=?, 
+        ProduccionFTP=?, 
+        TotalProduccion=?, 
+        DiasATD=?, 
+        HidroxidoTH=?, 
+        TotalATT_Hidroxido=?, 
+        AcumuladoCTA_Hidroxido=?, 
+        AcidoFTA=?, 
+        TotalATT_Acido=?, 
+        AcumuladoCTA_Acido=?
+        WHERE id=?";
+}
+if($firma_realizada){
+    $query = "UPDATE e_subgerencia_operaciones SET
+        Mes=?, 
+        LitrosFres=?, 
+        SHp=?, 
+        SNGp=?, 
+        volumenTA=?, 
+        solidosTA=?, 
+        VolumenTC=?, 
+        TotalTC=?, 
+        VolumenTP=?, 
+        LecheTP=?, 
+        PorsentajeTP=?, 
+        ProduccionTP=?, 
+        ContenidoTC=?, 
+        DiasOTD=?, 
+        CapacidadITC=?, 
+        TotalCapacidad=?, 
+        ProduccionATP=?, 
+        ProduccionFTP=?, 
+        TotalProduccion=?, 
+        DiasATD=?, 
+        HidroxidoTH=?, 
+        TotalATT_Hidroxido=?, 
+        AcumuladoCTA_Hidroxido=?, 
+        AcidoFTA=?, 
+        TotalATT_Acido=?, 
+        AcumuladoCTA_Acido=?,
+        firma_usuario=?,
+        fecha_firma=?
+        WHERE id=?";
+} else{
+    $query = "UPDATE e_subgerencia_operaciones SET
+        Mes=?, 
+        LitrosFres=?, 
+        SHp=?, 
+        SNGp=?, 
+        volumenTA=?, 
+        solidosTA=?, 
+        VolumenTC=?, 
+        TotalTC=?, 
+        VolumenTP=?, 
+        LecheTP=?, 
+        PorsentajeTP=?, 
+        ProduccionTP=?, 
+        ContenidoTC=?, 
+        DiasOTD=?, 
+        CapacidadITC=?, 
+        TotalCapacidad=?, 
+        ProduccionATP=?, 
+        ProduccionFTP=?, 
+        TotalProduccion=?, 
+        DiasATD=?, 
+        HidroxidoTH=?, 
+        TotalATT_Hidroxido=?, 
+        AcumuladoCTA_Hidroxido=?, 
+        AcidoFTA=?, 
+        TotalATT_Acido=?, 
+        AcumuladoCTA_Acido=?
+        WHERE id=?";
+}
 $stmt = mysqli_prepare($link, $query);
 
-// Cadena de tipos: 26 campos de actualización + 1 campo WHERE (id)
-// Usamos 's' (string) para todos, aunque muchos sean números. MySQLi los manejará.
-$types = str_repeat('s', 27); 
+if (!$stmt) {
+    echo "<script>
+        alert('Error al preparar la consulta: " . mysqli_error($link) . "');
+        window.history.back();
+    </script>";
+    include "Cerrar.php";
+    exit;
+}
 
-// Array de variables para el binding
-$params = [
-    $Mes, $LitrosFres, $SHp, $SNGp, $volumenTA, $solidosTA, $VolumenTC, 
-    $TotalTC, $VolumenTP, $LecheTP, $PorsentajeTP, $ProduccionTP, $ContenidoTC, 
-    $DiasOTD, $CapacidadITC, $TotalCapacidad, $ProduccionATP, $ProduccionFTP, 
-    $TotalProduccion, $DiasATD, $HidroxidoTH, $TotalATT_Hidroxido, $AcumuladoCTA_Hidroxido, 
-    $AcidoFTA, $TotalATT_Acido, $AcumuladoCTA_Acido, $ID
-];
+if ($firma_realizada) {
+    mysqli_stmt_bind_param($stmt, "sssssssssssssssssssssssssssss", 
+    $Mes, 
+    $LitrosFres, 
+    $SHp, 
+    $SNGp, 
+    $volumenTA, 
+    $solidosTA, 
+    $VolumenTC, 
+    $TotalTC, 
+    $VolumenTP, 
+    $LecheTP, 
+    $PorsentajeTP, 
+    $ProduccionTP, 
+    $ContenidoTC, 
+    $DiasOTD, 
+    $CapacidadITC, 
+    $TotalCapacidad, 
+    $ProduccionATP, 
+    $ProduccionFTP, 
+    $TotalProduccion, 
+    $DiasATD, 
+    $HidroxidoTH, 
+    $TotalATT_Hidroxido, 
+    $AcumuladoCTA_Hidroxido, 
+    $AcidoFTA, 
+    $TotalATT_Acido, 
+    $AcumuladoCTA_Acido,
+    $firma_usuario, 
+    $fecha_firma, 
+    $ID
+);
+} else {
+    mysqli_stmt_bind_param($stmt, "sssssssssssssssssssssssssss", 
+    $Mes, 
+    $LitrosFres, 
+    $SHp, 
+    $SNGp, 
+    $volumenTA, 
+    $solidosTA, 
+    $VolumenTC, 
+    $TotalTC, 
+    $VolumenTP, 
+    $LecheTP, 
+    $PorsentajeTP, 
+    $ProduccionTP, 
+    $ContenidoTC, 
+    $DiasOTD, 
+    $CapacidadITC, 
+    $TotalCapacidad, 
+    $ProduccionATP, 
+    $ProduccionFTP, 
+    $TotalProduccion, 
+    $DiasATD, 
+    $HidroxidoTH, 
+    $TotalATT_Hidroxido, 
+    $AcumuladoCTA_Hidroxido, 
+    $AcidoFTA, 
+    $TotalATT_Acido, 
+    $AcumuladoCTA_Acido,
+    $ID
+);
+}
 
-// Se usa call_user_func_array para enlazar dinámicamente los parámetros
-mysqli_stmt_bind_param($stmt, $types, ...$params);
+// Ejecutar la consulta preparada
+$ejecucion_exitosa = mysqli_stmt_execute($stmt);
+$filas_afectadas = mysqli_stmt_affected_rows($stmt);
+$error_sql = mysqli_stmt_error($stmt);
 
-// Ejecutar el statement
-$ejecutado = mysqli_stmt_execute($stmt);
-
-// Obtener el número de filas afectadas ANTES de cerrar el statement
-$filas_afectadas = $ejecutado ? mysqli_stmt_affected_rows($stmt) : 0;
-$error_stmt = mysqli_stmt_error($stmt); // Capturar error si lo hay
-
-// 4. Cerrar el statement
 mysqli_stmt_close($stmt);
-
 ?>
 
 <!DOCTYPE html>
@@ -113,24 +314,24 @@ mysqli_stmt_close($stmt);
 </head>
 <body>
     <div class="contenedor">
-        <?php
-            // 5. Mostrar el resultado de la operación
-            if ($ejecutado && $filas_afectadas > 0) {
-                // Mensaje actualizado para Subgerencia de Operaciones
-                echo "<div class='mensaje correcto'>Actualización de Subgerencia de Operaciones correcta</div>";
-            } elseif ($ejecutado && $filas_afectadas === 0) {
-                // Si la ejecución fue exitosa pero no hubo filas afectadas (no hubo cambios)
-                echo "<div class='mensaje advertencia'>Actualización finalizada. No se detectaron cambios en el registro.</div>";
+       <?php
+            // Mostrar el resultado de la operación
+            if ($ejecucion_exitosa) {
+                if ($filas_afectadas > 0) {
+                    $mensaje = "Actualización de Indicadores correcta";
+                    if ($firma_realizada) {
+                        $mensaje .= " y documento firmado exitosamente por: " . $firma_usuario;
+                    }
+                    echo "<div class='mensaje correcto'>$mensaje</div>";
+                } else {
+                    echo "<div class='mensaje advertencia'>Actualización finalizada. No se detectaron cambios en el registro.</div>";
+                }
             } else {
-                // Si hubo un error en la ejecución
-                $error_msg = $error_stmt ? $error_stmt : (mysqli_error($link) ?: "Error desconocido.");
-                echo "<div class='mensaje error'>Actualización incorrecta. Error: " . htmlspecialchars($error_msg) . "</div>";
+                echo "<div class='mensaje error'>Actualización incorrecta. Error: " . $error_sql . "</div>";
             }
             
             include "Cerrar.php"; // Cierra la conexión a la DB
         ?>
-        <!-- El enlace de regreso apunta a la página que permite seleccionar otro registro de Subgerencia para modificar. 
-             Se asume que la página de selección es ModSubG.php (similar a ModEnvases.php) -->
         <a href="ModSubG.php" class="btn">Regresar a Actualizar Otro Formulario</a><br>
         <br><a href='MenuModifi.php'><img src='../imagenes/home.png' height='100' width='90' alt='Inicio'></a>
     </div>

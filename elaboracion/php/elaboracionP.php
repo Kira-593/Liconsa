@@ -49,21 +49,12 @@ $es_admin = ($_SESSION['departamento'] === 'ADMIN');
             </div>    
 
             <div class="menu-column">
-                <!-- MODIFICACIÓN - Solo para ADMIN -->
-                <?php if ($es_admin): ?>
                     <a href="MenuModifi.php" class="opc habilitado">
                         <img src="../imagenes/modificacion.png" height="70" width="80" align="left" class="icono">
                         <span>MODIFICACIÓN DE FORMULARIOS</span>
                         <i class="fas fa-check icono-palomita"></i>
                     </a>
-                <?php else: ?>
-                    <div class="opc bloqueado">
-                        <img src="../imagenes/modificacion.png" height="70" width="80" align="left" class="icono">
-                        <span>MODIFICACIÓN DE FORMULARIOS</span>
-                        <i class="fas fa-lock icono-candado"></i>
-                    </div>
-                <?php endif; ?>
-                
+                                
                 <!-- ELIMINACIÓN - Solo para ADMIN -->
                 <?php if ($es_admin): ?>
                     <a href="MenuBajas.php" class="opc habilitado">

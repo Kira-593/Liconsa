@@ -1,4 +1,6 @@
 <?php
+date_default_timezone_set('America/Mexico_City');
+
 // Incluye la conexión a la base de datos
 include "Conexion.php";
 
@@ -20,48 +22,184 @@ $Temperatura = $_POST["Temperatura"] ?? '';
 $PH = $_POST["PH"] ?? '';
 $Reductasa = $_POST["Reductasa"] ?? '';
 
+// Procesar firma si se solicitó
+$firma_usuario = null;
+$fecha_firma = null;
+$firma_realizada = false;
+if (isset($_POST['firmar_documento']) && $_POST['firmar_documento'] == 'on') {
+    $clave_firma = $_POST['clave_firma'] ?? '';
+    
+    // CONEXIÓN A LA BASE DE DATOS DE USUARIOS
+    $servername = "localhost";
+    $username = "root";
+    $password = "";
+    $dbname_usuario = "usuario"; // Base de datos de usuarios
+    
+    $link_usuario = new mysqli($servername, $username, $password, $dbname_usuario);
+    
+    
+    // Verificar conexión a la base de datos de usuarios
+    if ($link_usuario->connect_error) {
+        echo "<script>
+            alert('Error de conexión a la base de datos de usuarios.');
+            window.history.back();
+        </script>";
+        include "Cerrar.php";
+        exit;
+    }
+    // Verificar la clave de firma en la base de datos de usuarios
+    $query_verificar_firma = "SELECT correo, claveF FROM users WHERE claveF = ? LIMIT 1";
+    $stmt_verificar = mysqli_prepare($link_usuario, $query_verificar_firma);
+    
+    if ($stmt_verificar) {
+        mysqli_stmt_bind_param($stmt_verificar, "s", $clave_firma);
+        mysqli_stmt_execute($stmt_verificar);
+        $result_verificar = mysqli_stmt_get_result($stmt_verificar);
+        
+        if ($result_verificar && mysqli_num_rows($result_verificar) > 0) {
+            $usuario_firma = mysqli_fetch_assoc($result_verificar);
+            $firma_usuario = $usuario_firma['correo'];
+            $fecha_firma = date('Y-m-d H:i:s');
+            $firma_realizada = true;
 
-// ************** INICIO DE MITIGACIÓN SQL INJECTION ******************
-// Se recomienda ENCARECIDAMENTE usar sentencias preparadas en producción.
-// Usamos mysqli_real_escape_string para mitigar la vulnerabilidad en este ejemplo.
-$ID_e = mysqli_real_escape_string($link, $ID);
-$Proveedor_e = mysqli_real_escape_string($link, $Proveedor);
-$Folio_e = mysqli_real_escape_string($link, $Folio);
-$FechaDictamen_e = mysqli_real_escape_string($link, $FechaDictamen);
-$Remision_e = mysqli_real_escape_string($link, $Remision);
-$Densidad_e = mysqli_real_escape_string($link, $Densidad);
-$Volumen_e = mysqli_real_escape_string($link, $Volumen);
-$Grasa_e = mysqli_real_escape_string($link, $Grasa);
-$SNG_e = mysqli_real_escape_string($link, $SNG);
-$Proteina_e = mysqli_real_escape_string($link, $Proteina);
-$Caseina_e = mysqli_real_escape_string($link, $Caseina);
-$Acidez_e = mysqli_real_escape_string($link, $Acidez);
-$Temperatura_e = mysqli_real_escape_string($link, $Temperatura);
-$PH_e = mysqli_real_escape_string($link, $PH);
-$Reductasa_e = mysqli_real_escape_string($link, $Reductasa);
-// ************** FIN DE MITIGACIÓN SQL INJECTION ******************
+            $query = "UPDATE c_captacionleche SET
+                        Proveedor='$Proveedor', 
+                        Folio='$Folio', 
+                        FechaDictamen='$FechaDictamen', 
+                        Remision='$Remision', 
+                        Densidad='$Densidad', 
+                        Volumen='$Volumen', 
+                        Grasa='$Grasa', 
+                        SNG='$SNG', 
+                        Proteina='$Proteina', 
+                        Caseina='$Caseina', 
+                        Acidez='$Acidez', 
+                        Temperatura='$Temperatura', 
+                        PH='$PH', 
+                        Reductasa='$Reductasa'
+                    WHERE id='$ID'"; 
+       } else {
+              echo "<script>
+                alert('Clave de firma inválida. No se pudo firmar el documento.');
+                window.history.back();
+                 </script>";
+                mysqli_stmt_close($stmt_verificar);
+                $link_usuario->close();
+                include "Cerrar.php";
+                exit;
+            }
+            mysqli_stmt_close($stmt_verificar);
+            $link_usuario->close();
+    } else {
+        echo "<script>
+            alert('Error al verificar la firma.');
+            window.history.back();
+        </script>";
+        $link_usuario->close();
+        include "Cerrar.php";
+        exit;
+    }
+} else {
+    $query = "UPDATE c_captacionleche SET
+                Proveedor=?, 
+                Folio=?, 
+                FechaDictamen=?, 
+                Remision=?, 
+                Densidad=?, 
+                Volumen=?, 
+                Grasa=?, 
+                SNG=?, 
+                Proteina=?, 
+                Caseina=?, 
+                Acidez=?, 
+                Temperatura=?, 
+                PH=?, 
+                Reductasa=?
+            WHERE id=?";
+}
+if ($firma_realizada) {
+    $query = "UPDATE c_captacionleche SET
+                Proveedor=?, 
+                Folio=?, 
+                FechaDictamen=?, 
+                Remision=?, 
+                Densidad=?, 
+                Volumen=?, 
+                Grasa=?, 
+                SNG=?, 
+                Proteina=?, 
+                Caseina=?, 
+                Acidez=?, 
+                Temperatura=?, 
+                PH=?, 
+                Reductasa=?,
+                firma_usuario=?,
+                fecha_firma=?
+            WHERE id=?";
+}else {
+    $query = "UPDATE c_captacionleche SET
+                Proveedor=?, 
+                Folio=?, 
+                FechaDictamen=?, 
+                Remision=?, 
+                Densidad=?, 
+                Volumen=?, 
+                Grasa=?, 
+                SNG=?, 
+                Proteina=?, 
+                Caseina=?, 
+                Acidez=?, 
+                Temperatura=?, 
+                PH=?, 
+                Reductasa=?
+            WHERE id=?";
+}
+$stmt = mysqli_prepare($link, $query);
+if($firma_realizada){
+        mysqli_stmt_bind_param($stmt, "sssssssssssssssss", 
+            $Proveedor, 
+            $Folio, 
+            $FechaDictamen, 
+            $Remision, 
+            $Densidad, 
+            $Volumen, 
+            $Grasa, 
+            $SNG, 
+            $Proteina, 
+            $Caseina, 
+            $Acidez, 
+            $Temperatura, 
+            $PH, 
+            $Reductasa,
+            $firma_usuario, 
+            $fecha_firma, 
+            $ID
+        );
+}else {
+        mysqli_stmt_bind_param($stmt, "sssssssssssssss", 
+            $Proveedor, 
+            $Folio, 
+            $FechaDictamen, 
+            $Remision, 
+            $Densidad, 
+            $Volumen, 
+            $Grasa, 
+            $SNG, 
+            $Proteina, 
+            $Caseina, 
+            $Acidez, 
+            $Temperatura, 
+            $PH, 
+            $Reductasa,
+            $ID
+        );
+}
+// Ejecutar la consulta preparada
+    $ejecucion_exitosa = mysqli_stmt_execute($stmt);
+    $filas_afectadas = mysqli_stmt_affected_rows($stmt);
+    $error_sql = mysqli_stmt_error($stmt);
 
-
-// 2. Consulta para actualizar los datos en la tabla 'c_captacionleche'
-$query = "UPDATE c_captacionleche SET
-            Proveedor='$Proveedor_e', 
-            Folio='$Folio_e', 
-            FechaDictamen='$FechaDictamen_e', 
-            Remision='$Remision_e', 
-            Densidad='$Densidad_e', 
-            Volumen='$Volumen_e', 
-            Grasa='$Grasa_e', 
-            SNG='$SNG_e', 
-            Proteina='$Proteina_e', 
-            Caseina='$Caseina_e', 
-            Acidez='$Acidez_e', 
-            Temperatura='$Temperatura_e', 
-            PH='$PH_e', 
-            Reductasa='$Reductasa_e'
-          WHERE id='$ID_e'"; 
-
-// 3. Ejecutar la consulta
-mysqli_query($link, $query);
+    mysqli_stmt_close($stmt);
 ?>
 
 <!DOCTYPE html>
@@ -79,20 +217,23 @@ mysqli_query($link, $query);
 <body>
     <div class="contenedor">
         <?php
-            // 4. Mostrar el resultado de la operación
-            if (mysqli_affected_rows($link) > 0) {
-                // Mensaje actualizado para Captación de Leche
-                echo "<div class='mensaje correcto'>Actualización del registro de Captación de Leche (ID: $ID_e) correcta</div>";
-            } else {
-                 // Si no hubo filas afectadas, se revisa si hubo un error de SQL
-                if (mysqli_error($link)) {
-                    echo "<div class='mensaje error'>Actualización incorrecta. Error: " . mysqli_error($link) . "</div>";
+            // Mostrar el resultado de la operación
+            if ($ejecucion_exitosa) {
+                if ($filas_afectadas > 0) {
+                    $mensaje = "Actualización de Indicadores correcta";
+                    if ($firma_realizada) {
+                        $mensaje .= " y documento firmado exitosamente por: " . $firma_usuario;
+                    }
+                    echo "<div class='mensaje correcto'>$mensaje</div>";
                 } else {
-                    echo "<div class='mensaje advertencia'>Actualización finalizada. No se detectaron cambios en el registro de Captación de Leche (ID: $ID_e).</div>";
+                    echo "<div class='mensaje advertencia'>Actualización finalizada. No se detectaron cambios en el registro.</div>";
                 }
+            } else {
+                echo "<div class='mensaje error'>Actualización incorrecta. Error: " . $error_sql . "</div>";
             }
+            
             include "Cerrar.php"; // Cierra la conexión a la DB
-        ?>
+        ?>  
         <!-- Enlaces de navegación actualizados para el contexto de Captación de Leche -->
         <!-- Asumimos que la página para modificar otros registros es ModRCT.php -->
         <a href="ModRCT.php" class="btn btn-primary mt-3">Regresar a Actualizar Otro Registro de Captación de Leche</a><br>

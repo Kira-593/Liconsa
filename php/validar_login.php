@@ -1,71 +1,225 @@
 <?php
-// Configuración de la conexión a la base de datos
-$servername = "localhost";
-$username = "root";
-$password = "";
-$dbname = "usuario";
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
+// Iniciar sesión solo si no está activa
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
+require_once 'historial.php';
+require_once 'configuracion.php';
+    
+
+// Configuración de bloqueo
+$max_attempts = 3;
+$lockout_time = 300; // 5 minutos en segundos
+
+// Función para verificar si el usuario está bloqueado
+function isUserLocked($correo) {
+    global $lockout_time;
+    
+    if (!isset($_SESSION['login_attempts'])) {
+        $_SESSION['login_attempts'] = [];
+    }
+    
+    if (isset($_SESSION['login_attempts'][$correo])) {
+        $attempt_data = $_SESSION['login_attempts'][$correo];
+        
+        // Verificar si el usuario está bloqueado
+        if ($attempt_data['attempts'] >= 3 && 
+            (time() - $attempt_data['last_attempt']) < $lockout_time) {
+            return true;
+        }
+        
+        // Limpiar intentos si ya pasó el tiempo de bloqueo
+        if ((time() - $attempt_data['last_attempt']) >= $lockout_time) {
+            unset($_SESSION['login_attempts'][$correo]);
+        }
+    }
+    
+    return false;
+}
+
+// Función para registrar intento fallido
+function recordFailedAttempt($correo) {
+    if (!isset($_SESSION['login_attempts'])) {
+        $_SESSION['login_attempts'] = [];
+    }
+    
+    if (!isset($_SESSION['login_attempts'][$correo])) {
+        $_SESSION['login_attempts'][$correo] = [
+            'attempts' => 1,
+            'last_attempt' => time()
+        ];
+    } else {
+        $_SESSION['login_attempts'][$correo]['attempts']++;
+        $_SESSION['login_attempts'][$correo]['last_attempt'] = time();
+    }
+}
+
+// Función para limpiar intentos (cuando el login es exitoso)
+function clearAttempts($correo) {
+    if (isset($_SESSION['login_attempts'][$correo])) {
+        unset($_SESSION['login_attempts'][$correo]);
+    }
+}
+
+// Función para obtener tiempo restante de bloqueo
+function getRemainingLockTime($correo) {
+    global $lockout_time;
+    
+    if (isset($_SESSION['login_attempts'][$correo])) {
+        $attempt_data = $_SESSION['login_attempts'][$correo];
+        $elapsed = time() - $attempt_data['last_attempt'];
+        $remaining = $lockout_time - $elapsed;
+        return max(0, $remaining);
+    }
+    return 0;
+}
+
+// Función para obtener intentos actuales
+function getCurrentAttempts($correo) {
+    if (isset($_SESSION['login_attempts'][$correo])) {
+        return $_SESSION['login_attempts'][$correo]['attempts'];
+    }
+    return 0;
+}
+
+// Verificar que sea POST
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+    header('Location: ../inicio.php');
+    exit();
+}
+
+// Obtener datos del formulario
+$correo = isset($_POST['correo']) ? trim($_POST['correo']) : '';
+$password = isset($_POST['password']) ? $_POST['password'] : '';
+$departamento = isset($_POST['departamento']) ? trim($_POST['departamento']) : '';
+
+// Validar que todos los campos requeridos estén presentes
+if (empty($correo) || empty($password) || empty($departamento)) {
+    echo "<script>alert('Por favor completa todos los campos.'); window.history.back();</script>";
+    exit();
+}
+
+// Verificar si el usuario está bloqueado
+if (isUserLocked($correo)) {
+    $remaining_time = getRemainingLockTime($correo);
+    $minutes = ceil($remaining_time / 60);
+    $seconds = $remaining_time % 60;
+    
+    echo "<script>
+        alert('Cuenta bloqueada por múltiples intentos fallidos. Por favor, espere $minutes minutos y $seconds segundos antes de intentar nuevamente.');
+        window.history.back();
+    </script>";
+    exit();
+}
 
 // Conectar a la base de datos
-$conn = new mysqli($servername, $username, $password, $dbname);
+$conexion = new mysqli('localhost', 'root', '', 'usuario');
 
-if ($conn->connect_error) {
-    // Manejo de error de conexión
-    die("Conexión fallida: " . $conn->connect_error);
+if ($conexion->connect_error) {
+    echo "<script>alert('Error de conexión a la base de datos.'); window.history.back();</script>";
+    exit();
 }
 
-// Obtener datos del formulario (de acuerdo a los nuevos campos)
-$departamento_form = $_POST['departamento'];
-$correo_form = $_POST['correo'];
-$password_form = $_POST['password']; // Contraseña en texto plano
-
-// 1. Consultar la base de datos buscando el CORREO y el DEPARTAMENTO
-// Se obtiene el hash de la contraseña guardada en la columna 'contraseña'.
-$sql = "SELECT correo, contraseña, Nombre, departamento FROM users WHERE correo = ? AND departamento = ?";
-//                                                     ↑ AÑADIR ESTE CAMPO ↑
-$stmt = $conn->prepare($sql);
+// Consultar el usuario
+$sql = "SELECT contraseña FROM users WHERE correo = ? AND departamento = ?";
+$stmt = $conexion->prepare($sql);
 
 if (!$stmt) {
-    die("Error al preparar la consulta: " . $conn->error);
+    echo "<script>alert('Error en la consulta.'); window.history.back();</script>";
+    $conexion->close();
+    exit();
 }
 
-// "ss" indica que los dos parámetros son strings (correo y departamento)
-$stmt->bind_param("ss", $correo_form, $departamento_form);
-$stmt->execute();
-$result = $stmt->get_result();
+$stmt->bind_param("ss", $correo, $departamento);
 
-if ($result->num_rows === 1) {
-    // Usuario encontrado: verificar la contraseña con hashing
-    $user_data = $result->fetch_assoc();
-    $hashed_password_db = $user_data['contraseña']; // Hash de la DB
+if (!$stmt->execute()) {
+    echo "<script>alert('Error al ejecutar la consulta.'); window.history.back();</script>";
+    $stmt->close();
+    $conexion->close();
+    exit();
+}
 
-    // 2. Verificar la contraseña: Compara la contraseña en texto plano del formulario con el hash de la DB.
-    if (password_verify($password_form, $hashed_password_db)) {
-        // Credenciales correctas
-        session_start();
+$stmt->store_result();
+
+if ($stmt->num_rows > 0) {
+    // Usuario encontrado
+    $stmt->bind_result($hashed_password);
+    $stmt->fetch();
+    
+    // Verificar contraseña
+    if (password_verify($password, $hashed_password)) {
+        // Login exitoso - limpiar intentos
+        clearAttempts($correo);
         
-        // Guardar datos esenciales en la sesión
-        $_SESSION['correo'] = $user_data['correo'];
-        $_SESSION['Nombre'] = $user_data['Nombre']; 
-        $_SESSION['departamento'] = $user_data['departamento']; // ← ¡FALTABA ESTA LÍNEA!
-        
-        // Redirigir al menú principal
-        header("Location: ../menuphp/php/menuP.php");
-        exit();
-    } else {
-        // Contraseña incorrecta
+        $_SESSION['correo'] = $correo;
+        $_SESSION['departamento'] = $departamento;
+
+         // REGISTRAR EN EL HISTORIAL
+       registrarAccionComun('login', 'Sistema', null, "IP: " . $_SERVER['REMOTE_ADDR']);
+    
+    echo "<script>alert('¡Bienvenido!'); window.location.href = '../menuphp/php/menuP.php';</script>";
+} else {
+         // Contraseña incorrecta
+    recordFailedAttempt($correo);
+    $attempts = getCurrentAttempts($correo);
+     // Registrar intento fallido
+    registrarError('Autenticación', "Contraseña incorrecta. Intentos: $attempts de $max_attempts");
+        if ($remaining_attempts > 0) {
+            echo "<script>
+                alert('Contraseña incorrecta. Te quedan $remaining_attempts intentos.');
+                window.history.back();
+            </script>";
+        } else {
+            // Bloquear cuenta
+            $remaining_time = getRemainingLockTime($correo);
+            $minutes = ceil($remaining_time / 60);
+            $seconds = $remaining_time % 60;
+            
+            echo "<script>
+                alert('Has excedido el número máximo de intentos. Cuenta bloqueada por $minutes minutos y $seconds segundos.');
+                window.history.back();
+            </script>";
+        }
+    }
+} else {
+    // Usuario no encontrado
+    recordFailedAttempt($correo);
+    $attempts = getCurrentAttempts($correo);
+    $remaining_attempts = $max_attempts - $attempts;
+    
+    if ($remaining_attempts > 0) {
         echo "<script>
-            alert('Contraseña incorrecta.');
+            alert('Correo o departamento no encontrado. Te quedan $remaining_attempts intentos.');
+            window.history.back();
+        </script>";
+    } else {
+        // Bloquear cuenta
+        $remaining_time = getRemainingLockTime($correo);
+        $minutes = ceil($remaining_time / 60);
+        $seconds = $remaining_time % 60;
+        
+        echo "<script>
+            alert('Has excedido el número máximo de intentos. Cuenta bloqueada por $minutes minutos y $seconds segundos.');
             window.history.back();
         </script>";
     }
-} else {
-    // Usuario no encontrado o combinación correo/departamento incorrecta
-    echo "<script>
-        alert('Departamento o Correo incorrectos.');
-        window.history.back();
-    </script>";
 }
 
 $stmt->close();
-$conn->close();
+$conexion->close();
 ?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+    <link rel="stylesheet" href="../css/validar.css">
+</head>
+<body>
+    
+</body>
+</html>

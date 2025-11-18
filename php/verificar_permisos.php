@@ -20,7 +20,7 @@ function verificarPermiso($permiso_requerido) {
     }
     
     // Si no es admin, solo puede acceder a formularios
-    if ($permiso_requerido === 'formularios') {
+    if ($permiso_requerido === 'formularios' || $permiso_requerido === 'modificacion') {
         return true;
     }
     

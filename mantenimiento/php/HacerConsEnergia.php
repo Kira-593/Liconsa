@@ -1,21 +1,18 @@
 <?php
+date_default_timezone_set('America/Mexico_City');
+
 // Incluye la conexión a la base de datos
 include "Conexion.php";
 
-// 1. Obtener todos los datos del formulario.
-// Usamos el operador de fusión de null (??) para obtener los valores o una cadena vacía/0.
 $ID = $_POST["id"] ?? ''; 
 $Mes = $_POST["Mes"] ?? '';
 
-// Consumo de Energía Térmica (Diesel)
 $CantidadDieselCTC = $_POST["CantidadDieselCTC"] ?? 0;
 $ReduccionITD = $_POST["ReduccionITD"] ?? 0;
 $PromedioRID = $_POST["PromedioRID"] ?? 0;
 $LitrosDLL = $_POST["LitrosDLL"] ?? 0;
 $ReduccionILD = $_POST["ReduccionILD"] ?? 0;
 $PromedioRILD = $_POST["PromedioRILD"] ?? 0;
-
-// Consumo de Energía Eléctrica
 $CantidadEnergiaCTC = $_POST["CantidadEnergiaCTC"] ?? 0;
 $ReduccionITR = $_POST["ReduccionITR"] ?? 0;
 $PromedioRIT = $_POST["PromedioRIT"] ?? 0;
@@ -23,35 +20,173 @@ $CantidadLLT = $_POST["CantidadLLT"] ?? 0;
 $ReduccionIKL = $_POST["ReduccionIKL"] ?? 0;
 $PromedioRIK = $_POST["PromedioRIK"] ?? 0;
 
+// Procesar firma si se solicitó
+$firma_usuario = null;
+$fecha_firma = null;
+$firma_realizada = false;
+if (isset($_POST['firmar_documento']) && $_POST['firmar_documento'] == 'on') {
+    $clave_firma = $_POST['clave_firma'] ?? '';
+    
+    // CONEXIÓN A LA BASE DE DATOS DE USUARIOS
+    $servername = "localhost";
+    $username = "root";
+    $password = "";
+    $dbname_usuario = "usuario"; // Base de datos de usuarios
+    
+    $link_usuario = new mysqli($servername, $username, $password, $dbname_usuario);
+    
+    
+    // Verificar conexión a la base de datos de usuarios
+    if ($link_usuario->connect_error) {
+        echo "<script>
+            alert('Error de conexión a la base de datos de usuarios.');
+            window.history.back();
+        </script>";
+        include "Cerrar.php";
+        exit;
+    }
+    // Verificar la clave de firma en la base de datos de usuarios
+    $query_verificar_firma = "SELECT correo, claveF FROM users WHERE claveF = ? LIMIT 1";
+    $stmt_verificar = mysqli_prepare($link_usuario, $query_verificar_firma);
+    
+    if ($stmt_verificar) {
+        mysqli_stmt_bind_param($stmt_verificar, "s", $clave_firma);
+        mysqli_stmt_execute($stmt_verificar);
+        $result_verificar = mysqli_stmt_get_result($stmt_verificar);
+        
+        if ($result_verificar && mysqli_num_rows($result_verificar) > 0) {
+            $usuario_firma = mysqli_fetch_assoc($result_verificar);
+            $firma_usuario = $usuario_firma['correo'];
+            $fecha_firma = date('Y-m-d H:i:s');
+            $firma_realizada = true;
 
-// 2. Consulta para actualizar los datos en la tabla 'm_consumo_energia_termica_electrica'
-// Utilizamos placeholders (?) para la seguridad contra Inyección SQL.
-$query = "UPDATE m_consumo_energia_termica_electrica SET
-            Mes = ?, 
-            CantidadDieselCTC = ?, 
-            ReduccionITD = ?, 
-            PromedioRID = ?,
-            LitrosDLL = ?,
-            ReduccionILD = ?,
-            PromedioRILD = ?,
-            CantidadEnergiaCTC = ?,
-            ReduccionITR = ?,
-            PromedioRIT = ?,
-            CantidadLLT = ?,
-            ReduccionIKL = ?,
-            PromedioRIK = ?
-          WHERE id = ?"; 
+            $query = "UPDATE m_consumo_energia_termica_electrica SET
+                        Mes = ?, 
+                        CantidadDieselCTC = ?, 
+                        ReduccionITD = ?, 
+                        PromedioRID = ?,
+                        LitrosDLL = ?,
+                        ReduccionILD = ?,
+                        PromedioRILD = ?,
+                        CantidadEnergiaCTC = ?,
+                        ReduccionITR = ?,
+                        PromedioRIT = ?,
+                        CantidadLLT = ?,
+                        ReduccionIKL = ?,
+                        PromedioRIK = ?
+                    WHERE id = ?"; 
+        } else {
+            
+            echo "<script>
+                alert('Clave de firma inválida. No se pudo firmar el documento.');
+                window.history.back();
+                 </script>";
+                mysqli_stmt_close($stmt_verificar);
+                $link_usuario->close();
+                include "Cerrar.php";
+                exit;
+            }
+            mysqli_stmt_close($stmt_verificar);
+            $link_usuario->close();
+    } else {
+        echo "<script>
+            alert('Error al verificar la firma.');
+            window.history.back();
+        </script>";
+        $link_usuario->close();
+        include "Cerrar.php";
+        exit;
+    }
+} else {
+        // Si no se firma, solo se actualizan los demás campos
+    $query = "UPDATE m_consumo_energia_termica_electrica SET
+                Mes = ?, 
+                CantidadDieselCTC = ?, 
+                ReduccionITD = ?, 
+                PromedioRID = ?,
+                LitrosDLL = ?,
+                ReduccionILD = ?,
+                PromedioRILD = ?,
+                CantidadEnergiaCTC = ?,
+                ReduccionITR = ?,
+                PromedioRIT = ?,
+                CantidadLLT = ?,
+                ReduccionIKL = ?,
+                PromedioRIK = ?
+            WHERE id = ?";
+}
+if($firma_realizada) {
+    // Agregar los campos de firma a la consulta si se firmó
+    $query = "UPDATE m_consumo_energia_termica_electrica SET
+                Mes = ?, 
+                CantidadDieselCTC = ?, 
+                ReduccionITD = ?, 
+                PromedioRID = ?,
+                LitrosDLL = ?,
+                ReduccionILD = ?,
+                PromedioRILD = ?,
+                CantidadEnergiaCTC = ?,
+                ReduccionITR = ?,
+                PromedioRIT = ?,
+                CantidadLLT = ?,
+                ReduccionIKL = ?,
+                PromedioRIK = ?,
+                firma_usuario = ?,
+                fecha_firma = ?
+            WHERE id = ?";
+}else{
+    $query = "UPDATE m_consumo_energia_termica_electrica SET
+                Mes = ?, 
+                CantidadDieselCTC = ?, 
+                ReduccionITD = ?, 
+                PromedioRID = ?,
+                LitrosDLL = ?,
+                ReduccionILD = ?,
+                PromedioRILD = ?,
+                CantidadEnergiaCTC = ?,
+                ReduccionITR = ?,
+                PromedioRIT = ?,
+                CantidadLLT = ?,
+                ReduccionIKL = ?,
+                PromedioRIK = ?
+            WHERE id = ?";
+}
 
-// 3. Preparar y ejecutar la consulta
 $stmt = mysqli_prepare($link, $query);
 
-if ($stmt) {
-    // Vincular parámetros: 's' para string (Mes), 'd' para double/float (todos los números) y 's' para string (ID)
-    // El orden de los tipos debe coincidir con el orden de los placeholders (?)
-    mysqli_stmt_bind_param($stmt, 'sdddddddddddds',
+if (!$stmt) {
+    echo "<script>
+        alert('Error al preparar la consulta: " . mysqli_error($link) . "');
+        window.history.back();
+    </script>";
+    include "Cerrar.php";
+    exit;
+}
+
+if ($firma_realizada) {
+    mysqli_stmt_bind_param($stmt, "ssssssssssssssss", 
         $Mes, 
-        $CantidadDieselCTC,
-        $ReduccionITD,
+        $CantidadDieselCTC, 
+        $ReduccionITD, 
+        $PromedioRID,
+        $LitrosDLL,
+        $ReduccionILD,
+        $PromedioRILD,
+        $CantidadEnergiaCTC,
+        $ReduccionITR,
+        $PromedioRIT,
+        $CantidadLLT,
+        $ReduccionIKL,
+        $PromedioRIK,
+        $firma_usuario,
+        $fecha_firma,
+        $ID
+    );
+} else {
+    mysqli_stmt_bind_param($stmt, "ssssssssssssss", 
+        $Mes, 
+        $CantidadDieselCTC, 
+        $ReduccionITD, 
         $PromedioRID,
         $LitrosDLL,
         $ReduccionILD,
@@ -64,30 +199,14 @@ if ($stmt) {
         $PromedioRIK,
         $ID
     );
-    
-    // Ejecutar la sentencia
-    $ejecucion_exitosa = mysqli_stmt_execute($stmt);
-    
-    // Obtener el número de filas afectadas
-    $filas_afectadas = mysqli_stmt_affected_rows($stmt);
-    
-    // Si la ejecución fue exitosa, pero no afectó filas, es posible que los datos fueran los mismos
-    // Si la ejecución falló, mysqli_error($link) puede dar la razón si se verifica a tiempo.
-    if (!$ejecucion_exitosa) {
-        $error_sql = mysqli_error($link);
-    } else {
-        $error_sql = null;
-    }
-
-    // Cerrar la sentencia preparada
-    mysqli_stmt_close($stmt);
-
-} else {
-    // Error al preparar la sentencia
-    $error_sql = "Error al preparar la consulta: " . mysqli_error($link);
-    $filas_afectadas = -1; // Indica un error de preparación
 }
 
+// Ejecutar la consulta preparada
+$ejecucion_exitosa = mysqli_stmt_execute($stmt);
+$filas_afectadas = mysqli_stmt_affected_rows($stmt);
+$error_sql = mysqli_stmt_error($stmt);
+
+mysqli_stmt_close($stmt);
 ?>
 
 <!DOCTYPE html>
@@ -104,21 +223,23 @@ if ($stmt) {
 <body>
     <div class="contenedor">
         <?php
-            $registro_nombre = "Consumo de Energía Térmica y Eléctrica";
-            
-            // 4. Mostrar el resultado de la operación
-            if ($filas_afectadas > 0) {
-                echo "<div class='mensaje correcto'>Actualización del registro de $registro_nombre **correcta**.</div>";
-            } elseif ($filas_afectadas === 0) {
-                echo "<div class='mensaje advertencia'>Actualización finalizada. No se detectaron **cambios** en el registro.</div>";
-            } else { 
-                // $filas_afectadas < 0 o hubo un error en la ejecución
-                $mensaje_error = $error_sql ?? "Error desconocido al intentar actualizar el registro.";
-                echo "<div class='mensaje error'>Actualización incorrecta. Error: " . $mensaje_error . "</div>";
+            // Mostrar el resultado de la operación
+            if ($ejecucion_exitosa) {
+                if ($filas_afectadas > 0) {
+                    $mensaje = "Actualización de Indicadores correcta";
+                    if ($firma_realizada) {
+                        $mensaje .= " y documento firmado exitosamente por: " . $firma_usuario;
+                    }
+                    echo "<div class='mensaje correcto'>$mensaje</div>";
+                } else {
+                    echo "<div class='mensaje advertencia'>Actualización finalizada. No se detectaron cambios en el registro.</div>";
+                }
+            } else {
+                echo "<div class='mensaje error'>Actualización incorrecta. Error: " . $error_sql . "</div>";
             }
             
             include "Cerrar.php"; // Cierra la conexión a la DB
-        ?>
+        ?>  
         
         <!-- Los enlaces de regreso se actualizan para reflejar la navegación del formulario de destino -->
         <a href="ModConsEnergia.php" class="btn btn-primary">Regresar a Modificar Consumo</a><br>

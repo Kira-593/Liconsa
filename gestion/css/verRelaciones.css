@@ -104,3 +104,15 @@ input[type="reset"]:hover {
     background-color: yellowgreen;
     color: #000;
 }
+textarea{
+    background:transparent;
+    border:none;
+    box-shadow:none;
+    resize:vertical;
+    outline:none;
+    padding:0;
+    margin:0;
+    width:100%;
+    color:inherit;
+    line-height:1.4;
+}

@@ -103,3 +103,9 @@ input[type="reset"] {
     height: auto;
     z-index: 10;
 }
+
+.alert {
+    border-radius: 5px;
+    padding: 15px;
+    margin-bottom: 20px;
+}

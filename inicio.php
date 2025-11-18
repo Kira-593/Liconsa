@@ -1,3 +1,24 @@
+<?php
+// Obtener dominio permitido desde la tabla usuarios.validacion_correo.tipoCorreo
+$allowedDomain = '@lechebienestar.gob.mx';
+// Intentar conectar a la base de datos 'usuarios' para obtener el dominio
+try {
+    $mysqli = new mysqli('localhost', 'root', '', 'usuario');
+    if (!$mysqli->connect_error) {
+        $res = $mysqli->query("SELECT tipoCorreo FROM validacion_correo LIMIT 1");
+        if ($res && $row = $res->fetch_assoc()) {
+            if (!empty($row['tipoCorreo'])) $allowedDomain = $row['tipoCorreo'];
+        }
+        $mysqli->close();
+    }
+} catch (Exception $e) {
+    // usar valor por defecto si falla
+}
+// Normalizar para que comience con @
+if (substr($allowedDomain, 0, 1) !== '@') {
+    $allowedDomain = '@' . $allowedDomain;
+}
+?>
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -10,6 +31,10 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
     <img src="imagenes/AgriculturaLogo.png" class="logo-superior" alt="Logo Agricultura">
     <img src="imagenes/sgc.png" class="logo-sgc" alt="SGC-MLS logo">
+    <script>
+        // Dominio permitido disponible para JavaScript
+        window.allowedDomain = '<?php echo addslashes($allowedDomain); ?>';
+    </script>
 </head>
 <body>
     <main>
@@ -30,21 +55,50 @@
             <div class="contenedor__login-register">
                 <form name="form" method="POST" action="php/validar_login.php" class="formulario__login" required>
                     <h2>Iniciar Sesión</h2>
-                    <input type="text" name="departamento" id="departamento" placeholder="Departamento" required>
+                    <select name="departamento" id="departamento" class="form-select" required>
+                        <option value="">Selecciona tu departamento</option>
+                        <option value="ADMIN">Administración</option>
+                        <option value="ENVASADO">Envasado</option>
+                        <option value="CALIDAD">Control de Calidad</option>
+                        <option value="PADRON">Padrón de Beneficiarios</option>
+                        <option value="DISTRIBUCION">Distribución</option>
+                        <option value="ADQUISICIONES">Adquisiciones</option>
+                        <option value="ALMACEN">Almacén</option>
+                        <option value="MANTENIMIENTO">Mantenimiento</option>
+                        <option value="INFORMATICA">Informática</option>
+                        <option value="ELABORACION">Elaboración</option>
+                        <option value="GESTION TRABAJO">Gestión del Trabajo</option>
+                        <option value="RECURSOS FINANCIEROS">Recursos Financieros</option>
+                    </select> 
                     <input type="text" name="correo" id="correo" placeholder="Correo" required>
                     <input type="password" name="password" id="password" placeholder="Contraseña" required>
                     <button>Entrar</button>
+                       <!-- Contenedor para mensajes de intentos -->
+                    <div id="attempts-message" class="attempts-message" style="display: none;"></div>
                 </form>
 
                     <form name="form" method="post" action="php/Guardar_login.php" class="formulario__register" required>
                         <h2>Regístrarse</h2>
-                        <input type="text" name="nombre" placeholder="Nombre" required>
-                        <input type="text" name="ap_P" placeholder="Apellido Paterno" required>
-                        <input type="text" name="ap_M" placeholder="Apellido Materno" required>
+                        <input type="text" name="nombre" placeholder="Nombre" minlength="2" required>
+                        <input type="text" name="ap_P" placeholder="Apellido Paterno" minlength="2" required>
+                        <input type="text" name="ap_M" placeholder="Apellido Materno" minlength="2" required>
                         <input type="text" name="correo" placeholder="Correo" required>
                         <input type="password" name="password" placeholder="Contraseña" required>
                         <input type="password" name="confirm_password" placeholder="Confirmar Contraseña" required>
-                        <input type="text" name="departamento" placeholder="Departamento" required>
+                        <select name="departamento" class="form-select" required>
+                            <option value="">Selecciona tu departamento</option>
+                            <option value="ENVASADO">Envasado</option>
+                            <option value="CALIDAD">Control de Calidad</option>
+                            <option value="PADRON">Padrón de Beneficiarios</option>
+                            <option value="DISTRIBUCION">Distribución</option>
+                            <option value="ADQUISICIONES">Adquisiciones</option>
+                            <option value="ALMACEN">Almacén</option>
+                            <option value="MANTENIMIENTO">Mantenimiento</option>
+                            <option value="INFORMATICA">Informática</option>
+                            <option value="ELABORACION">Elaboración</option>
+                            <option value="GESTION TRABAJO">Gestión del Trabajo</option>
+                            <option value="RECURSOS FINANCIEROS">Recursos Financieros</option>
+                        </select>
                         <input type="text" name="claveF" placeholder="Clave de Firma" required>
                         <button>Regístrarse</button>
                 </form>

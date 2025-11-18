@@ -17,6 +17,7 @@
     $PH = $_POST["PH"];
     $Reductasa = $_POST["Reductasa"];
 
+    
     // Consulta para insertar los datos en la base de datos
     $query = "INSERT INTO c_captacionleche (
         Proveedor, Folio, FechaDictamen, Remision, Densidad, Volumen, 

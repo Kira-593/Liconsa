@@ -7,6 +7,14 @@
     $res = mysqli_query($link, $query);
     $row = mysqli_fetch_array($res);
 
+    $texto_modificar = $row['permitir_modificar'] ? 'Bloquear Modificación' : 'Permitir Modificar';
+    $texto_firmar = $row['permitir_firmar'] ? 'Bloquear Firma' : 'Permitir Firmar';
+
+    // Determinar las clases CSS para los botones
+    $clase_modificar = $row['permitir_modificar'] ? 'btn btn-warning' : 'btn btn-success';
+    $clase_firmar = $row['permitir_firmar'] ? 'btn btn-warning' : 'btn btn-success';
+
+
    echo "
      <!DOCTYPE html>
         <html lang='es'>
@@ -44,12 +52,31 @@
                 <tr><td>**Porcentaje de Cumplimiento (Calculado):**</td><td><strong>{$row['PorcentajeCTP']}</strong></td></tr>
                 <tr><td>Meta Mínima Requerida:</td><td>{$row['MetaTM']}%</td></tr>
 
+                <tr><td colspan='2'>&nbsp;</td></tr>
+                <tr><td colspan='2'><strong>Estado de Permisos</strong></td></tr>
+                <tr><td>Permitir Modificar:</td><td>" . ($row['permitir_modificar'] ? '✅ ACTIVADO' : '❌ DESACTIVADO') . "</td></tr>
+                <tr><td>Permitir Firmar:</td><td>" . ($row['permitir_firmar'] ? '✅ ACTIVADO' : '❌ DESACTIVADO') . "</td></tr>
+            
                 </table>
                 <hr>
                 <div class='links'>
                     <!-- El formulario de guardado es GuardarEva.php, el enlace de consulta se ajusta a ConEva.php -->
                     <a href='ConEvaluacion.php' class='btn'>Realizar Otra Consulta</a>
                     <a href='MenuConsulta.php' class='home-link'><img src='../imagenes/home.png' alt='Inicio' height='50' width='50'></a>
+                </div>
+                <div class='links'>
+                <form method='post' action='GestionarPermisos.php' style='display:inline;'>
+                    <input type='hidden' name='id' value='{$row['id']}'>
+                    <input type='hidden' name='accion' value='modificar'>
+                    <input type='hidden' name='tabla' value='c_evaluaciondesempeno'>
+                    <input type='submit' class='$clase_modificar' value='$texto_modificar'>
+                </form>
+                <form method='post' action='GestionarPermisos.php' style='display:inline;'>
+                    <input type='hidden' name='id' value='{$row['id']}'>
+                    <input type='hidden' name='accion' value='firmar'>
+                    <input type='hidden' name='tabla' value='c_evaluaciondesempeno'>
+                    <input type='submit' class='$clase_firmar' value='$texto_firmar'>
+                </form>
                 </div>
             </section>
             </div>

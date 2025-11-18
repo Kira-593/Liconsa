@@ -1,4 +1,6 @@
 <?php
+date_default_timezone_set('America/Mexico_City');
+
 // Incluye la conexión a la base de datos
 include "Conexion.php";
 
@@ -12,36 +14,149 @@ $ControlesD = $_POST["ControlesD"] ?? '';
 $MaterialesA = $_POST["MaterialesA"] ?? '';
 $Total = $_POST["Total"] ?? '';
 
+// Procesar firma si se solicitó
+$firma_usuario = null;
+$fecha_firma = null;
+$firma_realizada = false;
+if (isset($_POST['firmar_documento']) && $_POST['firmar_documento'] == 'on') {
+    $clave_firma = $_POST['clave_firma'] ?? '';
+    
+    // CONEXIÓN A LA BASE DE DATOS DE USUARIOS
+    $servername = "localhost";
+    $username = "root";
+    $password = "";
+    $dbname_usuario = "usuario"; // Base de datos de usuarios
+    
+    $link_usuario = new mysqli($servername, $username, $password, $dbname_usuario);
+    
+    
+    // Verificar conexión a la base de datos de usuarios
+    if ($link_usuario->connect_error) {
+        echo "<script>
+            alert('Error de conexión a la base de datos de usuarios.');
+            window.history.back();
+        </script>";
+        include "Cerrar.php";
+        exit;
+    }
+    // Verificar la clave de firma en la base de datos de usuarios
+    $query_verificar_firma = "SELECT correo, claveF FROM users WHERE claveF = ? LIMIT 1";
+    $stmt_verificar = mysqli_prepare($link_usuario, $query_verificar_firma);
+    
+    if ($stmt_verificar) {
+        mysqli_stmt_bind_param($stmt_verificar, "s", $clave_firma);
+        mysqli_stmt_execute($stmt_verificar);
+        $result_verificar = mysqli_stmt_get_result($stmt_verificar);
+        
+        if ($result_verificar && mysqli_num_rows($result_verificar) > 0) {
+            $usuario_firma = mysqli_fetch_assoc($result_verificar);
+            $firma_usuario = $usuario_firma['correo'];
+            $fecha_firma = date('Y-m-d H:i:s');
+            $firma_realizada = true;
 
-// ************** INICIO DE MITIGACIÓN SQL INJECTION ******************
-// Se recomienda ENCARECIDAMENTE usar sentencias preparadas en producción.
-// Usamos mysqli_real_escape_string para mitigar la vulnerabilidad en este ejemplo.
-$ID_e = mysqli_real_escape_string($link, $ID);
-$Indicador_e = mysqli_real_escape_string($link, $Indicador);
-$Mes_e = mysqli_real_escape_string($link, $Mes);
-$Cantidad_insumos_e = mysqli_real_escape_string($link, $Cantidad_insumos);
-$ProductosT_e = mysqli_real_escape_string($link, $ProductosT);
-$ControlesD_e = mysqli_real_escape_string($link, $ControlesD);
-$MaterialesA_e = mysqli_real_escape_string($link, $MaterialesA);
-$Total_e = mysqli_real_escape_string($link, $Total);
-// ************** FIN DE MITIGACIÓN SQL INJECTION ******************
+            $query = "UPDATE c_formulariofm SET
+                        Indicador=?,
+                        Mes=?,
+                        Cantidad_insumos=?,
+                        ProductosT=?,
+                        ControlesD=?,
+                        MaterialesA=?,
+                        Total=?,
+                        firma_usuario=?,
+                        fecha_firma=?
+                    WHERE id=?";
 
 
-// 2. Consulta para actualizar los datos en la tabla 'c_formulariofm'
-$query = "UPDATE c_formulariofm SET
-            Indicador='$Indicador_e', 
-            Mes='$Mes_e', 
-            Cantidad_insumos='$Cantidad_insumos_e', 
-            ProductosT='$ProductosT_e', 
-            ControlesD='$ControlesD_e', 
-            MaterialesA='$MaterialesA_e', 
-            Total='$Total_e'
-          WHERE id='$ID_e'"; 
+ } else {
+              echo "<script>
+                alert('Clave de firma inválida. No se pudo firmar el documento.');
+                window.history.back();
+                 </script>";
+                mysqli_stmt_close($stmt_verificar);
+                $link_usuario->close();
+                include "Cerrar.php";
+                exit;
+            }
+            mysqli_stmt_close($stmt_verificar);
+            $link_usuario->close();
+    } else {
+        echo "<script>
+            alert('Error al verificar la firma.');
+            window.history.back();
+        </script>";
+        $link_usuario->close();
+        include "Cerrar.php";
+        exit;
+    }
+} else {
+        // Si no se firma, solo se actualizan los demás campos
+        $query = "UPDATE c_formulariofm SET
+                    Indicador=?,
+                    Mes=?,
+                    Cantidad_insumos=?,
+                    ProductosT=?,
+                    ControlesD=?,
+                    MaterialesA=?,
+                    Total=?
+                WHERE id=?";
+}
+if ($firma_realizada) {
+    // 2. Preparar la consulta SQL con firma
+    $query = "UPDATE c_formulariofm SET
+                Indicador=?,
+                Mes=?,
+                Cantidad_insumos=?,
+                ProductosT=?,
+                ControlesD=?,
+                MaterialesA=?,
+                Total=?,
+                firma_usuario=?,
+                fecha_firma=?
+            WHERE id=?";
+} else {
+    $query = "UPDATE c_formulariofm SET
+                Indicador= ?,
+                Mes=?,
+                Cantidad_insumos=?,
+                ProductosT=?,
+                ControlesD=?,
+                MaterialesA=?,
+                Total=?
+            WHERE id=?";
+}
+$stmt = mysqli_prepare($link, $query);
+if ($firma_realizada){
+        mysqli_stmt_bind_param($stmt, "ssssssssss", 
+        $Indicador, 
+        $Mes, 
+        $Cantidad_insumos, 
+        $ProductosT, 
+        $ControlesD, 
+        $MaterialesA, 
+        $Total, 
+        $firma_usuario, 
+        $fecha_firma, 
+        $ID
+    );
+}else {
+        mysqli_stmt_bind_param($stmt, "ssssssss", 
+        $Indicador, 
+        $Mes, 
+        $Cantidad_insumos, 
+        $ProductosT, 
+        $ControlesD, 
+        $MaterialesA, 
+        $Total, 
+        $ID
+    );
+}
+// Ejecutar la consulta preparada
+    $ejecucion_exitosa = mysqli_stmt_execute($stmt);
+    $filas_afectadas = mysqli_stmt_affected_rows($stmt);
+    $error_sql = mysqli_stmt_error($stmt);
 
-// 3. Ejecutar la consulta
-mysqli_query($link, $query);
+    mysqli_stmt_close($stmt);
 ?>
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -57,20 +172,23 @@ mysqli_query($link, $query);
 <body>
     <div class="contenedor">
         <?php
-            // 4. Mostrar el resultado de la operación
-            if (mysqli_affected_rows($link) > 0) {
-                // Mensaje actualizado para Formulario FM
-                echo "<div class='mensaje correcto'>Actualización del Formulario FM correcta</div>";
-            } else {
-                 // Si no hubo filas afectadas, se revisa si hubo un error de SQL
-                if (mysqli_error($link)) {
-                    echo "<div class='mensaje error'>Actualización incorrecta. Error: " . mysqli_error($link) . "</div>";
+            // Mostrar el resultado de la operación
+            if ($ejecucion_exitosa) {
+                if ($filas_afectadas > 0) {
+                    $mensaje = "Actualización de Indicadores correcta";
+                    if ($firma_realizada) {
+                        $mensaje .= " y documento firmado exitosamente por: " . $firma_usuario;
+                    }
+                    echo "<div class='mensaje correcto'>$mensaje</div>";
                 } else {
-                    echo "<div class='mensaje advertencia'>Actualización finalizada. No se detectaron cambios en el registro del Formulario FM.</div>";
+                    echo "<div class='mensaje advertencia'>Actualización finalizada. No se detectaron cambios en el registro.</div>";
                 }
+            } else {
+                echo "<div class='mensaje error'>Actualización incorrecta. Error: " . $error_sql . "</div>";
             }
+            
             include "Cerrar.php"; // Cierra la conexión a la DB
-        ?>
+        ?>  
         <!-- Enlaces de navegación actualizados para el contexto de Formulario FM -->
         <!-- Se asume que 'ModFormularioFM.php' es la página para modificar otros registros -->
         <a href="ModFM.php" class="btn btn-primary mt-3">Regresar a Actualizar Otro Formulario FM</a><br>

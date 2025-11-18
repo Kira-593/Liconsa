@@ -1,11 +1,12 @@
 <?php
-session_start();
+require_once '../../php/configuracion.php';
 // Verificar si el usuario ha iniciado sesión
 if (!isset($_SESSION['correo'])) {
     header("Location: ../../inicio.php");
     exit();
 }
 
+registrarActividad("Accedió al menú principal", "Menú Principal");
 // DEPURACIÓN - Ver qué hay en la sesión
 error_log("Departamento en sesión: " . ($_SESSION['departamento'] ?? 'NO HAY DEPARTAMENTO'));
 error_log("Correo en sesión: " . ($_SESSION['correo'] ?? 'NO HAY CORREO'));
@@ -86,6 +87,9 @@ $imagenes_departamentos = [
     'GESTIÓN DEL TRABAJO' => 'gestion de trabajo',
     'RECURSOS FINANCIEROS' => 'recursos financieros'
 ];
+
+// Verificar si es administrador
+$es_admin = ($departamento_usuario === 'ADMIN');
 ?>
 
 <!DOCTYPE html>
@@ -196,6 +200,19 @@ $imagenes_departamentos = [
 		<br>
 		<form action="logout.php" method="post">
 			<button type="submit" class="btn btn-danger">Cerrar Sesión</button>
+
+			<!-- En tu menuP.php o donde tengas el menú del admin -->
+			<?php 
+			// Mostrar botón de historial solo si es administrador
+			if ($_SESSION['departamento'] === 'ADMIN'): 
+			?>
+				<a href="../../php/admin_usuarios.php" class="btn btn-success ms-2">
+            <i class="fas fa-users-cog me-1"></i> Gestionar Usuarios
+        </a>
+				<a href="../../php/admin_historial.php" class="nav-link">
+					<i class="fas fa-history"></i> Historial de Usuarios
+				</a>
+			<?php endif; ?>
 		</form>
 	</main>
 

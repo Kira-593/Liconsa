@@ -1,4 +1,6 @@
 <?php
+date_default_timezone_set('America/Mexico_City');
+
 // Incluye la conexión a la base de datos (se asume que define $link)
 include "Conexion.php";
 
@@ -37,7 +39,45 @@ $ObservacionesSaldos = $_POST["ObservacionesSaldos"] ?? '';
 $TotalSaldo = $_POST["TotalSaldo"] ?? '';
 $ObservacionesSaldomes = $_POST["ObservacionesSaldomes"] ?? '';
 
-
+// Procesar firma si se solicitó
+$firma_usuario = null;
+$fecha_firma = null;
+$firma_realizada = false;
+if (isset($_POST['firmar_documento']) && $_POST['firmar_documento'] == 'on') {
+    $clave_firma = $_POST['clave_firma'] ?? '';
+    
+    // CONEXIÓN A LA BASE DE DATOS DE USUARIOS
+    $servername = "localhost";
+    $username = "root";
+    $password = "";
+    $dbname_usuario = "usuario"; // Base de datos de usuarios
+    
+    $link_usuario = new mysqli($servername, $username, $password, $dbname_usuario);
+    
+    
+    // Verificar conexión a la base de datos de usuarios
+    if ($link_usuario->connect_error) {
+        echo "<script>
+            alert('Error de conexión a la base de datos de usuarios.');
+            window.history.back();
+        </script>";
+        include "Cerrar.php";
+        exit;
+    }
+    // Verificar la clave de firma en la base de datos de usuarios
+    $query_verificar_firma = "SELECT correo, claveF FROM users WHERE claveF = ? LIMIT 1";
+    $stmt_verificar = mysqli_prepare($link_usuario, $query_verificar_firma);
+    
+    if ($stmt_verificar) {
+        mysqli_stmt_bind_param($stmt_verificar, "s", $clave_firma);
+        mysqli_stmt_execute($stmt_verificar);
+        $result_verificar = mysqli_stmt_get_result($stmt_verificar);
+        
+        if ($result_verificar && mysqli_num_rows($result_verificar) > 0) {
+            $usuario_firma = mysqli_fetch_assoc($result_verificar);
+            $firma_usuario = $usuario_firma['correo'];
+            $fecha_firma = date('Y-m-d H:i:s');
+            $firma_realizada = true;
 // 2. Consulta de actualización utilizando marcadores de posición (?)
 // Tabla asumida: 'cred_depto_credito_cobranza'
 $query = "UPDATE cred_depto_credito_cobranza SET
@@ -73,15 +113,135 @@ $query = "UPDATE cred_depto_credito_cobranza SET
             ObservacionesSaldomes = ?
           WHERE id = ?"; 
 
-// 3. Preparar la declaración
+         } else {
+              echo "<script>
+                alert('Clave de firma inválida. No se pudo firmar el documento.');
+                window.history.back();
+                 </script>";
+                mysqli_stmt_close($stmt_verificar);
+                $link_usuario->close();
+                include "Cerrar.php";
+                exit;
+            }
+            mysqli_stmt_close($stmt_verificar);
+            $link_usuario->close();
+    } else {
+        echo "<script>
+            alert('Error al verificar la firma.');
+            window.history.back();
+        </script>";
+        $link_usuario->close();
+        include "Cerrar.php";
+        exit;
+    }
+} else {
+    // Si no se firma, preparamos el UPDATE sin campos de firma
+    $query = "UPDATE cred_depto_credito_cobranza SET
+                Mes = ?,
+                CantidadLTF = ?,
+                ImporteTF = ?,
+                PorcentajeTF = ?,
+                CantidadLTFR = ?,
+                ImporteTFR = ?,
+                PorcentajeTFR = ?,
+                CantidadLTPAS = ?,
+                ImporteTPAS = ?,
+                PorcentajeTPAS = ?,
+                CantidadLTPC = ?,
+                ImporteLTPC = ?,
+                PorcentajeLTPC = ?,
+                CantidadLTUHT = ?,
+                ImporteLTUHT = ?,
+                PorcentajeLTUHT = ?,
+                ObservacionesRes = ?,
+                TotalFacturadoMes = ?,
+                TotalDepositosMes = ?,
+                ObservacionesFacturasDepositos = ?,
+                SaldoTS = ?,
+                SaldoPV = ?,
+                SaldoV = ?,
+                Saldotreina = ?,
+                Saldosesenta = ?,
+                Saldonoventa = ?,
+                Saldosecenta = ?,
+                ObservacionesSaldos = ?,
+                TotalSaldo = ?,
+                ObservacionesSaldomes = ?
+              WHERE id = ?";
+}
+if($firma_realizada) {
+    // 2. Preparar la consulta SQL con firma
+    $query = "UPDATE cred_depto_credito_cobranza SET
+                Mes = ?,
+                CantidadLTF = ?,
+                ImporteTF = ?,
+                PorcentajeTF = ?,
+                CantidadLTFR = ?,
+                ImporteTFR = ?,
+                PorcentajeTFR = ?,
+                CantidadLTPAS = ?,
+                ImporteTPAS = ?,
+                PorcentajeTPAS = ?,
+                CantidadLTPC = ?,
+                ImporteLTPC = ?,
+                PorcentajeLTPC = ?,
+                CantidadLTUHT = ?,
+                ImporteLTUHT = ?,
+                PorcentajeLTUHT = ?,
+                ObservacionesRes = ?,
+                TotalFacturadoMes = ?,
+                TotalDepositosMes = ?,
+                ObservacionesFacturasDepositos = ?,
+                SaldoTS = ?,
+                SaldoPV = ?,
+                SaldoV = ?,
+                Saldotreina = ?,
+                Saldosesenta = ?,
+                Saldonoventa = ?,
+                Saldosecenta = ?,
+                ObservacionesSaldos = ?,
+                TotalSaldo = ?,
+                ObservacionesSaldomes = ?,
+                firma_usuario = ?,
+                fecha_firma = ?
+              WHERE id = ?";
+} else {
+   $query = "UPDATE cred_depto_credito_cobranza SET
+                Mes = ?,
+                CantidadLTF = ?,
+                ImporteTF = ?,
+                PorcentajeTF = ?,
+                CantidadLTFR = ?,
+                ImporteTFR = ?,
+                PorcentajeTFR = ?,
+                CantidadLTPAS = ?,
+                ImporteTPAS = ?,
+                PorcentajeTPAS = ?,
+                CantidadLTPC = ?,
+                ImporteLTPC = ?,
+                PorcentajeLTPC = ?,
+                CantidadLTUHT = ?,
+                ImporteLTUHT = ?,
+                PorcentajeLTUHT = ?,
+                ObservacionesRes = ?,
+                TotalFacturadoMes = ?,
+                TotalDepositosMes = ?,
+                ObservacionesFacturasDepositos = ?,
+                SaldoTS = ?,
+                SaldoPV = ?,
+                SaldoV = ?,
+                Saldotreina = ?,
+                Saldosesenta = ?,
+                Saldonoventa = ?,
+                Saldosecenta = ?,
+                ObservacionesSaldos = ?,
+                TotalSaldo = ?,
+                ObservacionesSaldomes = ?
+              WHERE id = ?";
+}
 $stmt = mysqli_prepare($link, $query);
-
-// 4. Vincular los parámetros 
-// Se usa 's' (string) para todos los campos para simplificar la vinculación y evitar errores de tipo,
-// confiando en que MySQL convertirá las cadenas a números/fecha si el campo es numérico/fecha.
-$tipos = "sssssssssssssssssssssssssssssss"; // 30 's' para 29 campos + ID
-
-mysqli_stmt_bind_param($stmt, $tipos,
+if($firma_realizada) {
+    mysqli_stmt_bind_param($stmt, "sssssssssssssssssssssssssssssssss",
     $Mes, $CantidadLTF, $ImporteTF, $PorcentajeTF,
     $CantidadLTFR, $ImporteTFR, $PorcentajeTFR,
     $CantidadLTPAS, $ImporteTPAS, $PorcentajeTPAS,
@@ -92,32 +252,31 @@ mysqli_stmt_bind_param($stmt, $tipos,
     $SaldoTS, $SaldoPV, $SaldoV, $Saldotreina, $Saldosesenta, 
     $Saldonoventa, $Saldosecenta, $ObservacionesSaldos,
     $TotalSaldo, $ObservacionesSaldomes,
-    $ID // El ID es el último para la cláusula WHERE
+    $firma_usuario,
+    $fecha_firma, $ID
 );
-
-// 5. Ejecutar la declaración
-$ejecucion_exitosa = mysqli_stmt_execute($stmt);
-$filas_afectadas = mysqli_stmt_affected_rows($stmt);
-$error_sql = mysqli_stmt_error($stmt);
-
-// 6. Cerrar la declaración
-mysqli_stmt_close($stmt);
-
-// Se inicializa una variable para manejar el resultado antes del HTML
-$mensaje_clase = 'advertencia';
-$mensaje_texto = 'Actualización finalizada. No se detectaron cambios en el registro.';
-
-if ($ejecucion_exitosa) {
-    if ($filas_afectadas > 0) {
-        $mensaje_clase = 'correcto';
-        $mensaje_texto = 'Actualización de Indicadores de Crédito y Cobranza realizada correctamente.';
-    }
 } else {
-    // Hubo un error en la ejecución (ej. un tipo de dato incorrecto)
-    $mensaje_clase = 'error';
-    $mensaje_texto = 'Actualización incorrecta. Error: ' . $error_sql;
+    mysqli_stmt_bind_param($stmt, "ssssssssssssssssssssssssssssss",
+    $Mes, $CantidadLTF, $ImporteTF, $PorcentajeTF,
+    $CantidadLTFR, $ImporteTFR, $PorcentajeTFR,
+    $CantidadLTPAS, $ImporteTPAS, $PorcentajeTPAS,
+    $CantidadLTPC, $ImporteLTPC, $PorcentajeLTPC,
+    $CantidadLTUHT, $ImporteLTUHT, $PorcentajeLTUHT,
+    $ObservacionesRes, $TotalFacturadoMes, $TotalDepositosMes,
+    $ObservacionesFacturasDepositos,
+    $SaldoTS, $SaldoPV, $SaldoV, $Saldotreina, $Saldosesenta, 
+    $Saldonoventa, $Saldosecenta, $ObservacionesSaldos,
+    $TotalSaldo, $ObservacionesSaldomes,
+    $ID
+);
 }
 
+// Ejecutar la consulta preparada
+    $ejecucion_exitosa = mysqli_stmt_execute($stmt);
+    $filas_afectadas = mysqli_stmt_affected_rows($stmt);
+    $error_sql = mysqli_stmt_error($stmt);
+
+    mysqli_stmt_close($stmt);
 ?>
 
 <!DOCTYPE html>
@@ -134,10 +293,22 @@ if ($ejecucion_exitosa) {
 </head>
 <body>
     <div class="contenedor">
-        <?php
-            // 7. Mostrar el resultado de la operación
-            echo "<div class='mensaje $mensaje_clase'>$mensaje_texto</div><br>";
-
+     < <?php
+            // Mostrar el resultado de la operación
+            if ($ejecucion_exitosa) {
+                if ($filas_afectadas > 0) {
+                    $mensaje = "Actualización de Indicadores correcta";
+                    if ($firma_realizada) {
+                        $mensaje .= " y documento firmado exitosamente por: " . $firma_usuario;
+                    }
+                    echo "<div class='mensaje correcto'>$mensaje</div>";
+                } else {
+                    echo "<div class='mensaje advertencia'>Actualización finalizada. No se detectaron cambios en el registro.</div>";
+                }
+            } else {
+                echo "<div class='mensaje error'>Actualización incorrecta. Error: " . $error_sql . "</div>";
+            }
+            
             include "Cerrar.php"; // Cierra la conexión a la DB
         ?>
         <!-- Enlaces de navegación -->

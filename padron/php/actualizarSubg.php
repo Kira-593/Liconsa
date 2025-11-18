@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="../css/actualizarSubg.css">
     <script src="../js/cargas.js"></script>
     <script src="../js/limpiar.js"></script>
+    <script src="../js/ValidacionFirma.js"></script>
     <img src="../imagenes/AgriculturaLogo.png" class="logo-superior" alt="Logo Agricultura">
 	<img src="../imagenes/sgc.png" class="logo-sgc" alt="Logo SGC">	
 </head>
@@ -18,36 +19,70 @@
     <?php
     include "Conexion.php";
     
-    // Asumiendo que la nueva tabla se llama 'indicadores_mensuales'
-    // y se consulta por el campo 'Mes' o un ID. Mantendremos el ID original.
     $ID = $_GET["sc"]; 
-    $query = "SELECT * FROM p_subgerenciaabasto WHERE id='$ID'"; // Ajusta el nombre de la tabla y la columna clave
+    $query = "SELECT * FROM p_subgerenciaabasto WHERE id='$ID'";
     $res = mysqli_query($link, $query);
-        $row = mysqli_fetch_array($res);
-        ?>
+    $row = mysqli_fetch_array($res);
 
-        <form action="HacerSubg.php?action=hacer" method="POST" class="needs-validation">
-            <input type="hidden" value="<?= $row['id'] ?? '' ?>" name="id"> 
+    // Verificar permisos
+    $solo_firma = $row['permitir_firmar'] && !$row['permitir_modificar'];
+    $formulario_firmado = !empty($row['firma_usuario']);
+    
+    // Si solo está permitido firmar y el formulario ya está firmado, bloquear todo
+    if ($solo_firma && $formulario_firmado) {
+        echo "<script>
+            alert('Este formulario ya ha sido firmado y no puede ser modificado.');
+            window.location.href = 'MenuModifi.php';
+        </script>";
+        exit();
+    }
+
+    // Si no tiene permisos de modificación ni firma
+    if (!$row['permitir_modificar'] && !$row['permitir_firmar']) {
+        echo "<script>
+            alert('No tienes permisos para modificar o firmar este formulario. Contacta al administrador.');
+            window.location.href = 'MenuModifi.php';
+        </script>";
+        exit();
+    }
+    ?>
+
+    <form action="HacerSubg.php?action=hacer" method="POST" class="needs-validation" id="formulario">
+        <input type="hidden" value="<?= $row['id'] ?? '' ?>" name="id"> 
+        
+        <!-- Mostrar estado de firma si ya está firmado -->
+        <?php if ($formulario_firmado): ?>
+        <div class="alert alert-info">
+            <strong>✅ Formulario Firmado</strong><br>
+            Firmado por: <?= $row['firma_usuario'] ?><br>
+            Fecha: <?= $row['fecha_firma'] ?>
+        </div>
+        <?php endif; ?>
         
         <div class="row mb-3">
             <div class="col-md-6">
                 <label for="Mes">Mes:</label>
-                <input type="date" id="Mes" name="Mes" value="<?= $row['Mes'] ?? '' ?>" required> 
+                <input type="date" id="Mes" name="Mes" value="<?= $row['Mes'] ?? '' ?>" 
+                    <?= ($solo_firma || $formulario_firmado) ? 'readonly' : '' ?> required> 
             </div>
             <div class="col-md-6">
                 <label for="MetaETM">Meta ETM:</label>
-                <input type="number" id="MetaETM" name="MetaETM" value="<?= $row['MetaETM'] ?? '' ?>" required>
+                <input type="number" id="MetaETM" name="MetaETM" value="<?= $row['MetaETM'] ?? '' ?>" 
+                    <?= ($solo_firma || $formulario_firmado) ? 'readonly' : '' ?> required>
             </div>
         </div>
 
+        <!-- Repetir el atributo readonly en todos los campos del formulario -->
         <div class="row mb-3">
             <div class="col-md-6">
                 <label for="CantidadDTC">Cantidad DTC:</label>
-                <input type="number" id="CantidadDTC" name="CantidadDTC" value="<?= $row['CantidadDTC'] ?? '' ?>" required>
+                <input type="number" id="CantidadDTC" name="CantidadDTC" value="<?= $row['CantidadDTC'] ?? '' ?>" 
+                    <?= ($solo_firma || $formulario_firmado) ? 'readonly' : '' ?> required>
             </div>
             <div class="col-md-6">
                 <label for="CantidadFTC">Cantidad FTC:</label>
-                <input type="number" id="CantidadFTC" name="CantidadFTC" value="<?= $row['CantidadFTC'] ?? '' ?>" required>
+                <input type="number" id="CantidadFTC" name="CantidadFTC" value="<?= $row['CantidadFTC'] ?? '' ?>" 
+                    <?= ($solo_firma || $formulario_firmado) ? 'readonly' : '' ?> required>
             </div>
         </div>
 
@@ -56,77 +91,90 @@
         <div class="row mb-3">
             <div class="col-md-6">
                 <label for="TBuno">TB Uno:</label>
-                <input type="text" id="TBuno" name="TBuno" value="<?= $row['TBuno'] ?? '' ?>" required>
+                <input type="text" id="TBuno" name="TBuno" value="<?= $row['TBuno'] ?? '' ?>" 
+                    <?= ($solo_firma || $formulario_firmado) ? 'readonly' : '' ?> required>
             </div>
             <div class="col-md-6">
                 <label for="Porcentajebuno">% TB Uno:</label>
-                <input type="text" id="Porcentajebuno" name="Porcentajebuno" value="<?= $row['Porcentajebuno'] ?? '' ?>" required>
+                <input type="text" id="Porcentajebuno" name="Porcentajebuno" value="<?= $row['Porcentajebuno'] ?? '' ?>" 
+                    <?= ($solo_firma || $formulario_firmado) ? 'readonly' : '' ?> required>
             </div>
         </div>
-        
         <div class="row mb-3">
             <div class="col-md-6">
                 <label for="TBdos">TB Dos:</label>
-                <input type="text" id="TBdos" name="TBdos" value="<?= $row['TBdos'] ?? '' ?>" required>
+                <input type="text" id="TBdos" name="TBdos" value="<?= $row['TBdos'] ?? '' ?>"
+                    <?= ($solo_firma || $formulario_firmado) ? 'readonly' : '' ?> required>
             </div>
             <div class="col-md-6">
                 <label for="Porcentajetbdos">% TB Dos:</label>
-                <input type="text" id="Porcentajetbdos" name="Porcentajetbdos" value="<?= $row['Porcentajetbdos'] ?? '' ?>" required>
+                <input type="text" id="Porcentajetbdos" name="Porcentajetbdos" value="<?= $row['Porcentajetbdos'] ?? '' ?>" 
+                    <?= ($solo_firma || $formulario_firmado) ? 'readonly' : '' ?> required>
             </div>
         </div>
         
         <div class="row mb-3">
             <div class="col-md-6">
                 <label for="TBtres">TB Tres:</label>
-                <input type="text" id="TBtres" name="TBtres" value="<?= $row['TBtres'] ?? '' ?>" required>
+                <input type="text" id="TBtres" name="TBtres" value="<?= $row['TBtres'] ?? '' ?>" 
+                    <?= ($solo_firma || $formulario_firmado) ? 'readonly' : '' ?> required>
             </div>
             <div class="col-md-6">
                 <label for="Porcentajetbtres">% TB Tres:</label>
-                <input type="text" id="Porcentajetbtres" name="Porcentajetbtres" value="<?= $row['Porcentajetbtres'] ?? '' ?>" required>
+                <input type="text" id="Porcentajetbtres" name="Porcentajetbtres" value="<?= $row['Porcentajetbtres'] ?? '' ?>" 
+                    <?= ($solo_firma || $formulario_firmado) ? 'readonly' : '' ?> required>
             </div>
         </div>
         
         <div class="row mb-3">
             <div class="col-md-6">
                 <label for="TBCuatro">TB Cuatro:</label>
-                <input type="text" id="TBCuatro" name="TBCuatro" value="<?= $row['TBCuatro'] ?? '' ?>" required>
+                <input type="text" id="TBCuatro" name="TBCuatro" value="<?= $row['TBCuatro'] ?? '' ?>"
+                    <?= ($solo_firma || $formulario_firmado) ? 'readonly' : '' ?> required>
             </div>
             <div class="col-md-6">
                 <label for="Porcentajetbcuatro">% TB Cuatro:</label>
-                <input type="text" id="Porcentajetbcuatro" name="Porcentajetbcuatro" value="<?= $row['Porcentajetbcuatro'] ?? '' ?>" required>
+                <input type="text" id="Porcentajetbcuatro" name="Porcentajetbcuatro" value="<?= $row['Porcentajetbcuatro'] ?? '' ?>" 
+                    <?= ($solo_firma || $formulario_firmado) ? 'readonly' : '' ?> required>
             </div>
         </div>
         
         <div class="row mb-3">
             <div class="col-md-6">
                 <label for="TBCinco">TB Cinco:</label>
-                <input type="text" id="TBCinco" name="TBCinco" value="<?= $row['TBCinco'] ?? '' ?>" required>
+                <input type="text" id="TBCinco" name="TBCinco" value="<?= $row['TBCinco'] ?? '' ?>"
+                    <?= ($solo_firma || $formulario_firmado) ? 'readonly' : '' ?> required>
             </div>
             <div class="col-md-6">
                 <label for="Porcentajetbcinco">% TB Cinco:</label>
-                <input type="text" id="Porcentajetbcinco" name="Porcentajetbcinco" value="<?= $row['Porcentajetbcinco'] ?? '' ?>" required>
+                <input type="text" id="Porcentajetbcinco" name="Porcentajetbcinco" value="<?= $row['Porcentajetbcinco'] ?? '' ?>" 
+                    <?= ($solo_firma || $formulario_firmado) ? 'readonly' : '' ?> required>
             </div>
         </div>
         
         <div class="row mb-3">
             <div class="col-md-6">
                 <label for="TBseis">TB Seis:</label>
-                <input type="text" id="TBseis" name="TBseis" value="<?= $row['TBseis'] ?? '' ?>" required>
+                <input type="text" id="TBseis" name="TBseis" value="<?= $row['TBseis'] ?? '' ?>"
+                    <?= ($solo_firma || $formulario_firmado) ? 'readonly' : '' ?> required>
             </div>
             <div class="col-md-6">
                 <label for="Porcentajetbseis">% TB Seis:</label>
-                <input type="text" id="Porcentajetbseis" name="Porcentajetbseis" value="<?= $row['Porcentajetbseis'] ?? '' ?>" required>
+                <input type="text" id="Porcentajetbseis" name="Porcentajetbseis" value="<?= $row['Porcentajetbseis'] ?? '' ?>" 
+                    <?= ($solo_firma || $formulario_firmado) ? 'readonly' : '' ?> required>
             </div>
         </div>
         
         <div class="row mb-3">
             <div class="col-md-6">
                 <label for="TBsiete">TB Siete:</label>
-                <input type="text" id="TBsiete" name="TBsiete" value="<?= $row['TBsiete'] ?? '' ?>" required>
+                <input type="text" id="TBsiete" name="TBsiete" value="<?= $row['TBsiete'] ?? '' ?>"
+                    <?= ($solo_firma || $formulario_firmado) ? 'readonly' : '' ?> required>
             </div>
             <div class="col-md-6">
                 <label for="Porcentajetbsiete">% TB Siete:</label>
-                <input type="text" id="Porcentajetbsiete" name="Porcentajetbsiete" value="<?= $row['Porcentajetbsiete'] ?? '' ?>" required>
+                <input type="text" id="Porcentajetbsiete" name="Porcentajetbsiete" value="<?= $row['Porcentajetbsiete'] ?? '' ?>" 
+                    <?= ($solo_firma || $formulario_firmado) ? 'readonly' : '' ?> required>
             </div>
         </div>
 
@@ -135,27 +183,80 @@
         <div class="row mb-3">
             <div class="col-md-4">
                 <label for="BajasTB">Bajas TB:</label>
-                <input type="number" id="BajasTB" name="BajasTB" value="<?= $row['BajasTB'] ?? '' ?>" required>
+                <input type="number" id="BajasTB" name="BajasTB" value="<?= $row['BajasTB'] ?? '' ?>"
+                    <?= ($solo_firma || $formulario_firmado) ? 'readonly' : '' ?> required>
             </div>
             <div class="col-md-4">
                 <label for="AltasTA">Altas TA:</label>
-                <input type="number" id="AltasTA" name="AltasTA" value="<?= $row['AltasTA'] ?? '' ?>" required>
+                <input type="number" id="AltasTA" name="AltasTA" value="<?= $row['AltasTA'] ?? '' ?>"
+                    <?= ($solo_firma || $formulario_firmado) ? 'readonly' : '' ?> required>
             </div>
             <div class="col-md-4">
                 <label for="VariacionTV">Variación TV:</label>
-                <input type="text" id="VariacionTV" name="VariacionTV" value="<?= $row['VariacionTV'] ?? '' ?>" required>
+                <input type="text" id="VariacionTV" name="VariacionTV" value="<?= $row['VariacionTV'] ?? '' ?>" 
+                    <?= ($solo_firma || $formulario_firmado) ? 'readonly' : '' ?> required>
             </div>
+        </div>
+        
+         <!-- SECCIÓN DE FIRMA -->
+        <div class="firma-section mt-4 p-3 border rounded">
+            <h4>Firma Digital</h4>
+            
+            <?php if ($row['permitir_firmar'] && !$formulario_firmado): ?>
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label for="clave_firma">Clave de Firma:</label>
+                        <input type="password" id="clave_firma" name="clave_firma" class="form-control" 
+                            placeholder="Ingrese su clave única de firma" 
+                            <?= !$row['permitir_firmar'] ? 'readonly' : '' ?>>
+                        <small>
+                            Ingrese su clave única de firma para validar este formulario.
+                        </small>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="confirmar_clave">Confirmar Clave:</label>
+                        <input type="password" id="confirmar_clave" name="confirmar_clave" class="form-control" 
+                            placeholder="Confirme su clave de firma"
+                            <?= !$row['permitir_firmar'] ? 'readonly' : '' ?>>
+                    </div>
+                </div>
+                
+                <div class="form-check mb-3">
+                    <label class="form-check-label" for="firmar_documento" style="display:inline-flex;align-items:center;gap:6px;cursor:pointer;">
+                        <input type="checkbox" id="firmar_documento" name="firmar_documento" class="form-check-input" <?= !$row['permitir_firmar'] ? 'disabled' : '' ?> required>
+                        Deseo firmar este documento digitalmente
+                    </label>
+                </div>
+            <?php elseif ($formulario_firmado): ?>
+                <div class="alert alert-success">
+                    <strong>✅ Documento Firmado</strong><br>
+                    Este formulario fue firmado por: <strong><?= $row['firma_usuario'] ?></strong><br>
+                    Fecha de firma: <strong><?= $row['fecha_firma'] ?></strong>
+                </div>
+            <?php else: ?>
+                <div class="alert alert-warning">
+                    <strong>⚠️ Firma no disponible</strong><br>
+                    No tienes permisos para firmar este documento o la firma no está habilitada.
+                </div>
+            <?php endif; ?>
         </div>
         
         <div class="row mt-4">
             <div class="col-12 text-center">
-                <input type="submit" value="Guardar Cambios" class="btn btn-primary me-2">
-                <input type="button" value="Limpiar Campos" class="btn btn-secondary" onclick="limpiarCampos()"><br><br>
+                <?php if (!$formulario_firmado): ?>
+                    <input type="submit" value="Guardar Cambios" class="btn btn-primary me-2" id="btnGuardar">
+                    <input type="button" value="Limpiar Campos" class="btn btn-secondary" onclick="limpiarCampos()"
+                    <?= ($solo_firma) ? 'disabled' : '' ?>>
+                <?php else: ?>
+                    <div class="alert alert-warning">
+                        Este formulario ya ha sido firmado y no puede ser modificado.
+                    </div>
+                <?php endif; ?>
             </div>
         </div>
     </form>
 
-    <a href="MenuModifi.php" class="back-link"><img src="../Imagenes/home.png" height="100" width="90"></a>
+   <br><a href="MenuModifi.php" class="back-link"><img src="../Imagenes/home.png" height="100" width="90"></a>
 </div>
 </body>
 </html>

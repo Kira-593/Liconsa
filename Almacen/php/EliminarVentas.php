@@ -27,7 +27,7 @@
 			include "Cerrar.php";
 		?>
 		<hr>
-		<a href='BajasMaterial.php' class='btn'>REGRESAR A REALIZAR OTRA ELIMINACIÓN</a>
+		<a href='BajasVenta.php' class='btn'>REGRESAR A REALIZAR OTRA ELIMINACIÓN</a>
 		<br><br>
 		<a href='MenuBajas.php'><img src='..\imagenes\home.png' height='100' width='90'></a>
 	</div>

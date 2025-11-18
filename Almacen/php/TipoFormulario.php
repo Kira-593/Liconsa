@@ -1,3 +1,10 @@
+<?php
+session_start();
+require_once '../../php/historial.php';
+
+// Ejemplos de registro:
+registrarHistorial("Consultó reportes", "Reportes", "Consultó reporte de ventas del mes");
+?>
 <!DOCTYPE html>
 <html lang="es">
 <head>

@@ -1,4 +1,5 @@
 <?php
+date_default_timezone_set("America/Mexico_City");
 // Incluye la conexión a la base de datos
 include "Conexion.php";
 
@@ -14,36 +15,152 @@ $MinimoTE = $_POST["MinimoTE"] ?? '';
 $MaximoTE = $_POST["MaximoTE"] ?? '';
 $PromedioTP = $_POST["PromedioTP"] ?? '';
 
+// Procesar firma si se solicitó
+$firma_usuario = null;
+$fecha_firma = null;
+$firma_realizada = false;
+if (isset($_POST['firmar_documento']) && $_POST['firmar_documento'] == 'on') {
+    $clave_firma = $_POST['clave_firma'] ?? '';
+    
+    // CONEXIÓN A LA BASE DE DATOS DE USUARIOS
+    $servername = "localhost";
+    $username = "root";
+    $password = "";
+    $dbname_usuario = "usuario"; // Base de datos de usuarios
+    
+    $link_usuario = new mysqli($servername, $username, $password, $dbname_usuario);
+    
+    
+    // Verificar conexión a la base de datos de usuarios
+    if ($link_usuario->connect_error) {
+        echo "<script>
+            alert('Error de conexión a la base de datos de usuarios.');
+            window.history.back();
+        </script>";
+        include "Cerrar.php";
+        exit;
+    }
+    // Verificar la clave de firma en la base de datos de usuarios
+    $query_verificar_firma = "SELECT correo, claveF FROM users WHERE claveF = ? LIMIT 1";
+    $stmt_verificar = mysqli_prepare($link_usuario, $query_verificar_firma);
+    
+    if ($stmt_verificar) {
+        mysqli_stmt_bind_param($stmt_verificar, "s", $clave_firma);
+        mysqli_stmt_execute($stmt_verificar);
+        $result_verificar = mysqli_stmt_get_result($stmt_verificar);
+        
+        if ($result_verificar && mysqli_num_rows($result_verificar) > 0) {
+            $usuario_firma = mysqli_fetch_assoc($result_verificar);
+            $firma_usuario = $usuario_firma['correo'];
+            $fecha_firma = date('Y-m-d H:i:s');
+            $firma_realizada = true;
 
-// ************** INICIO DE MITIGACIÓN SQL INJECTION ******************
-// Se recomienda ENCARECIDAMENTE usar sentencias preparadas en producción.
-// Usamos mysqli_real_escape_string para mitigar la vulnerabilidad en este ejemplo.
-$ID_e = mysqli_real_escape_string($link, $ID);
-$Indicador_e = mysqli_real_escape_string($link, $Indicador);
-$Mes_e = mysqli_real_escape_string($link, $Mes);
-$MinimoTMN_e = mysqli_real_escape_string($link, $MinimoTMN);
-$MaximoTMN_e = mysqli_real_escape_string($link, $MaximoTMN);
-$PromedioTPN_e = mysqli_real_escape_string($link, $PromedioTPN);
-$MinimoTE_e = mysqli_real_escape_string($link, $MinimoTE);
-$MaximoTE_e = mysqli_real_escape_string($link, $MaximoTE);
-$PromedioTP_e = mysqli_real_escape_string($link, $PromedioTP);
-// ************** FIN DE MITIGACIÓN SQL INJECTION ******************
+            $query = "UPDATE c_contenidonetopesoenvase SET
+                        Indicador= ?, 
+                        Mes=?,
+                        MinimoTMN=?,
+                        MaximoTMN=?,
+                        PromedioTPN=?,
+                        MinimoTE=?,
+                        MaximoTE=?,
+                        PromedioTP=?
+                    WHERE id=?";
 
+     } else {
+              echo "<script>
+                alert('Clave de firma inválida. No se pudo firmar el documento.');
+                window.history.back();
+                 </script>";
+                mysqli_stmt_close($stmt_verificar);
+                $link_usuario->close();
+                include "Cerrar.php";
+                exit;
+            }
+            mysqli_stmt_close($stmt_verificar);
+            $link_usuario->close();
+    } else {
+        echo "<script>
+            alert('Error al verificar la firma.');
+            window.history.back();
+        </script>";
+        $link_usuario->close();
+        include "Cerrar.php";
+        exit;
+    }
+} else {
+    // Si no se firma, preparamos el UPDATE sin campos de firma
+    $query = "UPDATE c_contenidonetopesoenvase SET
+                Indicador= ?,
+                Mes=?,
+                MinimoTMN=?,
+                MaximoTMN=?,
+                PromedioTPN=?,
+                MinimoTE=?,
+                MaximoTE=?,
+                PromedioTP=?
+            WHERE id=?";
+}
+if($firma_realizada) {
+    // Si se realizó la firma, agregamos los campos de firma al UPDATE
+    $query = "UPDATE c_contenidonetopesoenvase SET
+                Indicador= ?,
+                Mes=?,
+                MinimoTMN=?,
+                MaximoTMN=?,
+                PromedioTPN=?,
+                MinimoTE=?,
+                MaximoTE=?,
+                PromedioTP=?,
+                firma_usuario=?,
+                fecha_firma=?
+            WHERE id=?";
+} else{
+    $query = "UPDATE c_contenidonetopesoenvase SET
+                Indicador= ?, 
+                Mes=?,
+                MinimoTMN=?,
+                MaximoTMN=?,
+                PromedioTPN=?,
+                MinimoTE=?,
+                MaximoTE=?,
+                PromedioTP=?
+            WHERE id=?";
+}
+$stmt = mysqli_prepare($link, $query);
+if ($firma_realizada) {
+    mysqli_stmt_bind_param($stmt, "sssssssssss", 
+        $Indicador, 
+        $Mes,
+        $MinimoTMN,
+        $MaximoTMN,
+        $PromedioTPN,
+        $MinimoTE,
+        $MaximoTE,
+        $PromedioTP,
+        $firma_usuario,
+        $fecha_firma,
+        $ID
+    );
+} else {
+    mysqli_stmt_bind_param($stmt, "sssssssss", 
+        $Indicador, 
+        $Mes,
+        $MinimoTMN,
+        $MaximoTMN,
+        $PromedioTPN,
+        $MinimoTE,
+        $MaximoTE,
+        $PromedioTP,
+        $ID
+    );
+}
 
-// 2. Consulta para actualizar los datos en la tabla 'c_contenidonetopesoenvase'
-$query = "UPDATE c_contenidonetopesoenvase SET
-            Indicador='$Indicador_e', 
-            Mes='$Mes_e', 
-            MinimoTMN='$MinimoTMN_e', 
-            MaximoTMN='$MaximoTMN_e', 
-            PromedioTPN='$PromedioTPN_e', 
-            MinimoTE='$MinimoTE_e', 
-            MaximoTE='$MaximoTE_e', 
-            PromedioTP='$PromedioTP_e'
-          WHERE id='$ID_e'"; 
+// Ejecutar la consulta preparada
+    $ejecucion_exitosa = mysqli_stmt_execute($stmt);
+    $filas_afectadas = mysqli_stmt_affected_rows($stmt);
+    $error_sql = mysqli_stmt_error($stmt);
 
-// 3. Ejecutar la consulta
-mysqli_query($link, $query);
+    mysqli_stmt_close($stmt);
 ?>
 
 <!DOCTYPE html>
@@ -60,22 +177,24 @@ mysqli_query($link, $query);
 </head>
 <body>
     <div class="contenedor">
-        <?php
-            // 4. Mostrar el resultado de la operación
-            if (mysqli_affected_rows($link) > 0) {
-                // Mensaje actualizado para Contenido Neto y Peso
-                echo "<div class='mensaje correcto'>Actualización del registro de Contenido Neto y Peso de Envase Vacío (ID: $ID_e) correcta</div>";
-            } else {
-                 // Si no hubo filas afectadas, se revisa si hubo un error de SQL
-                if (mysqli_error($link)) {
-                    echo "<div class='mensaje error'>Actualización incorrecta. Error: " . mysqli_error($link) . "</div>";
+         <?php
+            // Mostrar el resultado de la operación
+            if ($ejecucion_exitosa) {
+                if ($filas_afectadas > 0) {
+                    $mensaje = "Actualización de Indicadores correcta";
+                    if ($firma_realizada) {
+                        $mensaje .= " y documento firmado exitosamente por: " . $firma_usuario;
+                    }
+                    echo "<div class='mensaje correcto'>$mensaje</div>";
                 } else {
-                    // Mensaje actualizado para Contenido Neto y Peso (sin cambios)
-                    echo "<div class='mensaje advertencia'>Actualización finalizada. No se detectaron cambios en el registro de Contenido Neto y Peso de Envase Vacío (ID: $ID_e).</div>";
+                    echo "<div class='mensaje advertencia'>Actualización finalizada. No se detectaron cambios en el registro.</div>";
                 }
+            } else {
+                echo "<div class='mensaje error'>Actualización incorrecta. Error: " . $error_sql . "</div>";
             }
+            
             include "Cerrar.php"; // Cierra la conexión a la DB
-        ?>
+        ?> 
         <!-- Enlaces de navegación actualizados para el contexto de Contenido Neto y Peso -->
         <!-- Asumimos un script de modificación para este contexto, por ejemplo: ModNyP.php -->
         <a href="./ModContenidoNyP.php" class="btn btn-primary mt-3">Regresar a Actualizar Otro Registro de Contenido Neto y Peso</a><br>

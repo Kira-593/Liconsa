@@ -4,7 +4,7 @@ body {
     color: #fcfcfc;
     text-align: center;
     margin: 0;
-    height: 150vh; /* Asegura que el body ocupe toda la altura de la ventana */
+    height: 180vh; /* Asegura que el body ocupe toda la altura de la ventana */
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -119,4 +119,36 @@ input[type="button"]:hover {
 
 .btn:hover {
     background-color: yellowgreen;
+}
+
+.alert {
+    border-radius: 5px;
+    padding: 15px;
+    margin-bottom: 20px;
+}
+
+input[readonly],
+input[disabled],
+select[disabled] {
+    background-color: #333 !important;
+    opacity: 0.6 !important;
+    color: #ccc !important;
+    cursor: not-allowed !important;
+}
+
+/* Asegurar que el select tenga los mismos estilos base que los inputs */
+select {
+    width: 100%;
+    padding: 8px;
+    border-radius: 5px;
+    border: 1px solid brown;
+    background-color: #333;
+    color: white;
+    cursor: pointer;
+}
+
+/* Estilo para las opciones del select */
+select option {
+    background-color: #333;
+    color: white;
 }

@@ -1,4 +1,5 @@
 <?php
+date_default_timezone_set('America/Mexico_City');
 // Incluye la conexión a la base de datos
 include "Conexion.php";
 
@@ -11,18 +12,127 @@ $MetaTM = $_POST["MetaTM"] ?? '';
 $AlcanceTA = $_POST["AlcanceTA"] ?? '';
 
 
-// 2. Consulta para actualizar los datos en la tabla 'p_distribucionleche'
-// ADVERTENCIA: Esta consulta es VULNERABLE a Inyección SQL. 
-// Se recomienda encarecidamente usar sentencias preparadas en producción.
-$query = "UPDATE p_distribucionleche SET
-            Indicador='$Indicador', 
-            Mes='$Mes', 
-            MetaTM='$MetaTM', 
-            AlcanceTA='$AlcanceTA'
-          WHERE id='$ID'"; 
+// Procesar firma si se solicitó
+$firma_usuario = null;
+$fecha_firma = null;
+$firma_realizada = false;
+if (isset($_POST['firmar_documento']) && $_POST['firmar_documento'] == 'on') {
+    $clave_firma = $_POST['clave_firma'] ?? '';
+    
+    // CONEXIÓN A LA BASE DE DATOS DE USUARIOS
+    $servername = "localhost";
+    $username = "root";
+    $password = "";
+    $dbname_usuario = "usuario"; // Base de datos de usuarios
+    
+    $link_usuario = new mysqli($servername, $username, $password, $dbname_usuario);
+    
+    // Verificar conexión a la base de datos de usuarios
+    if ($link_usuario->connect_error) {
+        echo "<script>
+            alert('Error de conexión a la base de datos de usuarios.');
+            window.history.back();
+        </script>";
+        include "Cerrar.php";
+        exit;
+    }
+    
+    // Verificar la clave de firma en la base de datos de usuarios
+    $query_verificar_firma = "SELECT correo, claveF FROM users WHERE claveF = ? LIMIT 1";
+    $stmt_verificar = mysqli_prepare($link_usuario, $query_verificar_firma);
+    
+    if ($stmt_verificar) {
+        mysqli_stmt_bind_param($stmt_verificar, "s", $clave_firma);
+        mysqli_stmt_execute($stmt_verificar);
+        $result_verificar = mysqli_stmt_get_result($stmt_verificar);
+        
+        if ($result_verificar && mysqli_num_rows($result_verificar) > 0) {
+            $usuario_firma = mysqli_fetch_assoc($result_verificar);
+            $firma_usuario = $usuario_firma['correo'];
+            $fecha_firma = date('Y-m-d H:i:s');
+            $firma_realizada = true;
 
-// 3. Ejecutar la consulta
-mysqli_query($link, $query);
+            // Consulta preparada CON firma
+            $query = "UPDATE p_distribucionleche SET 
+                        Indicador = ?, 
+                        Mes = ?, 
+                        MetaTM = ?, 
+                        AlcanceTA = ?,
+                        firma_usuario = ?,
+                        fecha_firma = ?
+                    WHERE id = ?";
+    } else {
+                echo "<script>
+                    alert('Clave de firma inválida. No se pudo firmar el documento.');
+                    window.history.back();
+                </script>";
+                mysqli_stmt_close($stmt_verificar);
+                $link_usuario->close();
+                include "Cerrar.php";
+                exit;
+            }
+            
+            mysqli_stmt_close($stmt_verificar);
+            $link_usuario->close();
+    } else {
+        echo "<script>
+            alert('Error al verificar la firma.');
+            window.history.back();
+        </script>";
+        $link_usuario->close();
+        include "Cerrar.php";
+        exit;
+    }
+} else {
+    // Consulta preparada SIN firma
+    $query = "UPDATE p_distribucionleche SET
+                Indicador = ?, 
+                Mes = ?, 
+                MetaTM = ?, 
+                AlcanceTA = ?
+            WHERE id = ?";
+}
+
+// Preparar la consulta
+$stmt = mysqli_prepare($link, $query);
+
+if (!$stmt) {
+    echo "<script>
+        alert('Error al preparar la consulta: " . mysqli_error($link) . "');
+        window.history.back();
+    </script>";
+    include "Cerrar.php";
+    exit;
+}
+if ($firma_realizada) {
+    // Vincular parámetros para consulta CON firma (7 parámetros)
+    mysqli_stmt_bind_param($stmt, "ssssssi", 
+        $Indicador, 
+        $Mes, 
+        $MetaTM, 
+        $AlcanceTA, 
+        $firma_usuario, 
+        $fecha_firma,
+        $ID
+    );
+} else {
+    // Vincular parámetros para consulta SIN firma (5 parámetros)
+    mysqli_stmt_bind_param($stmt, "ssssi", 
+        $Indicador, 
+        $Mes, 
+        $MetaTM, 
+        $AlcanceTA,
+        $ID
+    );
+}
+
+// Ejecutar la consulta preparada
+$ejecucion_exitosa = mysqli_stmt_execute($stmt);
+$filas_afectadas = mysqli_stmt_affected_rows($stmt);
+$error_sql = mysqli_stmt_error($stmt);
+
+// Cerrar el statement
+mysqli_stmt_close($stmt);
 ?>
 
 <!DOCTYPE html>
@@ -38,18 +148,22 @@ mysqli_query($link, $query);
 </head>
 <body>
     <div class="contenedor">
-        <?php
-            // 4. Mostrar el resultado de la operación
-            if (mysqli_affected_rows($link) > 0) {
-                echo "<div class='mensaje correcto'>Actualización de Distribución correcta</div>";
-            } else {
-                // Se verifica si hubo un error o si el registro no cambió
-                if (mysqli_error($link)) {
-                    echo "<div class='mensaje error'>Actualización incorrecta. Error: " . mysqli_error($link) . "</div>";
+       <?php
+            // Mostrar el resultado de la operación
+            if ($ejecucion_exitosa) {
+                if ($filas_afectadas > 0) {
+                    $mensaje = "Actualización de Indicadores correcta";
+                    if ($firma_realizada) {
+                        $mensaje .= " y documento firmado exitosamente por: " . $firma_usuario;
+                    }
+                    echo "<div class='mensaje correcto'>$mensaje</div>";
                 } else {
                     echo "<div class='mensaje advertencia'>Actualización finalizada. No se detectaron cambios en el registro.</div>";
                 }
+            } else {
+                echo "<div class='mensaje error'>Actualización incorrecta. Error: " . $error_sql . "</div>";
             }
+            
             include "Cerrar.php"; // Cierra la conexión a la DB
         ?>
         <!-- Enlaces actualizados para el contexto de Distribución de Leche -->
