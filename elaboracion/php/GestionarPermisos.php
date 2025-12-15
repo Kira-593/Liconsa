@@ -11,7 +11,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         'e_pdc',
         'e_mermas',
         'e_envases_rotos',
-        'e_subgerencia_operaciones'
+        'e_subgerencia_operaciones',
+        'e_indicador'
     ];
 
     if (!in_array($tabla, $tablas_permitidas)) {
@@ -50,6 +51,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         'e_mermas' => 'verMermas.php',
         'e_envases_rotos' => 'verEnvase.php',
         'e_subgerencia_operaciones' => 'verSubG.php',
+        'e_indicador' => 'verIndi.php'  
     ];
 
     $pagina_retorno = isset($paginas_retorno[$tabla]) ? $paginas_retorno[$tabla] : 'MenuConsulta.php';

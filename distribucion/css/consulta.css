@@ -1,24 +1,32 @@
 body {
-    background:linear-gradient(white,#6aa2e3,rgb(48, 48, 224)); 
-    font-family: Arial, sans-serif;
-    color: gray;
+   background: radial-gradient(circle, rgb(255, 254, 254), #eae4e4, rgb(241, 234, 234)); 
+    font-family: NotoSans;
+    color: brown;
+    text-align: center;
+    margin: 0;
+    height: 100vh; /* Asegura que el body ocupe toda la altura de la ventana */
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
-    text-align: center;
-
-    /* Asegura que el fondo cubra toda la ventana */
-    min-height: 100vh;
-    background-size: cover;
-    margin: 0;
 
 }
-.logo{
-    height: 200px;
-    width: 200px;
+.logo-superior {
     position: absolute;
-    top:1px;
-    right:1px;
+    top: 30px;
+    left: 20px;
+    width: 30%; /* Ajusta el tamaño según tu preferencia */
+    height: auto;
+    z-index: 10;
+}
+
+.logo-sgc {
+    position: absolute;
+    top: -175px; /* Más arriba que 0px */
+    right: 20px;
+    width: 30%; /* Ajusta el tamaño según tu preferencia */
+    height: auto;
+    z-index: 10;
 }
 /* Contenedor principal */
 .contenedor {
@@ -39,7 +47,7 @@ h1 {
 
 /* Selección de opciones */
 select {
-    width: 30%;
+    width: 25%;
     padding: 8px;
     border-radius: 5px;
     border: 1px solid brown;
@@ -71,3 +79,9 @@ input[type="submit"]:hover {
     display: inline-block;
     margin-top: 20px;
 }
+
+.firmado { background-color: #d4edda; color: #155724; }
+.completo { background-color: #cce7ff; color: #004085; }
+.modificar { background-color: #fff3cd; color: #856404; }
+.firmar { background-color: #d1ecf1; color: #0c5460; }
+.bloqueado { background-color: #f8d7da; color: #721c24; }

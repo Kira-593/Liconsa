@@ -19,10 +19,10 @@
 	<main class="container">
 		<section class="menu">
 			<div class="menu-column">
-				<a href= "registro.php" class="opc">
-					<img src="../imagenes/registro.png" height="70" width="80" align="left" class="icono">
-					<span>FORMULARIO</span>
-				</a>
+				<a href="IndiInformatica.php" class="opc">
+            <img src="../imagenes/indicador.png" height="70" width="80" class="icono">
+            <span>INDICADOR</span>
+        </a>
 
 				<a href= "Consulta.php" class="opc">
 					<img src="../imagenes/consulta.png" height="70" width="80" align="left" class="icono">

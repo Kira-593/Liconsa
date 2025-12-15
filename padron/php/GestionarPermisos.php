@@ -11,7 +11,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         'p_subgerenciaabasto',
         'p_distribucionleche',
         'p_factorretiro', 
-        'p_rutasdistribucion'
+        'p_rutasdistribucion',
+        'p_indicador'
     ];
 
     if (!in_array($tabla, $tablas_permitidas)) {
@@ -49,7 +50,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         'p_subgerenciaabasto' => 'verSubg.php',
         'p_distribucionleche' => 'verDis.php',
         'p_factorretiro' => 'verFact.php',
-        'p_rutasdistribucion' => 'verRutas.php'
+        'p_rutasdistribucion' => 'verRutas.php',
+        'p_indicador' => 'verIndicador.php'
     ];
 
     $pagina_retorno = isset($paginas_retorno[$tabla]) ? $paginas_retorno[$tabla] : 'MenuConsulta.php';

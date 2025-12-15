@@ -8,7 +8,7 @@ if (!isset($_SESSION['departamento']) || $_SESSION['departamento'] !== 'ADMIN') 
 }
 
 // Incluir funciones del historial
-require_once 'history_functions.php';
+require_once 'historial.php';
 
 // Conectar a la base de datos
 $conexion = new mysqli('localhost', 'root', '', 'usuario');
@@ -104,28 +104,35 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $stmt->close();
             break;
             
-        case 'reset_password':
-            // Resetear contraseña
-            $nueva_password = password_hash('password123', PASSWORD_DEFAULT);
-            $sql = "UPDATE users SET contraseña = ? WHERE id = ?";
-            $stmt = $conexion->prepare($sql);
-            $stmt->bind_param("si", $nueva_password, $user_id);
+        case 'cambiar_password':
+            $nueva_password = trim($_POST['nueva_password']);
             
-            if ($stmt->execute()) {
-                $mensaje = "Contraseña reseteada a 'password123'";
-                $tipo_mensaje = "success";
-                
-                // Registrar en historial
-                registrarHistorial(
-                    "Reseteó contraseña", 
-                    "Gestión de Usuarios", 
-                    "Reseteó contraseña del usuario ID: $user_id"
-                );
-            } else {
-                $mensaje = "Error al resetear contraseña: " . $stmt->error;
+            if (empty($nueva_password)) {
+                $mensaje = "La contraseña no puede estar vacía";
                 $tipo_mensaje = "danger";
+            } else {
+                // Encriptar la nueva contraseña
+                $password_hash = password_hash($nueva_password, PASSWORD_DEFAULT);
+                $sql = "UPDATE users SET contraseña = ? WHERE id = ?";
+                $stmt = $conexion->prepare($sql);
+                $stmt->bind_param("si", $password_hash, $user_id);
+                
+                if ($stmt->execute()) {
+                    $mensaje = "Contraseña actualizada correctamente";
+                    $tipo_mensaje = "success";
+                    
+                    // Registrar en historial
+                    registrarHistorial(
+                        "Cambió contraseña", 
+                        "Gestión de Usuarios", 
+                        "Cambió contraseña del usuario ID: $user_id"
+                    );
+                } else {
+                    $mensaje = "Error al cambiar contraseña: " . $stmt->error;
+                    $tipo_mensaje = "danger";
+                }
+                $stmt->close();
             }
-            $stmt->close();
             break;
     }
 }
@@ -193,39 +200,8 @@ $estadisticas = $stats_result->fetch_assoc();
     <title>Gestión de Usuarios - Administración</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <style>
-        .card-stat {
-            border-left: 4px solid #0d6efd;
-            transition: transform 0.2s;
-        }
-        .card-stat:hover {
-            transform: translateY(-2px);
-        }
-        .table-hover tbody tr:hover {
-            background-color: rgba(0,0,0,.075);
-        }
-        .badge-activo {
-            background-color: #198754;
-        }
-        .badge-inactivo {
-            background-color: #dc3545;
-        }
-        .btn-action {
-            padding: 0.25rem 0.5rem;
-            font-size: 0.875rem;
-        }
-        .user-avatar {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background: #0d6efd;
-            color: white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-        }
-    </style>
+    <link rel="stylesheet" href="../css/admin_usuarios.css">
+    
 </head>
 <body>
     <div class="container-fluid py-4">
@@ -386,15 +362,14 @@ $estadisticas = $stats_result->fetch_assoc();
                                                     <i class="fas fa-edit"></i>
                                                 </button>
                                                 
-                                                <!-- Botón Reset Password -->
-                                                <form method="POST" class="d-inline">
-                                                    <input type="hidden" name="action" value="reset_password">
-                                                    <input type="hidden" name="user_id" value="<?php echo $usuario['id']; ?>">
-                                                    <button type="submit" class="btn btn-info btn-sm btn-action" 
-                                                            onclick="return confirm('¿Resetear contraseña a \"password123\"?')">
-                                                        <i class="fas fa-key"></i>
-                                                    </button>
-                                                </form>
+                                                 <!-- Botón Cambiar Contraseña -->
+                                                <button type="button" class="btn btn-info btn-sm btn-action" 
+                                                        data-bs-toggle="modal" 
+                                                        data-bs-target="#modalCambiarPassword"
+                                                        data-user-id="<?php echo $usuario['id']; ?>"
+                                                        data-user-correo="<?php echo htmlspecialchars($usuario['correo']); ?>">
+                                                    <i class="fas fa-key"></i>
+                                                </button>
                                                 
                                                 <!-- Botón Activar/Desactivar -->
                                                 <?php if ($usuario['activo']): ?>
@@ -514,6 +489,99 @@ $estadisticas = $stats_result->fetch_assoc();
             document.getElementById('edit_activo').checked = usuario.activo == 1;
         });
     </script>
+
+    <!-- Modal para Cambiar Contraseña -->
+<div class="modal fade" id="modalCambiarPassword" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form method="POST" id="formCambiarPassword">
+                <input type="hidden" name="action" value="cambiar_password">
+                <input type="hidden" name="user_id" id="cambiar_password_user_id">
+                
+                <div class="modal-header">
+                    <h5 class="modal-title">Cambiar Contraseña</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">Usuario</label>
+                        <input type="text" class="form-control" id="cambiar_password_correo" readonly>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Nueva Contraseña</label>
+                        <input type="password" class="form-control" name="nueva_password" id="nueva_password" required 
+                               placeholder="Ingrese la nueva contraseña" minlength="6">
+                        <div class="form-text">La contraseña debe tener al menos 6 caracteres.</div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Confirmar Contraseña</label>
+                        <input type="password" class="form-control" id="confirmar_password" 
+                               placeholder="Confirme la nueva contraseña" onkeyup="validarPasswords()">
+                        <div class="form-text" id="password-match-message"></div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-primary" id="btn-guardar-password" disabled>
+                        <i class="fas fa-save me-1"></i>Guardar Contraseña
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<script>
+    // Cargar datos en el modal de cambiar contraseña
+    document.getElementById('modalCambiarPassword').addEventListener('show.bs.modal', function (event) {
+        var button = event.relatedTarget;
+        var userId = button.getAttribute('data-user-id');
+        var userCorreo = button.getAttribute('data-user-correo');
+        
+        document.getElementById('cambiar_password_user_id').value = userId;
+        document.getElementById('cambiar_password_correo').value = userCorreo;
+        
+        // Limpiar campos
+        document.getElementById('nueva_password').value = '';
+        document.getElementById('confirmar_password').value = '';
+        document.getElementById('btn-guardar-password').disabled = true;
+        document.getElementById('password-match-message').textContent = '';
+        document.getElementById('password-match-message').className = 'form-text';
+    });
+
+    // Validar que las contraseñas coincidan
+    function validarPasswords() {
+        var password = document.getElementById('nueva_password').value;
+        var confirmar = document.getElementById('confirmar_password').value;
+        var mensaje = document.getElementById('password-match-message');
+        var boton = document.getElementById('btn-guardar-password');
+        
+        if (password === '' || confirmar === '') {
+            mensaje.textContent = '';
+            mensaje.className = 'form-text';
+            boton.disabled = true;
+            return;
+        }
+        
+        if (password === confirmar) {
+            if (password.length >= 6) {
+                mensaje.textContent = '✓ Las contraseñas coinciden';
+                mensaje.className = 'form-text text-success';
+                boton.disabled = false;
+            } else {
+                mensaje.textContent = '✗ La contraseña debe tener al menos 6 caracteres';
+                mensaje.className = 'form-text text-danger';
+                boton.disabled = true;
+            }
+        } else {
+            mensaje.textContent = '✗ Las contraseñas no coinciden';
+            mensaje.className = 'form-text text-danger';
+            boton.disabled = true;
+        }
+    }
+
+    // También validar cuando se escribe en el campo de nueva contraseña
+    document.getElementById('nueva_password').addEventListener('input', validarPasswords);
+</script>
 </body>
 </html>
 

@@ -119,3 +119,110 @@ body {
     font-size: 1.2em;
 }
 
+header .dropdown {
+    left: 600px !important;
+    top:  80px !important;
+    font-family: NotoSans;
+}
+
+header .dropdown,
+header .dropdown * {
+    position: relative;
+    z-index: 9999 !important;  /* muy por encima de cualquier imagen */
+}
+
+/* Quitar el color azul cuando una opción está activa o enfocada */
+.dropdown-menu .dropdown-item:active,
+.dropdown-menu .dropdown-item:focus {
+    background-color: #541E2C !important;
+    color: #ffffff !important;
+}
+
+/* Color al pasar el cursor */
+.dropdown-menu .dropdown-item:hover {
+    background-color: #541E2C !important;
+    color: #ffffff !important;
+}
+
+/* Opciones normal */
+.dropdown-menu .dropdown-item {
+    transition: 0.2s ease;
+}
+
+/* ===== BOTÓN CERRAR SESIÓN EN POSICIÓN ORIGINAL ===== */
+.btn-logout {
+    background: #541E2C;
+    color: white;
+    border: none;
+    padding: 12px 30px;
+    border-radius: 8px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(220, 53, 69, 0.3);
+    margin: 20px 0;
+}
+
+.btn-logout:hover {
+    background: #A5802D;
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(220, 53, 69, 0.4);
+}
+
+/* ===== HEADER SOLO CON MENÚ ADMIN ===== */
+.admin-menu {
+    position: absolute;
+    right: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.btn-admin {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: rgba(255, 255, 255, 0.9);
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 0.875rem;
+    transition: all 0.3s ease;
+    white-space: nowrap;
+}
+
+.btn-admin:hover {
+    background: rgba(255, 255, 255, 0.2);
+    border-color: rgba(255, 255, 255, 0.4);
+    color: white;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
+    .admin-menu {
+        position: static;
+        transform: none;
+        margin-top: 10px;
+        text-align: center;
+    }
+    
+    .header-main .d-flex {
+        flex-direction: column;
+        gap: 10px;
+        min-height: auto;
+    }
+    
+    .btn-logout {
+        padding: 10px 25px;
+        margin: 15px 0;
+    }
+}
+
+@media (max-width: 576px) {
+    .btn-logout {
+        padding: 10px 20px;
+        font-size: 0.9rem;
+    }
+    
+    .btn-admin {
+        font-size: 0.8rem;
+        padding: 5px 10px;
+    }
+}

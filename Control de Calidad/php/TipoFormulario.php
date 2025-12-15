@@ -42,14 +42,15 @@
                 <span>Evaluación del Desempeño</span>
             </a>
         </div>
-    </div>
-
+    </div>      
+    
     <!-- Botón centrado abajo -->
     <div class="menu-bottom">
         <a href="FormContenidoNyP.php" class="opc">
             <img src="../imagenes/botella.png" height="70" width="80" class="icono">
             <span>Contenido Neto y Peso de Envase vacío.</span>
         </a>
+        
     </div>
 </section>
 

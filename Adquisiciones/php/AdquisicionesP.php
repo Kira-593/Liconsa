@@ -72,6 +72,15 @@ $es_admin = ($_SESSION['departamento'] === 'ADMIN');
                 <?php endif; ?>
             </div>
         </section>
+        <section class="menu">
+            <div class="menu-column">
+                  <div class="menu-bottom">
+        <a href="IndiAdquisiciones.php" class="opc">
+            <img src="../imagenes/indicador.png" height="70" width="80" class="icono">
+            <span>INDICADORES.</span>
+        </a>
+            </div>
+        </section>
         <br>
         <a href="../../menuphp/php/menuP.php" class="btn btn-danger">Menú principal</a>
     </main>

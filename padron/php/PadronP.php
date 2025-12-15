@@ -28,9 +28,10 @@ $es_admin = ($_SESSION['departamento'] === 'ADMIN');
                 <!-- FORMULARIOS - Siempre habilitado para todos -->
                 <a href="TipoFormulario.php" class="opc habilitado">
                     <img src="../imagenes/registro.png" height="70" width="80" align="left" class="icono">
-                    <span>FORMULARIOS</span>
+                    <span>INGRESAR INFORMACIÓN</span>
                     <i class="fas fa-check icono-palomita"></i>
                 </a>
+                
 
                 <!-- CONSULTA DE FORMULARIOS - Solo para ADMIN -->
                 <?php if ($es_admin): ?>
@@ -62,15 +63,32 @@ $es_admin = ($_SESSION['departamento'] === 'ADMIN');
                         <span>ELIMINACIÓN DE FORMULARIOS</span>
                         <i class="fas fa-check icono-palomita"></i>
                     </a>
+                    
                 <?php else: ?>
                     <div class="opc bloqueado">
                         <img src="../imagenes/eliminar.png" height="70" width="80" align="left" class="icono">
                         <span>ELIMINACIÓN DE FORMULARIOS</span>
                         <i class="fas fa-lock icono-candado"></i>
+                        
                     </div>
+                    
                 <?php endif; ?>
+                
             </div>
+        
+    </div>
         </section>
+            <section class="menu">
+                <div class="menu-column">
+                    <div class="menu-bottom">
+                            <a href="Menuindi.php" class="opc">
+                                <img src="../imagenes/indicador.png" height="70" width="80" class="icono">
+                                <span>INDICADORES.</span>
+                                <i class="fas fa-check icono-palomita"></i>
+                            </a>
+                    </div>
+                </div>
+            </section>
         <br>
         <a href="../../menuphp/php/menuP.php" class="btn btn-danger">Menú principal</a>
     </main>

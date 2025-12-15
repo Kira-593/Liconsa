@@ -70,6 +70,17 @@ $es_admin = ($_SESSION['departamento'] === 'ADMIN');
                     </div>
                 <?php endif; ?>
             </div>
+            </div>
+        </section>
+        <section class="menu">
+            <div class="menu-column">
+                  <div class="menu-bottom">
+        <a href="MenuIndi.php" class="opc">
+            <img src="../imagenes/indicador.png" height="70" width="80" class="icono">
+            <span>INDICADORES.</span>
+            <i class="fas fa-check icono-palomita"></i>
+        </a>
+            </div>
         </section>
         <br>
         <a href="../../menuphp/php/menuP.php" class="btn btn-danger">Menú principal</a>

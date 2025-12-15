@@ -14,7 +14,6 @@ error_log("Correo en sesión: " . ($_SESSION['correo'] ?? 'NO HAY CORREO'));
 // Definir qué departamentos tienen acceso a qué áreas (USANDO LOS VALORES REALES DE LA BD)
 $permisos_por_departamento = [
     'ADMIN' => [ 
-        'ACTIVIDADES DEL SUBCOMITE',
         'ENVASADO', 
         'CONTROL DE CALIDAD',
         'PADRÓN DE BENEFICIARIOS',
@@ -58,7 +57,6 @@ error_log("Áreas habilitadas: " . implode(', ', $areas_habilitadas));
 
 // Mapeo de departamentos a URLs
 $urls_departamentos = [
-    'ACTIVIDADES DEL SUBCOMITE' => '../../Actividades del subcomite/php/ActP.php',
     'ENVASADO' => '../../envasado/php/envasadoP.php',
     'CONTROL DE CALIDAD' => '../../Control de Calidad/php/ControlP.php',
     'PADRÓN DE BENEFICIARIOS' => '../../padron/php/PadronP.php',
@@ -74,7 +72,6 @@ $urls_departamentos = [
 
 // Mapeo CORREGIDO de nombres de imágenes
 $imagenes_departamentos = [
-    'ACTIVIDADES DEL SUBCOMITE' => 'actividades del subcomite',
     'ENVASADO' => 'envasado',
     'CONTROL DE CALIDAD' => 'control de calidad',
     'PADRÓN DE BENEFICIARIOS' => 'padron de bene',
@@ -106,12 +103,26 @@ $es_admin = ($departamento_usuario === 'ADMIN');
 </head>
 <body>
 
-	<header class="text-center my-4">
+
+
+	<header class="text-center my-4 position-relative">
 		<h1>MENÚ PRINCIPAL</h1>
 		<div class="app-name">
 			<span>Departamentos</span>
 		</div>
-		
+
+		<?php if ($es_admin): ?>
+		<div class="dropdown position-absolute top-0 end-0 mt-2 me-2">
+			<button class="btn btn-secondary dropdown-toggle" type="button" id="adminMenu" data-bs-toggle="dropdown" >
+				<i class="fas fa-user-cog" ></i><span> OPCIONES</span> 
+			</button>
+			<ul class="dropdown-menu dropdown-menu-end" aria-labelledby="adminMenu">
+				<li><a class="dropdown-item" href="../../php/admin_usuarios.php"><i class="fas fa-users-cog me-2"></i>Gestionar Usuarios</a></li>
+				<li><a class="dropdown-item" href="../../php/admin_historial.php"><i class="fas fa-history me-2"></i>Historial de Usuarios</a></li>
+			</ul>
+		</div>
+		<?php endif; ?>
+
 	</header>
 
 	<main class="container">
@@ -119,10 +130,10 @@ $es_admin = ($departamento_usuario === 'ADMIN');
 			<div class="menu-column">
 				<?php
 				$departamentos_columna1 = [
-					'ACTIVIDADES DEL SUBCOMITE',
 					'PADRÓN DE BENEFICIARIOS', 
 					'ALMACÉN',
-					'ELABORACIÓN'
+					'ELABORACIÓN',
+					'ENVASADO'
 				];
 				
 				foreach ($departamentos_columna1 as $depto): 
@@ -146,7 +157,6 @@ $es_admin = ($departamento_usuario === 'ADMIN');
 			<div class="menu-column">
 				<?php
 				$departamentos_columna2 = [
-					'ENVASADO',
 					'DISTRIBUCIÓN',
 					'MANTENIMIENTO',
 					'GESTIÓN DEL TRABAJO'
@@ -197,24 +207,20 @@ $es_admin = ($departamento_usuario === 'ADMIN');
 				<?php endforeach; ?>
 			</div>
 		</section>
-		<br>
-		<form action="logout.php" method="post">
-			<button type="submit" class="btn btn-danger">Cerrar Sesión</button>
 
-			<!-- En tu menuP.php o donde tengas el menú del admin -->
-			<?php 
-			// Mostrar botón de historial solo si es administrador
-			if ($_SESSION['departamento'] === 'ADMIN'): 
-			?>
-				<a href="../../php/admin_usuarios.php" class="btn btn-success ms-2">
-            <i class="fas fa-users-cog me-1"></i> Gestionar Usuarios
-        </a>
-				<a href="../../php/admin_historial.php" class="nav-link">
-					<i class="fas fa-history"></i> Historial de Usuarios
-				</a>
-			<?php endif; ?>
-		</form>
+		<!-- Botón Cerrar Sesión para todos los usuarios -->
+		<div class="text-center mt-4">
+			<form action="logout.php" method="post">
+				<button type="submit" class="btn btn-logout">
+					<i class="fas fa-sign-out-alt me-2"></i>Cerrar Sesión
+				</button>
+			</form>
+		</div>
+
 	</main>
+
+	<!-- Bootstrap JS (necesario para dropdown) -->
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 
 	<script>
 		// Prevenir clic en departamentos bloqueados

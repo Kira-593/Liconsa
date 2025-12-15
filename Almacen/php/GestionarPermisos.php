@@ -9,7 +9,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     // Validar tabla permitida
     $tablas_permitidas = [
         'a_existenciasmaterial',
-        'a_ventaleche'
+        'a_ventaleche',
+        'a_indicador'
     ];
 
     if (!in_array($tabla, $tablas_permitidas)) {
@@ -45,7 +46,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     // Determinar la página de retorno basada en la tabla
     $paginas_retorno = [
         'a_existenciasmaterial' => 'verMaterial.php',
-        'a_ventaleche' => 'verVenta.php'
+        'a_ventaleche' => 'verVenta.php',
+        'a_indicador' => 'verIndi.php'
     ];
 
     $pagina_retorno = isset($paginas_retorno[$tabla]) ? $paginas_retorno[$tabla] : 'MenuConsulta.php';

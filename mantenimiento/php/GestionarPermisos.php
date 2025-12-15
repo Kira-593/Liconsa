@@ -10,7 +10,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $tablas_permitidas = [
         'm_consumoaguaproceso',
         'm_consumo_energia_produccion',
-        'm_consumo_energia_termica_electrica'
+        'm_consumo_energia_termica_electrica',
+        'm_indicador'
     ];
 
     if (!in_array($tabla, $tablas_permitidas)) {
@@ -47,7 +48,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $paginas_retorno = [
         'm_consumo_energia_produccion' => 'verCons.php',
         'm_consumo_energia_termica_electrica' => 'verConsEnergia.php',
-        'm_consumoaguaproceso' => 'verAguaP.php'
+        'm_consumoaguaproceso' => 'verAguaP.php',
+        'm_indicador' => 'verIndi.php'
     ];
 
     $pagina_retorno = isset($paginas_retorno[$tabla]) ? $paginas_retorno[$tabla] : 'MenuConsulta.php';
