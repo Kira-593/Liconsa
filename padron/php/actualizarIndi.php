@@ -458,7 +458,7 @@ session_start();
             </div>
 
             <!-- SECCIÓN DE FIRMA -->
-            <div class="firma-section">
+            <div class="firma-section mt-4 p-3 border rounded">
                 <h4>Firma Digital</h4>
                 
                 <?php if ($row['permitir_firmar'] && !$formulario_firmado): ?>

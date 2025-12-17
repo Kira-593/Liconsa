@@ -28,9 +28,10 @@ $es_admin = ($_SESSION['departamento'] === 'ADMIN');
           <div class="menu-bottom">
             
 
-            <a href="IndiGestionMa.php" class="opc">
+            <a href="MenuIndiMa.php" class="opc">
             <img src="../imagenes/IndiMA.png" height="70" width="80" class="icono">
             <span>INDICADOR RELACIONES INDUSTRIALES</span>
+            <i class="fas fa-check icono-palomita"></i>
             </a>
             
           </div>
@@ -40,9 +41,10 @@ $es_admin = ($_SESSION['departamento'] === 'ADMIN');
         <section class="menu">
             <div class="menu-column">
                   <div class="menu-bottom">
-        <a href="IndiGestionDa.php" class="opc">
+        <a href="MenuIndiDa.php" class="opc">
             <img src="../imagenes/IndiDA.png" height="70" width="80" class="icono">
             <span>INDICADOR SEGURIDAD E HIGIENE</span>
+            <i class="fas fa-check icono-palomita"></i>
         </a>
             </div>
         </section>  

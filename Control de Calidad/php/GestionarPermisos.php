@@ -12,7 +12,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         'c_captacionleche',
         'c_formulariogps',
         'c_evaluaciondesempeno',
-        'c_contenidonetopesoenvase'
+        'c_contenidonetopesoenvase',
+        'c_indicador'
     ];
 
     if (!in_array($tabla, $tablas_permitidas)) {
@@ -51,7 +52,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         'c_captacionleche' => 'verRCT.php',
         'c_formulariogps' => 'verGPS.php',
         'c_evaluaciondesempeno' => 'verEvaluacion.php',
-        'c_contenidonetopesoenvase' => 'verContenidoNyP.php'
+        'c_contenidonetopesoenvase' => 'verContenidoNyP.php',
+        'c_indicador' => 'verIndi.php'
     ];
 
     $pagina_retorno = isset($paginas_retorno[$tabla]) ? $paginas_retorno[$tabla] : 'MenuConsulta.php';

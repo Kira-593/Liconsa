@@ -20,7 +20,7 @@
     <h4>Gestion del Ambiente de trabajo y de las Competencias de Personal</h4>
     
     <section class="registro">
-        <form method="post" action="GuardarPDC.php">
+        <form method="post" action="GuardarIndiMa.php">
         <div class="registro-container">
             <div class="registro-column">
 

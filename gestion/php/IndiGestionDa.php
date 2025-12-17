@@ -21,7 +21,7 @@
     <h4>Gestion del Ambiente de trabajo y de las Competencias de Personal</h4>
     
     <section class="registro">
-        <form method="post" action="GuardarPDC.php">
+        <form method="post" action="GuardarIndiDa.php">
 
         <div class="registro-container">
         <div class="registro-column">
@@ -188,7 +188,7 @@
         </form>
     </section>
 
-    <a href="./Indigestiones.php" class="home-link">
+    <a href="MenuIndiDa.php" class="home-link">
         <img src="../imagenes/home.png" height="100" width="90">
     </a>
 

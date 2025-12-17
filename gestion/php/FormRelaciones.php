@@ -5,6 +5,7 @@
 	<meta charset="UTF-8">
     <script src="../js/cargas.js"></script>
     <script src="../js/SumaT.js"></script>
+    <script src="../js/limpiar.js"></script>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
 	<link rel="stylesheet" href="../css/formRelaciones.css">
     <img src="../imagenes/AgriculturaLogo.png" class="logo-superior" alt="Logo Agricultura">
@@ -81,7 +82,7 @@
          </div>
                 <div class="form-buttons">
                 <input type="submit" name="g" value="Guardar">
-                <input type="reset" name="b" value="Limpiar">
+                <input type="button" name="b" value="Limpiar" onclick="limpiarCampos()">
             </div>
                 
         </form>

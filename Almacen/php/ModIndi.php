@@ -20,8 +20,8 @@
 
 <body>
     <div class="contenedor">
-        <h1>Modificación de Información de los Formularios</h1>
-        <p>Seleccione el ID del formulario.</p>
+        <h1>Modificación de Información de los Indicadores</h1>
+        <p>Seleccione el ID del indicador.</p>
 
         <form method="get" action="actualizarIndi.php">
             <select name="sc" required>

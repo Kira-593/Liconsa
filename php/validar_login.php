@@ -25,13 +25,13 @@ function isUserLocked($correo) {
     
     if (isset($_SESSION['login_attempts'][$correo])) {
         $attempt_data = $_SESSION['login_attempts'][$correo];
-        
+
         // Verificar si el usuario está bloqueado
-        if ($attempt_data['attempts'] >= 3 && 
+        if ($attempt_data['attempts'] >= $GLOBALS['max_attempts'] && 
             (time() - $attempt_data['last_attempt']) < $lockout_time) {
             return true;
         }
-        
+
         // Limpiar intentos si ya pasó el tiempo de bloqueo
         if ((time() - $attempt_data['last_attempt']) >= $lockout_time) {
             unset($_SESSION['login_attempts'][$correo]);
@@ -106,11 +106,17 @@ if (empty($correo) || empty($password) || empty($departamento)) {
 // Verificar si el usuario está bloqueado
 if (isUserLocked($correo)) {
     $remaining_time = getRemainingLockTime($correo);
-    $minutes = ceil($remaining_time / 60);
+    $minutes = intdiv($remaining_time, 60);
     $seconds = $remaining_time % 60;
-    
+
+    if ($minutes > 0) {
+        $msg = "Cuenta bloqueada por múltiples intentos fallidos. Por favor, espere $minutes minutos y $seconds segundos antes de intentar nuevamente.";
+    } else {
+        $msg = "Cuenta bloqueada por múltiples intentos fallidos. Por favor, espere $seconds segundos antes de intentar nuevamente.";
+    }
+
     echo "<script>
-        alert('Cuenta bloqueada por múltiples intentos fallidos. Por favor, espere $minutes minutos y $seconds segundos antes de intentar nuevamente.');
+        alert('" . addslashes($msg) . "');
         window.history.back();
     </script>";
     exit();
@@ -164,33 +170,51 @@ if ($stmt->num_rows > 0) {
     echo "<script>alert('¡Bienvenido!'); window.location.href = '../menuphp/php/menuP.php';</script>";
 } else {
          // Contraseña incorrecta
-    recordFailedAttempt($correo);
-    $attempts = getCurrentAttempts($correo);
-     // Registrar intento fallido
-    registrarError('Autenticación', "Contraseña incorrecta. Intentos: $attempts de $max_attempts");
+        // Obtener intentos antes y después para mostrar correctamente los restantes
+        $attempts_before = getCurrentAttempts($correo);
+        recordFailedAttempt($correo);
+        $attempts_after = getCurrentAttempts($correo);
+        $remaining_attempts = max(0, $max_attempts - $attempts_after);
+
+        // Registrar intento fallido (para auditoría)
+        registrarError('Autenticación', "Contraseña incorrecta. Intentos antes: $attempts_before, ahora: $attempts_after de $max_attempts");
+
+        // Registrar en error_log para depuración local (no expone al usuario)
+        error_log("Login fallido para $correo: before=$attempts_before after=$attempts_after max=$max_attempts");
+
         if ($remaining_attempts > 0) {
             echo "<script>
                 alert('Contraseña incorrecta. Te quedan $remaining_attempts intentos.');
                 window.history.back();
             </script>";
         } else {
-            // Bloquear cuenta
+            // Bloquear cuenta (mensaje con tiempo restante)
             $remaining_time = getRemainingLockTime($correo);
-            $minutes = ceil($remaining_time / 60);
+            $minutes = intdiv($remaining_time, 60);
             $seconds = $remaining_time % 60;
-            
+
+            if ($minutes > 0) {
+                $msg = "Has excedido el número máximo de intentos. Cuenta bloqueada por $minutes minutos y $seconds segundos.";
+            } else {
+                $msg = "Has excedido el número máximo de intentos. Cuenta bloqueada por $seconds segundos.";
+            }
+
             echo "<script>
-                alert('Has excedido el número máximo de intentos. Cuenta bloqueada por $minutes minutos y $seconds segundos.');
+                alert('" . addslashes($msg) . "');
                 window.history.back();
             </script>";
         }
     }
 } else {
     // Usuario no encontrado
+    $attempts_before = getCurrentAttempts($correo);
     recordFailedAttempt($correo);
-    $attempts = getCurrentAttempts($correo);
-    $remaining_attempts = $max_attempts - $attempts;
-    
+    $attempts_after = getCurrentAttempts($correo);
+    $remaining_attempts = max(0, $max_attempts - $attempts_after);
+
+    registrarError('Autenticación', "Usuario no encontrado. Intentos antes: $attempts_before, ahora: $attempts_after of $max_attempts");
+    error_log("Login no encontrado para $correo: before=$attempts_before after=$attempts_after max=$max_attempts");
+
     if ($remaining_attempts > 0) {
         echo "<script>
             alert('Correo o departamento no encontrado. Te quedan $remaining_attempts intentos.');
@@ -199,11 +223,17 @@ if ($stmt->num_rows > 0) {
     } else {
         // Bloquear cuenta
         $remaining_time = getRemainingLockTime($correo);
-        $minutes = ceil($remaining_time / 60);
+        $minutes = intdiv($remaining_time, 60);
         $seconds = $remaining_time % 60;
-        
+
+        if ($minutes > 0) {
+            $msg = "Has excedido el número máximo de intentos. Cuenta bloqueada por $minutes minutos y $seconds segundos.";
+        } else {
+            $msg = "Has excedido el número máximo de intentos. Cuenta bloqueada por $seconds segundos.";
+        }
+
         echo "<script>
-            alert('Has excedido el número máximo de intentos. Cuenta bloqueada por $minutes minutos y $seconds segundos.');
+            alert('" . addslashes($msg) . "');
             window.history.back();
         </script>";
     }

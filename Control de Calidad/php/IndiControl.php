@@ -26,7 +26,7 @@
         <h4>Control de Calidad</h4>
         
         <section class="registro">
-            <form method="post" action="GuardarPDC.php">
+            <form method="post" action="GuardarIndi.php">
 
                 <div class="registro-container">
 
@@ -129,8 +129,8 @@
                 </div> <!-- cierre de registro-container -->
 
                 <div class="form-buttons">
-                    <input type="submit" name="g" value="Guardar">
-                    <input type="reset" name="b" value="Limpiar">
+                    <input type="submit" name="g" value="Guardar" class="btn">
+                    <input type="reset" name="b" value="Limpiar" class="btn">
                 </div>
 
             </form>

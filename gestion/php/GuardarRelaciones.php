@@ -49,7 +49,7 @@
             include "Cerrar.php";
         ?>
         <br><a href='FormRelaciones.php' class='btn'>Realizar Otra Inserción</a><br>
-        <br><a href='GestionP.php'><img src='../imagenes/home.png' height='100' width='90'></a>
+        <br><a href='gestionP.php'><img src='../imagenes/home.png' height='100' width='90'></a>
     </div>
 </body>
 </html>

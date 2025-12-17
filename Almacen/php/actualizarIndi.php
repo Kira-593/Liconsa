@@ -1,6 +1,6 @@
 <?php
 session_start();
-// Incluye la conexión a la base de datos
+// Incluye la conexión a la base de datos   
 include "Conexion.php";
 
 // 1. Verificar y obtener el ID del registro a modificar
@@ -17,7 +17,7 @@ if (!$res || mysqli_num_rows($res) == 0) {
     die("
     <!DOCTYPE html><html lang='es'><head><meta charset='UTF-8'><title>Error</title></head><body>
     <div class='container mt-5'><div class='alert alert-danger'>Error: Registro con ID $ID no encontrado o error en la consulta.</div></div>
-    </body></html>");
+    </body></html>");   
 }
 
 $row = mysqli_fetch_array($res);
@@ -183,7 +183,7 @@ include "Cerrar.php";
             </div>
             
             <!-- SECCIÓN DE FIRMA -->
-            <div class="firma-section">
+            <div class="firma-section mt-4 p-3 border rounded"  >
                 <h4>Firma Digital</h4>
                 
                 <?php if ($row['permitir_firmar'] && !$formulario_firmado): ?>
@@ -223,8 +223,8 @@ include "Cerrar.php";
             
             <div class="form-buttons">
                 <?php if (!$formulario_firmado): ?>
-                    <input type="submit" name="g" value="Guardar Cambios" class="btn btn-primary">
-                    <input type="button" value="Limpiar Campos" class="btn btn-secondary" onclick="limpiarCampos()"
+                    <input type="submit" name="g" value="Guardar Cambios" class="btn">
+                    <input type="button" value="Limpiar Campos" class="btn" onclick="limpiarCampos()"
                            <?= ($solo_firma) ? 'disabled' : '' ?>>
                 <?php else: ?>
                     <div class="alert alert-warning">

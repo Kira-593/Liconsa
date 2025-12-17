@@ -75,9 +75,10 @@ $es_admin = ($_SESSION['departamento'] === 'ADMIN');
         <section class="menu">
             <div class="menu-column">
                   <div class="menu-bottom">
-        <a href="IndiAdquisiciones.php" class="opc">
+        <a href="MenuIndi.php" class="opc">
             <img src="../imagenes/indicador.png" height="70" width="80" class="icono">
             <span>INDICADORES.</span>
+            <i class="fas fa-check icono-palomita"></i>
         </a>
             </div>
         </section>

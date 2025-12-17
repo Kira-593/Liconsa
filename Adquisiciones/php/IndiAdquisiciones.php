@@ -21,7 +21,7 @@
     <h4>Adquisiciones de Bienes Muebles y Servicios (10)</h4>
     
     <section class="registro">
-        <form method="post" action="GuardarPDC.php">
+        <form method="post" action="GuardarIndi.php">
         <div class="registro-container">
         <div class="registro-column">
 
@@ -118,8 +118,8 @@
                 <hr>
 
                 <div class="form-buttons">
-                    <input type="submit" name="g" value="Guardar">
-                    <input type="reset" name="b" value="Limpiar">
+                    <input type="submit" name="g" value="Guardar" class="btn">
+                    <input type="reset" name="b" value="Limpiar" class="btn">
                 </div>
 
             </div> <!-- cierre faltante -->
@@ -127,7 +127,7 @@
         </form>
     </section>
 
-    <a href="./AdquisicionesP.php" class="home-link">
+    <a href="MenuIndi.php" class="home-link">
         <img src="../imagenes/home.png" height="100" width="90">
     </a>
 </main>

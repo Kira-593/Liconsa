@@ -8,7 +8,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     // Validar tabla permitida
     $tablas_permitidas = [
-        'g_relacionesindustriales'
+        'g_relacionesindustriales',
+        'g_indicador_ma',
+        'g_indicador_da'
     ];
 
     if (!in_array($tabla, $tablas_permitidas)) {
@@ -43,7 +45,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     // Determinar la página de retorno basada en la tabla
     $paginas_retorno = [
-        'g_relacionesindustriales' => 'verRelaciones.php'
+        'g_relacionesindustriales' => 'verRelaciones.php',
+        'g_indicador_ma' => 'verIndiMa.php',
+        'g_indicador_da' => 'verIndiDa.php'
     ];
 
     $pagina_retorno = isset($paginas_retorno[$tabla]) ? $paginas_retorno[$tabla] : 'MenuConsulta.php';

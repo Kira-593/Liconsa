@@ -226,8 +226,8 @@ include "Cerrar.php";
             <div class="row mt-4">
                 <div class="col-12 text-center">
                     <?php if (!$formulario_firmado): ?>
-                        <input type="submit" value="Guardar Cambios" class="btn btn-primary me-2" id="btnGuardar">
-                        <input type="button" value="Limpiar Campos" class="btn btn-secondary" onclick="limpiarCampos()"
+                        <input type="submit" value="Guardar Cambios" class="btn" id="btnGuardar">
+                        <input type="button" value="Limpiar Campos" class="btn" onclick="limpiarCampos()"
                         <?= ($solo_firma) ? 'disabled' : '' ?>>
                     <?php else: ?>
                         <div class="alert alert-warning">Este formulario ya ha sido firmado y no puede ser modificado.</div>

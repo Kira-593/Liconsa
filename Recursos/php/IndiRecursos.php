@@ -21,7 +21,7 @@
     <h4>Recursos Financieros</h4>
     
     <section class="registro">
-        <form method="post" action="GuardarPDC.php">
+        <form method="post" action="GuardarIndi.php">
             <div class="registro-container">
                 <div class="registro-column">
 
@@ -84,8 +84,8 @@
                     <hr>
 
                     <div class="form-buttons">
-                        <input type="submit" name="g" value="Guardar">
-                        <input type="reset" name="b" value="Limpiar">
+                        <input type="submit" name="g" value="Guardar" class="btn">
+                        <input type="reset" name="b" value="Limpiar" class="btn">
                     </div>
 
                 </div>

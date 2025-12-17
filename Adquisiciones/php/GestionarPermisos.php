@@ -8,7 +8,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     // Validar tabla permitida
     $tablas_permitidas = [
-        'c_resumenadquisiciones'
+        'c_resumenadquisiciones',
+        'ad_indicador'
     ];
 
     if (!in_array($tabla, $tablas_permitidas)) {
@@ -43,7 +44,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     // Determinar la página de retorno basada en la tabla
     $paginas_retorno = [
-        'c_resumenadquisiciones' => 'verResumenA.php'
+        'c_resumenadquisiciones' => 'verResumenA.php',
+        'ad_indicador' => 'verIndi.php'
     ];
 
     $pagina_retorno = isset($paginas_retorno[$tabla]) ? $paginas_retorno[$tabla] : 'MenuConsulta.php';
