@@ -47,8 +47,8 @@ echo "
             <hr>
             
             <table class='info-tabla'>
-                <tr><td>ID del Registro:</td><td>{$row['id']}</td></tr>
                 <tr><td>Clave de Registro:</td><td>{$row['Claveregis']}</td></tr>
+                <tr><td>Fecha de Actualización:</td><td>" . date('d/m/Y', strtotime($row['FechaAct'])) . "</td></tr>
                 <tr><td>Fecha de Elaboración:</td><td>{$mes_formateado}</td></tr>
                 <tr><td>Periodo:</td><td>{$periodo_formateado}</td></tr>
                 <tr><td>Fecha de Registro:</td><td>" . date('d/m/Y H:i:s', strtotime($row['fecha_registro'])) . "</td></tr>
@@ -128,6 +128,14 @@ echo "
                 <tr><td>Permitir Modificar:</td><td>" . ($row['permitir_modificar'] ? '✅ ACTIVADO' : '❌ DESACTIVADO') . "</td></tr>
                 <tr><td>Permitir Firmar:</td><td>" . ($row['permitir_firmar'] ? '✅ ACTIVADO' : '❌ DESACTIVADO') . "</td></tr>
             </table>
+            
+            " . (!empty($row['firma_usuario']) ? "
+            <div class='seccion-titulo'>📝 Estado de Firma</div>
+            <table class='info-tabla'>
+                <tr><td>Documento Firmado por:</td><td>{$row['firma_usuario']}</td></tr>
+                <tr><td>Fecha de Firma:</td><td>" . date('d/m/Y H:i:s', strtotime($row['fecha_firma'])) . "</td></tr>
+            </table>
+            " : "") . "
             
             <hr>
             

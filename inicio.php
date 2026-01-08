@@ -1,19 +1,34 @@
 <?php
 // Obtener dominio permitido desde la tabla usuarios.validacion_correo.tipoCorreo
 $allowedDomain = '@lechebienestar.gob.mx';
-// Intentar conectar a la base de datos 'usuarios' para obtener el dominio
+$departamento_correos = [];
+
+// Intentar conectar a la base de datos 'usuarios' para obtener el dominio y correos por departamento
 try {
     $mysqli = new mysqli('localhost', 'root', '', 'usuario');
     if (!$mysqli->connect_error) {
+        // Obtener dominio permitido
         $res = $mysqli->query("SELECT tipoCorreo FROM validacion_correo LIMIT 1");
         if ($res && $row = $res->fetch_assoc()) {
             if (!empty($row['tipoCorreo'])) $allowedDomain = $row['tipoCorreo'];
         }
+        
+        // Obtener un correo por cada departamento (el primero activo o registrado)
+        $res_dept = $mysqli->query("SELECT DISTINCT departamento, correo FROM users WHERE activo = 1 ORDER BY departamento, id ASC");
+        if ($res_dept) {
+            while ($row = $res_dept->fetch_assoc()) {
+                if (!isset($departamento_correos[$row['departamento']])) {
+                    $departamento_correos[$row['departamento']] = $row['correo'];
+                }
+            }
+        }
+        
         $mysqli->close();
     }
 } catch (Exception $e) {
     // usar valor por defecto si falla
 }
+
 // Normalizar para que comience con @
 if (substr($allowedDomain, 0, 1) !== '@') {
     $allowedDomain = '@' . $allowedDomain;
@@ -34,6 +49,9 @@ if (substr($allowedDomain, 0, 1) !== '@') {
     <script>
         // Dominio permitido disponible para JavaScript
         window.allowedDomain = '<?php echo addslashes($allowedDomain); ?>';
+        
+        // Mapa de departamento -> correo para autocompletación
+        window.departamentoCorreos = <?php echo json_encode($departamento_correos, JSON_UNESCAPED_SLASHES); ?>;
     </script>
 </head>
 <body>
@@ -75,6 +93,19 @@ if (substr($allowedDomain, 0, 1) !== '@') {
                     <button>Entrar</button>
                        <!-- Contenedor para mensajes de intentos -->
                     <div id="attempts-message" class="attempts-message" style="display: none;"></div>
+                    
+                    <script>
+                        // Autocompletar correo según departamento seleccionado
+                        document.getElementById('departamento').addEventListener('change', function() {
+                            var dept = this.value;
+                            var correoField = document.getElementById('correo');
+                            if (dept && window.departamentoCorreos && window.departamentoCorreos[dept]) {
+                                correoField.value = window.departamentoCorreos[dept];
+                            } else {
+                                correoField.value = '';
+                            }
+                        });
+                    </script>
                 </form>
 
                     <form name="form" method="post" action="php/Guardar_login.php" class="formulario__register" required>

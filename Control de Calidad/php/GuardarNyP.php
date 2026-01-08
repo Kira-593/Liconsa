@@ -1,25 +1,36 @@
 <?php
     include "Conexion.php";
 
-    // Obtener los datos del formulario
-    $Indicador = $_POST["Indicador"];
-    $Mes = $_POST["Mes"];
-    $MinimoTMN = $_POST["MinimoTMN"];
-    $MaximoTMN = $_POST["MaximoTMN"];
-    $PromedioTPN = $_POST["PromedioTPN"];
-    $MinimoTE = $_POST["MinimoTE"];
-    $MaximoTE = $_POST["MaximoTE"];
-    $PromedioTP = $_POST["PromedioTP"];
+    // Obtener y sanitizar los datos del formulario
+    $Indicador = isset($_POST["Indicador"]) ? $_POST["Indicador"] : '';
+    $Mes = isset($_POST["Mes"]) ? $_POST["Mes"] : '';
+    $MinimoTMN = isset($_POST["MinimoTMN"]) ? $_POST["MinimoTMN"] : '';
+    $MaximoTMN = isset($_POST["MaximoTMN"]) ? $_POST["MaximoTMN"] : '';
+    $PromedioTPN = isset($_POST["PromedioTPN"]) ? $_POST["PromedioTPN"] : '';
+    $MinimoTE = isset($_POST["MinimoTE"]) ? $_POST["MinimoTE"] : '';
+    $MaximoTE = isset($_POST["MaximoTE"]) ? $_POST["MaximoTE"] : '';
+    $PromedioTP = isset($_POST["PromedioTP"]) ? $_POST["PromedioTP"] : '';
 
-    // Consulta para insertar los datos en la base de datos
-    $query = "INSERT INTO c_contenidoNetoPesoEnvase (
+    // Preparar sentencia para evitar inyección y problemas con valores sin comillas
+    $stmt = mysqli_prepare($link, "INSERT INTO c_contenidonetopesoenvase (
         Indicador, Mes, MinimoTMN, MaximoTMN, PromedioTPN, MinimoTE, MaximoTE, PromedioTP
-    ) VALUES (
-        '$Indicador', '$Mes', $MinimoTMN, $MaximoTMN, $PromedioTPN, $MinimoTE, $MaximoTE, $PromedioTP
-    )";
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
 
-    // Ejecutar la consulta
-    mysqli_query($link, $query);
+    $error = '';
+    $affected = 0;
+
+    if ($stmt) {
+        // Enlazamos todos como strings para que MySQL maneje la conversión; la sentencia preparada se encarga de las comillas
+        mysqli_stmt_bind_param($stmt, 'ssssssss', $Indicador, $Mes, $MinimoTMN, $MaximoTMN, $PromedioTPN, $MinimoTE, $MaximoTE, $PromedioTP);
+        if (mysqli_stmt_execute($stmt)) {
+            $affected = mysqli_stmt_affected_rows($stmt);
+        } else {
+            $error = mysqli_stmt_error($stmt);
+        }
+        mysqli_stmt_close($stmt);
+    } else {
+        $error = mysqli_error($link);
+    }
 ?>
 
 <!DOCTYPE html>
@@ -35,10 +46,19 @@
 <body>
     <div class="contenedor">
         <?php
-            if (mysqli_affected_rows($link) > 0) {
+            if (isset($affected) && $affected > 0) {
                 echo "<div class='mensaje correcto'>Registro guardado correctamente</div>";
             } else {
-                echo "<div class='mensaje error'>Error al guardar el registro. Error: " . mysqli_error($link) . "</div>";
+                $msg = '';
+                if (isset($error) && $error !== '') {
+                    $msg = $error;
+                } else {
+                    $msg = mysqli_error($link);
+                }
+                if ($msg === '') {
+                    $msg = 'Error desconocido al ejecutar la consulta.';
+                }
+                echo "<div class='mensaje error'>Error al guardar el registro. Error: " . htmlspecialchars($msg) . "</div>";
             }
             include "Cerrar.php";
         ?>

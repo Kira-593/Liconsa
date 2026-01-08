@@ -1,3 +1,6 @@
+<?php
+session_start();
+?>
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -15,12 +18,15 @@
 <body>
 <div class="container">
     <h2>Modificar Rutas de Distribución</h2>
-    
+     
     <?php
     include "Conexion.php";
     
-    $ID = $_GET["sc"] ?? die("<div class='alert alert-danger'>Error: ID no proporcionado.</div>");
-    $query = "SELECT * FROM p_rutasdistribucion WHERE id='$ID'";
+    // Verificar si el usuario es administrador
+    $es_admin = isset($_SESSION['departamento']) && $_SESSION['departamento'] === 'ADMIN';
+    
+    $ID = $_GET["id"] ?? $_GET["sc"] ?? die("<div class='alert alert-danger'>Error: ID de registro no proporcionado.</div>");
+    $query = "SELECT * FROM p_rutasdistribucion WHERE id='$ID'"; 
     $res = mysqli_query($link, $query);
     
     if (!$res || mysqli_num_rows($res) == 0) {
@@ -33,8 +39,8 @@
     $solo_firma = $row['permitir_firmar'] && !$row['permitir_modificar'];
     $formulario_firmado = !empty($row['firma_usuario']);
     
-    // Si solo está permitido firmar y el formulario ya está firmado, bloquear todo
-    if ($solo_firma && $formulario_firmado) {
+    // Si solo está permitido firmar y el formulario ya está firmado, y NO es admin: bloquear
+    if ($solo_firma && $formulario_firmado && !$es_admin) {
         echo "<script>
             alert('Este formulario ya ha sido firmado y no puede ser modificado.');
             window.location.href = 'MenuModifi.php';
@@ -42,18 +48,26 @@
         exit();
     }
 
-    // Si no tiene permisos de modificación ni firma
-    if (!$row['permitir_modificar'] && !$row['permitir_firmar']) {
+    // Si no tiene permisos de modificación ni firma, y NO es admin
+    if (!$row['permitir_modificar'] && !$row['permitir_firmar'] && !$es_admin) {
         echo "<script>
             alert('No tienes permisos para modificar o firmar este formulario. Contacta al administrador.');
-            window.location.href = 'MenuModifi.php';
+            window.location.href = 'MenuIndi.php';
         </script>";
         exit();
     }
 
+    // Mostrar alerta si es admin accediendo a un registro firmado
+    if ($es_admin && $formulario_firmado) {
+        echo "<div class='alert alert-warning alert-section'>
+            <strong>🔓 Acceso de Administrador</strong><br>
+            Como administrador, puedes modificar este formulario firmado y deshacer la firma si es necesario.
+        </div>";
+    }
+
     // Mostrar estado de firma si ya está firmado
     if ($formulario_firmado): ?>
-        <div class="alert alert-info">
+        <div class="alert alert-info alert-section">
             <strong>✅ Formulario Firmado</strong><br>
             Firmado por: <?= $row['firma_usuario'] ?><br>
             Fecha: <?= $row['fecha_firma'] ?>
@@ -68,7 +82,7 @@
                 <div>
                     <label for="Mes">Mes:</label>
                     <input type="date" id="Mes" name="Mes" value="<?= $row['Mes'] ?? '' ?>" 
-                           <?= ($solo_firma || $formulario_firmado) ? 'readonly' : '' ?> required>
+                           <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?> required>
                 </div>
 
                 <div>
@@ -77,42 +91,42 @@
                     <hr>
                     <label for="LitrosTRuno">Litros Desplazados de R1:</label>
                     <input type="number" id="LitrosTRuno" name="LitrosTRuno" value="<?= $row['LitrosTRuno'] ?? '' ?>" 
-                           <?= ($solo_firma || $formulario_firmado) ? 'readonly' : '' ?> required>
+                           <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?> required>
                 </div>
                 <div>
                     <label for="PorcentajeTRuno">Porcentaje que Representa R1:</label>
                     <input type="number" id="PorcentajeTRuno" name="PorcentajeTRuno" placeholder="Ej. 27%" value="<?= $row['PorcentajeTRuno'] ?? '' ?>" 
-                           <?= ($solo_firma || $formulario_firmado) ? 'readonly' : '' ?> required>
+                           <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?> required>
                 </div>
                 <div>
                     <label for="LitrosTRdos">Litros Desplazados de R2:</label>
                     <input type="number" id="LitrosTRdos" name="LitrosTRdos" value="<?= $row['LitrosTRdos'] ?? '' ?>" 
-                           <?= ($solo_firma || $formulario_firmado) ? 'readonly' : '' ?> required>
+                           <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?> required>
                 </div>
                 <div>
                     <label for="PorcentajeTRdos">Porcentaje que Representa R2:</label>
                     <input type="number" id="PorcentajeTRdos" name="PorcentajeTRdos" placeholder="Ej. 26%" value="<?= $row['PorcentajeTRdos'] ?? '' ?>" 
-                           <?= ($solo_firma || $formulario_firmado) ? 'readonly' : '' ?> required>
+                           <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?> required>
                 </div>
                 <div>
                     <label for="LitrosTRtres">Litros Desplazados de R3:</label>
                     <input type="number" id="LitrosTRtres" name="LitrosTRtres" value="<?= $row['LitrosTRtres'] ?? '' ?>" 
-                           <?= ($solo_firma || $formulario_firmado) ? 'readonly' : '' ?> required>
+                           <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?> required>
                 </div>
                 <div>
                     <label for="PorcentajeTRtres">Porcentaje que Representa R3:</label>
                     <input type="number" id="PorcentajeTRtres" name="PorcentajeTRtres" placeholder="Ej. 29%" value="<?= $row['PorcentajeTRtres'] ?? '' ?>" 
-                           <?= ($solo_firma || $formulario_firmado) ? 'readonly' : '' ?> required>
+                           <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?> required>
                 </div>
                 <div>
                     <label for="LitrosTRcuatro">Litros Desplazados de R4:</label>
                     <input type="number" id="LitrosTRcuatro" name="LitrosTRcuatro" value="<?= $row['LitrosTRcuatro'] ?? '' ?>" 
-                           <?= ($solo_firma || $formulario_firmado) ? 'readonly' : '' ?> required>
+                           <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?> required>
                 </div>
                 <div>
                     <label for="PorcentajeTRcuatro">Porcentaje que Representa R4:</label>
                     <input type="number" id="PorcentajeTRcuatro" name="PorcentajeTRcuatro" placeholder="Ej. 18%" value="<?= $row['PorcentajeTRcuatro'] ?? '' ?>" 
-                           <?= ($solo_firma || $formulario_firmado) ? 'readonly' : '' ?> required>
+                           <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?> required>
                 </div>
             </div>
         </div>
@@ -155,22 +169,35 @@
             <?php endif; ?>
         </div>
         
-        <div class="row mt-4">
-            <div class="col-12 text-center">
+         <div class="form-buttons">
                 <?php if (!$formulario_firmado): ?>
-                    <input type="submit" value="Guardar Cambios" class="btn btn-primary me-2" id="btnGuardar">
+                    <input type="submit" name="g" value="Guardar Cambios" class="btn btn-primary">
                     <input type="button" value="Limpiar Campos" class="btn btn-secondary" onclick="limpiarCampos()"
-                    <?= ($solo_firma) ? 'disabled' : '' ?>>
+                           <?= ($solo_firma) ? 'disabled' : '' ?>>
                 <?php else: ?>
-                    <div class="alert alert-warning">
-                        Este formulario ya ha sido firmado y no puede ser modificado.
-                    </div>
-                <?php endif; ?>
-            </div>
-        </div>
+                    <input type="submit" name="g" value="Guardar Cambios" class="btn btn-primary" 
+                           <?= $es_admin ? '' : 'disabled' ?>>
+                    <input type="button" value="Limpiar Campos" class="btn btn-secondary" onclick="limpiarCampos()"
+                           <?= ($solo_firma || !$es_admin) ? 'disabled' : '' ?>>
+                    
+                    <?php if ($es_admin && $formulario_firmado): ?>
+                        <form method="POST" action="HacerIndi.php" style="display:inline;">
+                            <input type="hidden" name="id" value="<?= $row['id'] ?>">
+                            <input type="hidden" name="action" value="undo_signature">
+                            <input type="submit" value="Deshacer Firma" class="btn btn-warning"
+                                   onclick="return confirm('¿Estás seguro de que deseas deshacer la firma de este formulario?')">
+                        </form>
+                    <?php endif; ?>
+                    
+                        <?php if (!$es_admin): ?>
+                            <div class="alert alert-warning mt-3">
+                                Este formulario ya ha sido firmado y no puede ser modificado.
+                            </div>
+                        <?php endif; ?>
+                    <?php endif; ?>
     </form>
 
-    <br><a href="MenuModifi.php" class="back-link">
+    <br><br><a href="MenuModifi.php" class="back-link">
         <img src="../imagenes/home.png" height="100" width="90" alt="Volver">
     </a>
 </div>

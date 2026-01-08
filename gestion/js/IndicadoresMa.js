@@ -12,9 +12,9 @@
 
         const valornuevosip = parseFloat(NuevosIP.value) || 0;
         const valornumevaluaciones = parseFloat(NumEvaluaciones.value) || 0;
-    
-        porCumplimientoCAP.value = (valorcapampar / valorcapaprog) *100;
-        porCumplimientoET.value = (valornumevaluaciones/valornuevosip ) *100;
+
+        porCumplimientoCAP.value = ((valorcapampar / valorcapaprog) *100).toFixed(2);
+        porCumplimientoET.value = ((valornumevaluaciones/valornuevosip ) *100).toFixed(2);
     }
 
     capaImpar.addEventListener('input', actualizarTotal);

@@ -1,51 +1,5 @@
 <?php
-// Incluye la conexión a la base de datos
-include "Conexion.php";
-
-// 1. Verificar y obtener el ID del registro a modificar
-// Se usa 'sc' para obtener el ID.
-$ID = $_GET["sc"] ?? die("
-    <!DOCTYPE html><html lang='es'><head><meta charset='UTF-8'><title>Error</title></head><body>
-    <div class='container mt-5'><div class='alert alert-danger'>Error: ID de registro (sc) no proporcionado.</div></div>
-    </body></html>");
-
-// La tabla es 'c_captacionleche'
-// Seleccionamos TODOS los campos para prellenar el formulario
-$query = "SELECT * FROM c_captacionleche WHERE id='$ID'"; 
-$res = mysqli_query($link, $query);
-
-if (!$res || mysqli_num_rows($res) == 0) {
-    die("
-    <!DOCTYPE html><html lang='es'><head><meta charset='UTF-8'><title>Error</title></head><body>
-    <div class='container mt-5'><div class='alert alert-danger'>Error: Registro con ID $ID no encontrado o error en la consulta.</div></div>
-    </body></html>");
-}
-
-$row = mysqli_fetch_array($res);
-
-// Permisos y estado de firma
-$solo_firma = !empty($row['permitir_firmar']) && empty($row['permitir_modificar']);
-$formulario_firmado = !empty($row['firma_usuario']);
-
-// Si solo está permitido firmar y ya está firmado, bloquear todo
-if ($solo_firma && $formulario_firmado) {
-        echo "<script>
-            alert('Este formulario ya ha sido firmado y no puede ser modificado.');
-            window.location.href = 'MenuModifi.php';
-        </script>";
-        exit();
-}
-
-// Si no tiene permisos de modificación ni firma
-if (empty($row['permitir_modificar']) && empty($row['permitir_firmar'])) {
-        echo "<script>
-            alert('No tienes permisos para modificar o firmar este formulario. Contacta al administrador.');
-            window.location.href = 'MenuModifi.php';
-        </script>";
-        exit();
-}
-
-include "Cerrar.php"; 
+session_start();
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -70,20 +24,67 @@ include "Cerrar.php";
 <main class="container">
     
     <h1>Modificar Registro de Captación de Leche</h1>
+
+      <?php
+    include "Conexion.php";
+    
+    // Verificar si el usuario es administrador
+    $es_admin = isset($_SESSION['departamento']) && $_SESSION['departamento'] === 'ADMIN';
+    
+    $ID = $_GET["id"] ?? $_GET["sc"] ?? die("<div class='alert alert-danger'>Error: ID de registro no proporcionado.</div>");
+    $query = "SELECT * FROM c_captacionleche WHERE id='$ID'"; 
+    $res = mysqli_query($link, $query);
+    
+    if (!$res || mysqli_num_rows($res) == 0) {
+        die("<div class='alert alert-danger'>Error: Registro no encontrado.</div>");
+    }
+    
+    $row = mysqli_fetch_array($res);
+
+    // Verificar permisos
+    $solo_firma = $row['permitir_firmar'] && !$row['permitir_modificar'];
+    $formulario_firmado = !empty($row['firma_usuario']);
+    
+    // Si solo está permitido firmar y el formulario ya está firmado, y NO es admin: bloquear
+    if ($solo_firma && $formulario_firmado && !$es_admin) {
+        echo "<script>
+            alert('Este formulario ya ha sido firmado y no puede ser modificado.');
+            window.location.href = 'MenuModifi.php';
+        </script>";
+        exit();
+    }
+
+    // Si no tiene permisos de modificación ni firma, y NO es admin
+    if (!$row['permitir_modificar'] && !$row['permitir_firmar'] && !$es_admin) {
+        echo "<script>
+            alert('No tienes permisos para modificar o firmar este formulario. Contacta al administrador.');
+            window.location.href = 'MenuModifi.php';
+        </script>";
+        exit();
+    }
+
+    // Mostrar alerta si es admin accediendo a un registro firmado
+    if ($es_admin && $formulario_firmado) {
+        echo "<div class='alert alert-warning alert-section'>
+            <strong>🔓 Acceso de Administrador</strong><br>
+            Como administrador, puedes modificar este formulario firmado y deshacer la firma si es necesario.
+        </div>";
+    }
+
+    // Mostrar estado de firma si ya está firmado
+    if ($formulario_firmado): ?>
+        <div class="alert alert-info alert-section">
+            <strong>✅ Formulario Firmado</strong><br>
+            Firmado por: <?= $row['firma_usuario'] ?><br>
+            Fecha: <?= $row['fecha_firma'] ?>
+        </div>
+    <?php endif; ?>
     
     <section class="registro">
         <!-- La acción del formulario se dirige al script de actualización -->
         <form action="HacerRCT.php" method="POST" class="needs-validation" id="formulario">
             <!-- Campo oculto para pasar el ID del registro a actualizar -->
             <input type="hidden" value="<?= $row['id'] ?? '' ?>" name="id">
-
-            <?php if ($formulario_firmado): ?>
-            <div class="alert alert-info">
-                <strong>✅ Formulario Firmado</strong><br>
-                Firmado por: <?= $row['firma_usuario'] ?><br>
-                Fecha: <?= $row['fecha_firma'] ?>
-            </div>
-            <?php endif; ?>
         
             <div class="registro-container">
                 <div class="registro-column">
@@ -93,7 +94,7 @@ include "Cerrar.php";
                         <label for="Provedor">Provedor:</label>
                         <input type="text" id="Provedor" name="Proveedor" 
                                value="<?= $row['Proveedor'] ?? '' ?>" 
-                               <?= ($solo_firma || $formulario_firmado) ? 'readonly' : '' ?>
+                               <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
                                placeholder="Ej. Nombre, locacion, periodo" required>
                     </div>
 
@@ -102,7 +103,7 @@ include "Cerrar.php";
                         <label for="Folio">Folio:</label>
                         <input type="number" id="Folio" name="Folio" 
                                value="<?= $row['Folio'] ?? '' ?>" 
-                               <?= ($solo_firma || $formulario_firmado) ? 'readonly' : '' ?>
+                               <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
                                placeholder="Ej. 151" required>
                     </div>
 
@@ -111,7 +112,7 @@ include "Cerrar.php";
                         <label for="FechaDictamen">Fecha de Dictamen:</label>
                         <input type="date" id="FechaDictamen" name="FechaDictamen" 
                                value="<?= $row['FechaDictamen'] ?? '' ?>" 
-                               <?= ($solo_firma || $formulario_firmado) ? 'readonly' : '' ?>
+                               <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
                                placeholder="Ej. 01/07/2025" required>
                     </div>
 
@@ -120,7 +121,7 @@ include "Cerrar.php";
                         <label for="Remision">Remisión:</label>
                         <input type="text" id="Remision" name="Remision" 
                                value="<?= $row['Remision'] ?? '' ?>" 
-                               <?= ($solo_firma || $formulario_firmado) ? 'readonly' : '' ?>
+                               <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
                                placeholder="Ej. SJU-481" required>
                     </div>
 
@@ -129,7 +130,7 @@ include "Cerrar.php";
                         <label for="Densidad">Densidad (g/mL):</label>
                         <input type="number" step="0.0001" id="Densidad" name="Densidad" 
                                value="<?= $row['Densidad'] ?? '' ?>" 
-                                   <?= ($solo_firma || $formulario_firmado) ? 'readonly' : '' ?>
+                                   <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
                                    placeholder="Ej. 1.0315" required>
                     </div>
 
@@ -138,7 +139,7 @@ include "Cerrar.php";
                         <label for="Volumen">Volumen (Litros):</label>
                         <input type="number" step="0.01" id="Volumen" name="Volumen" 
                                value="<?= $row['Volumen'] ?? '' ?>" 
-                                   <?= ($solo_firma || $formulario_firmado) ? 'readonly' : '' ?>
+                                   <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
                                    placeholder="Ej. 14,009" required>
                     </div>
 
@@ -147,7 +148,7 @@ include "Cerrar.php";
                         <label for="Grasa">Grasa (g/L):</label>
                         <input type="number" step="0.1" id="Grasa" name="Grasa" 
                                value="<?= $row['Grasa'] ?? '' ?>" 
-                                   <?= ($solo_firma || $formulario_firmado) ? 'readonly' : '' ?>
+                                   <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
                                    placeholder="Ej. 38.3" required>
                     </div>
 
@@ -156,7 +157,7 @@ include "Cerrar.php";
                         <label for="SNG">S.N.G. (g/L):</label>
                         <input type="number" step="0.1" id="SNG" name="SNG" 
                                value="<?= $row['SNG'] ?? '' ?>" 
-                                   <?= ($solo_firma || $formulario_firmado) ? 'readonly' : '' ?>
+                                   <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
                                    placeholder="Ej. 90.1" required>
                     </div>
 
@@ -165,7 +166,7 @@ include "Cerrar.php";
                         <label for="Proteina">Proteína (g/L):</label>
                         <input type="number" step="0.1" id="Proteina" name="Proteina" 
                                value="<?= $row['Proteina'] ?? '' ?>" 
-                                   <?= ($solo_firma || $formulario_firmado) ? 'readonly' : '' ?>
+                                   <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
                                    placeholder="Ej. 32.8" required>
                     </div>
 
@@ -174,7 +175,7 @@ include "Cerrar.php";
                         <label for="Caseina">Caseína (g/L):</label>
                         <input type="number" step="0.1" id="Caseina" name="Caseina" 
                                value="<?= $row['Caseina'] ?? '' ?>" 
-                                   <?= ($solo_firma || $formulario_firmado) ? 'readonly' : '' ?>
+                                   <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
                                    placeholder="Ej. 25.5" required>
                     </div>
 
@@ -183,7 +184,7 @@ include "Cerrar.php";
                         <label for="Acidez">Acidez (g/L):</label>
                         <input type="number" step="0.01" id="Acidez" name="Acidez" 
                                value="<?= $row['Acidez'] ?? '' ?>" 
-                                   <?= ($solo_firma || $formulario_firmado) ? 'readonly' : '' ?>
+                                   <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
                                    placeholder="Ej. 1.45" required>
                     </div>
 
@@ -192,7 +193,7 @@ include "Cerrar.php";
                         <label for="Temperatura">Temperatura (°C):</label>
                         <input type="number" step="0.1" id="Temperatura" name="Temperatura" 
                                value="<?= $row['Temperatura'] ?? '' ?>" 
-                                   <?= ($solo_firma || $formulario_firmado) ? 'readonly' : '' ?>
+                                   <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
                                    placeholder="Ej. 5" required>
                     </div>
 
@@ -201,7 +202,7 @@ include "Cerrar.php";
                         <label for="PH">P.C. °H:</label>
                         <input type="number" step="0.001" id="PH" name="PH" 
                                value="<?= $row['PH'] ?? '' ?>" 
-                                   <?= ($solo_firma || $formulario_firmado) ? 'readonly' : '' ?>
+                                   <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
                                    placeholder="Ej. -0.546" required>
                     </div>
 
@@ -210,7 +211,7 @@ include "Cerrar.php";
                         <label for="Reductasa">Reductasa (min):</label>
                         <input type="number" id="Reductasa" name="Reductasa" 
                                value="<?= $row['Reductasa'] ?? '' ?>" 
-                                   <?= ($solo_firma || $formulario_firmado) ? 'readonly' : '' ?>
+                                   <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
                                    placeholder="Ej. 340" required>
                     </div>
                 </div>
@@ -255,14 +256,33 @@ include "Cerrar.php";
                 <?php endif; ?>
             </div>
 
-            <div class="form-buttons mt-4">
+            
+                   <div class="form-buttons">
                 <?php if (!$formulario_firmado): ?>
-                    <input type="submit" name="g" value="Guardar Cambios">
-                    <input type="button" name="b" value="Limpiar" onclick="limpiarCampos()"
-                    <?= ($solo_firma) ? 'disabled' : '' ?>>
+                    <input type="submit" name="g" value="Guardar Cambios" class="btn btn-primary">
+                    <input type="button" value="Limpiar Campos" class="btn btn-secondary" onclick="limpiarCampos()"
+                           <?= ($solo_firma) ? 'disabled' : '' ?>>
                 <?php else: ?>
-                    <div class="alert alert-warning">Este formulario ya ha sido firmado y no puede ser modificado.</div>
-                <?php endif; ?>
+                    <input type="submit" name="g" value="Guardar Cambios" class="btn btn-primary" 
+                           <?= $es_admin ? '' : 'disabled' ?>>
+                    <input type="button" value="Limpiar Campos" class="btn btn-secondary" onclick="limpiarCampos()"
+                           <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'disabled' : '' ?>>
+                    
+                    <?php if ($es_admin && $formulario_firmado): ?>
+                        <form method="POST" action="HacerRCT.php" style="display:inline;">
+                            <input type="hidden" name="id" value="<?= $row['id'] ?>">
+                            <input type="hidden" name="action" value="undo_signature">
+                            <input type="submit" value="Deshacer Firma" class="btn btn-warning"
+                                   onclick="return confirm('¿Estás seguro de que deseas deshacer la firma de este formulario?')">
+                        </form>
+                    <?php endif; ?>
+                    
+                        <?php if (!$es_admin): ?>
+                            <div class="alert alert-warning mt-3">
+                                Este formulario ya ha sido firmado y no puede ser modificado.
+                            </div>
+                        <?php endif; ?>
+                    <?php endif; ?>
             </div>
         </form>
     </section>

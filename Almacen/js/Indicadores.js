@@ -7,7 +7,7 @@
         const valorsumen = parseFloat(sumen.value) || 0;
         const valornumencuestas = parseFloat(numencuestas.value) || 0;
     
-        puntossatisfaccion.value = valorsumen/valornumencuestas;
+        puntossatisfaccion.value = (valorsumen/valornumencuestas).toFixed(2);
     }
 
     sumen.addEventListener('input', actualizarTotal);

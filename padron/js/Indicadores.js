@@ -47,19 +47,20 @@ document.addEventListener('DOMContentLoaded', function() {
         const valorTotalEncues = parseFloat(totalEncues.value) || 0;
         const valorMaxPuntos = parseFloat(maxPuntos.value) || 0;
         const valorTPTE = parseFloat(TPTE.value) || 0;
+        
 
 
-        PEncuestas.value =  valorTPTE / (valorTotalEncues * valorMaxPuntos);
+        PEncuestas.value =   ((valorTotalEncues * valorMaxPuntos)/valorTPTE).toFixed(2);
     
-        FacRetP.value = valorLitp/valorBenefip/valorDiasp;
+        FacRetP.value = (valorLitp/valorBenefip/valorDiasp).toFixed(2);
     
-        FacRetLi.value = valorLit/valorBenefi/valorDias;
+        FacRetLi.value = (valorLit/valorBenefi/valorDias).toFixed(2);
     
-        MetaReal.value = valorBenef*100/ valorMetabe;
+        MetaReal.value = (valorBenef*100/ valorMetabe).toFixed(2);
     
-        porcentajeTNE.value =(valorTNE * 100) / valorFamilias ;
+        porcentajeTNE.value =((valorTNE * 100) / valorFamilias).toFixed(2); ;
 
-        PQNA.value = (valorQuejasAtendidas / valorQuejasR) *100 ;
+        PQNA.value = ((valorQuejasAtendidas / valorQuejasR) *100).toFixed(2); ;
     }
 
     familiasInscritas.addEventListener('input', actualizarTotal);
@@ -75,5 +76,6 @@ document.addEventListener('DOMContentLoaded', function() {
     totalEncues.addEventListener('input', actualizarTotal);
     maxPuntos.addEventListener('input', actualizarTotal);
     TPTE.addEventListener('input', actualizarTotal);
+    
 
 });

@@ -14,8 +14,8 @@
         const valorNumObservaciones = parseFloat(NumObservaciones.value) || 0;
         const valorNumPuntosEvaluados = parseFloat(NumPuntosEvaluados.value) || 0;
 
-        CalibracionEquipos.value = (valorNumEquiposAtendidos / valorNumEquiposProgramados)*100;
-        CumplimientoPuntosEvaluados.value = (valorNumObservaciones / valorNumPuntosEvaluados)*100;
+        CalibracionEquipos.value = ((valorNumEquiposAtendidos / valorNumEquiposProgramados)*100).toFixed(2);
+        CumplimientoPuntosEvaluados.value = ((valorNumObservaciones / valorNumPuntosEvaluados)*100).toFixed(2);
     }
 
     NumEquiposAtendidos.addEventListener('input', actualizarTotal);

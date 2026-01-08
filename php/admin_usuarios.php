@@ -312,7 +312,9 @@ $estadisticas = $stats_result->fetch_assoc();
                                 <th>Información</th>
                                 <th>Departamento</th>
                                 <th>Estado</th>
-                                <th>Acciones</th>
+                                <th>Modificar usuario</th>
+                                <th>Cambiar contraseña</th>
+                                <th>Activar/Desactivar</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -352,46 +354,46 @@ $estadisticas = $stats_result->fetch_assoc();
                                                 <?php echo $usuario['activo'] ? 'Activo' : 'Inactivo'; ?>
                                             </span>
                                         </td>
-                                        <td>
-                                            <div class="btn-group" role="group">
-                                                <!-- Botón Editar -->
-                                                <button type="button" class="btn btn-warning btn-sm btn-action" 
-                                                        data-bs-toggle="modal" 
-                                                        data-bs-target="#modalEditarUsuario"
-                                                        data-usuario='<?php echo htmlspecialchars(json_encode($usuario), ENT_QUOTES); ?>'>
-                                                    <i class="fas fa-edit"></i>
-                                                </button>
-                                                
-                                                 <!-- Botón Cambiar Contraseña -->
-                                                <button type="button" class="btn btn-info btn-sm btn-action" 
-                                                        data-bs-toggle="modal" 
-                                                        data-bs-target="#modalCambiarPassword"
-                                                        data-user-id="<?php echo $usuario['id']; ?>"
-                                                        data-user-correo="<?php echo htmlspecialchars($usuario['correo']); ?>">
-                                                    <i class="fas fa-key"></i>
-                                                </button>
-                                                
-                                                <!-- Botón Activar/Desactivar -->
-                                                <?php if ($usuario['activo']): ?>
-                                                    <form method="POST" class="d-inline">
-                                                        <input type="hidden" name="action" value="eliminar">
-                                                        <input type="hidden" name="user_id" value="<?php echo $usuario['id']; ?>">
-                                                        <button type="submit" class="btn btn-danger btn-sm btn-action"
-                                                                onclick="return confirm('¿Desactivar este usuario?')">
-                                                            <i class="fas fa-user-slash"></i>
-                                                        </button>
-                                                    </form>
-                                                <?php else: ?>
-                                                    <form method="POST" class="d-inline">
-                                                        <input type="hidden" name="action" value="activar">
-                                                        <input type="hidden" name="user_id" value="<?php echo $usuario['id']; ?>">
-                                                        <button type="submit" class="btn btn-success btn-sm btn-action"
-                                                                onclick="return confirm('¿Activar este usuario?')">
-                                                            <i class="fas fa-user-check"></i>
-                                                        </button>
-                                                    </form>
-                                                <?php endif; ?>
-                                            </div>
+                                        <td align="center">
+                                            <!-- Botón Editar -->
+                                            <button type="button" class="btn btn-warning btn-sm btn-action" 
+                                                    data-bs-toggle="modal" 
+                                                    data-bs-target="#modalEditarUsuario"
+                                                    data-usuario='<?php echo htmlspecialchars(json_encode($usuario), ENT_QUOTES); ?>'>
+                                                <i class="fas fa-edit"></i>
+                                            </button>
+                                        </td>
+                                        <td align="center">
+                                            <!-- Botón Cambiar Contraseña -->
+                                            <button type="button" class="btn btn-info btn-sm btn-action" 
+                                                    data-bs-toggle="modal" 
+                                                    data-bs-target="#modalCambiarPassword"
+                                                    data-user-id="<?php echo $usuario['id']; ?>"
+                                                    data-user-correo="<?php echo htmlspecialchars($usuario['correo']); ?>">
+                                                <i class="fas fa-key"></i>
+                                            </button>
+                                        </td>
+                                        <td align="center">
+                                            <!-- Botón Activar/Desactivar -->
+                                            <?php if ($usuario['activo']): ?>
+                                                <form method="POST" class="d-inline">
+                                                    <input type="hidden" name="action" value="eliminar">
+                                                    <input type="hidden" name="user_id" value="<?php echo $usuario['id']; ?>">
+                                                    <button type="submit" class="btn btn-danger btn-sm btn-action"
+                                                            onclick="return confirm('¿Desactivar este usuario?')">
+                                                        <i class="fas fa-user-slash"></i>
+                                                    </button>
+                                                </form>
+                                            <?php else: ?>
+                                                <form method="POST" class="d-inline">
+                                                    <input type="hidden" name="action" value="activar">
+                                                    <input type="hidden" name="user_id" value="<?php echo $usuario['id']; ?>">
+                                                    <button type="submit" class="btn btn-success btn-sm btn-action"
+                                                            onclick="return confirm('¿Activar este usuario?')">
+                                                        <i class="fas fa-user-check"></i>
+                                                    </button>
+                                                </form>
+                                            <?php endif; ?>
                                         </td>
                                     </tr>
                                 <?php endforeach; ?>

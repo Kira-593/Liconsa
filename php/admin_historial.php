@@ -18,6 +18,39 @@ if ($conexion->connect_error) {
     echo "<div class=\"alert alert-danger\">Error de conexión a la base de datos. Intente más tarde.</div>";
     exit();
 }
+// Mensajes para la interfaz
+$mensaje = '';
+$tipo_mensaje = '';
+
+// Procesar acciones POST (eliminar por año)
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'delete_year') {
+    $year = intval($_POST['year'] ?? 0);
+    if ($year > 0) {
+        $stmt = $conexion->prepare("DELETE FROM user_history WHERE YEAR(created_at) = ?");
+        if ($stmt) {
+            $stmt->bind_param('i', $year);
+            if ($stmt->execute()) {
+                $affected = $stmt->affected_rows;
+                $mensaje = "Se eliminaron $affected registros del año $year.";
+                $tipo_mensaje = 'success';
+                // Registrar en historial la eliminación
+                if (function_exists('registrarHistorial')) {
+                    registrarHistorial("Eliminó historial por año", "Historial", "Eliminó $affected registros del año $year");
+                }
+            } else {
+                $mensaje = 'Error al eliminar registros: ' . $stmt->error;
+                $tipo_mensaje = 'danger';
+            }
+            $stmt->close();
+        } else {
+            $mensaje = 'Error al preparar la consulta: ' . $conexion->error;
+            $tipo_mensaje = 'danger';
+        }
+    } else {
+        $mensaje = 'Año inválido.';
+        $tipo_mensaje = 'warning';
+    }
+}
 // Procesar filtros
 $limite = isset($_GET['limite']) ? intval($_GET['limite']) : 100;
 $usuario = isset($_GET['usuario']) ? trim($_GET['usuario']) : '';
@@ -27,6 +60,39 @@ $fecha_fin = isset($_GET['fecha_fin']) ? $_GET['fecha_fin'] : '';
 // Obtener historial
 $historial = obtenerHistorial($limite, $usuario, $fecha_inicio, $fecha_fin);
 $estadisticas = obtenerEstadisticasHistorial(30);
+
+// Obtener años disponibles en el historial para el selector
+$years = [];
+$res_years = $conexion->query("SELECT DISTINCT YEAR(created_at) as y FROM user_history ORDER BY y DESC");
+if ($res_years === false) {
+    error_log('Error obteniendo años del historial: ' . $conexion->error);
+} else {
+    while ($r = $res_years->fetch_assoc()) {
+        $years[] = intval($r['y']);
+    }
+}
+
+// Si no hay años distintos (p.ej. tras limpieza), tratar de obtener un rango por min/max
+if (empty($years)) {
+    $r2 = $conexion->query("SELECT MIN(YEAR(created_at)) as min_y, MAX(YEAR(created_at)) as max_y FROM user_history");
+    if ($r2 && $row2 = $r2->fetch_assoc()) {
+        $min_y = intval($row2['min_y']);
+        $max_y = intval($row2['max_y']);
+        if ($min_y > 0 && $max_y >= $min_y) {
+            for ($y = $max_y; $y >= $min_y; $y--) {
+                $years[] = $y;
+            }
+        }
+    }
+}
+
+// Si aún no hay años, incluir el año actual como opción de respaldo (no destructiva)
+if (empty($years)) {
+    $years[] = intval(date('Y'));
+    $years_fallback = true;
+} else {
+    $years_fallback = false;
+}
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -138,11 +204,49 @@ $estadisticas = obtenerEstadisticasHistorial(30);
                                     <i class="fas fa-refresh me-1"></i>Limpiar
                                 </a>
                             </div>
-                        </form>
-                    </div>
-                </div>
+                                </form>
+                            </div>
+                        </div>
 
-                <div class="row mb-4">
+                        <?php if (!empty($mensaje)): ?>
+                            <div class="alert alert-<?php echo htmlspecialchars($tipo_mensaje ?: 'info'); ?> alert-dismissible fade show mt-3" role="alert">
+                                <?php echo htmlspecialchars($mensaje); ?>
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                            </div>
+                        <?php endif; ?>
+
+                        <!-- Eliminar por año -->
+                        <div class="card mb-4">
+                            <div class="card-header">
+                                <h6 class="mb-0"><i class="fas fa-trash-alt me-2"></i>Eliminar registros por año</h6>
+                            </div>
+                            <div class="card-body">
+                                <form method="POST" onsubmit="return confirm('¿Eliminar todos los registros del año ' + document.getElementById('delete_year_select').value + '? Esta acción no se puede deshacer.');" class="row g-3">
+                                    <input type="hidden" name="action" value="delete_year">
+                                    <div class="col-md-4">
+                                        <label class="form-label">Año</label>
+                                        <select id="delete_year_select" name="year" class="form-select" required <?php echo ($years_fallback ? '' : ''); ?> >
+                                            <?php if (empty($years) || ($years_fallback ?? false)): ?>
+                                                <option value="<?php echo intval(date('Y')); ?>"><?php echo intval(date('Y')); ?> (sin registros reales)</option>
+                                            <?php else: ?>
+                                                <option value="">Seleccionar año</option>
+                                                <?php foreach ($years as $y): ?>
+                                                    <option value="<?php echo $y; ?>"><?php echo $y; ?></option>
+                                                <?php endforeach; ?>
+                                            <?php endif; ?>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-8 d-flex align-items-end">
+                                        <button type="submit" class="btn btn-danger" <?php echo (empty($years) && !$years_fallback) ? 'disabled' : ''; ?>>
+                                            <i class="fas fa-trash me-1"></i>Eliminar registros del año
+                                        </button>
+                                        <div class="form-text ms-3">Acción irreversible — asegúrese antes de continuar.</div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+
+                        <div class="row mb-4">
     <div class="col-12">
         <div class="card">
             <div class="card-header">

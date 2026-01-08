@@ -25,6 +25,9 @@ session_start();
     <?php
     include "Conexion.php";
     
+    // Verificar si el usuario es administrador
+    $es_admin = isset($_SESSION['departamento']) && $_SESSION['departamento'] === 'ADMIN';
+    
     $ID = $_GET["id"] ?? $_GET["sc"] ?? die("<div class='alert alert-danger'>Error: ID de registro no proporcionado.</div>");
     $query = "SELECT * FROM i_indicador WHERE id='$ID'"; 
     $res = mysqli_query($link, $query);
@@ -36,25 +39,33 @@ session_start();
     $row = mysqli_fetch_array($res);
 
     // Verificar permisos
-    $solo_firma = !empty($row['permitir_firmar']) && empty($row['permitir_modificar']);
+    $solo_firma = $row['permitir_firmar'] && !$row['permitir_modificar'];
     $formulario_firmado = !empty($row['firma_usuario']);
     
-    // Si solo está permitido firmar y el formulario ya está firmado, bloquear todo
-    if ($solo_firma && $formulario_firmado) {
+    // Si solo está permitido firmar y el formulario ya está firmado, y NO es admin: bloquear
+    if ($solo_firma && $formulario_firmado && !$es_admin) {
         echo "<script>
             alert('Este formulario ya ha sido firmado y no puede ser modificado.');
-            window.location.href = 'MenuIndi.php';
+            window.location.href = 'InformaticaP.php';
         </script>";
         exit();
     }
 
-    // Si no tiene permisos de modificación ni firma
-    if (empty($row['permitir_modificar']) && empty($row['permitir_firmar'])) {
+    // Si no tiene permisos de modificación ni firma, y NO es admin
+    if (!$row['permitir_modificar'] && !$row['permitir_firmar'] && !$es_admin) {
         echo "<script>
             alert('No tienes permisos para modificar o firmar este formulario. Contacta al administrador.');
-            window.location.href = 'MenuIndi.php';
+            window.location.href = 'InfomaticaP.php';
         </script>";
         exit();
+    }
+
+    // Mostrar alerta si es admin accediendo a un registro firmado
+    if ($es_admin && $formulario_firmado) {
+        echo "<div class='alert alert-warning alert-section'>
+            <strong>🔓 Acceso de Administrador</strong><br>
+            Como administrador, puedes modificar este formulario firmado y deshacer la firma si es necesario.
+        </div>";
     }
 
     // Mostrar estado de firma si ya está firmado
@@ -78,19 +89,19 @@ session_start();
                             <input type="text" id="Claveregis" name="Claveregis" 
                                    value="<?= $row['Claveregis'] ?? '' ?>" 
                                    placeholder="Ingrese la cantidad" 
-                                   <?= ($solo_firma || $formulario_firmado) ? 'readonly' : '' ?>
+                                   <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
                                    required>
                         </div>
                         <label for="Mes">Fecha de Elaboración:</label>
                         <input type="date" id="Mes" name="Mes" 
                                value="<?= $row['Mes'] ?? '' ?>" 
-                               <?= ($solo_firma || $formulario_firmado) ? 'readonly' : '' ?>
+                               <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
                                required>
                         
                         <label for="Periodo">Periodo:</label>
                         <input type="date" id="Periodo" name="Periodo" 
                                value="<?= $row['Periodo'] ?? '' ?>" 
-                               <?= ($solo_firma || $formulario_firmado) ? 'readonly' : '' ?>
+                               <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
                                required>
                     </div>
                     
@@ -106,7 +117,7 @@ session_start();
                         <input type="number" id="SolicitudesAtendidas" name="SolicitudesAtendidas" 
                                value="<?= $row['SolicitudesAtendidas'] ?? '' ?>" 
                                placeholder="Ingrese la cantidad" 
-                               <?= ($solo_firma || $formulario_firmado) ? 'readonly' : '' ?>
+                               <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
                                required step="any">
                     </div>
                     <div>
@@ -114,7 +125,7 @@ session_start();
                         <input type="number" id="NumSolicitudes" name="NumSolicitudes" 
                                value="<?= $row['NumSolicitudes'] ?? '' ?>" 
                                placeholder="Ingrese la cantidad" 
-                               <?= ($solo_firma || $formulario_firmado) ? 'readonly' : '' ?>
+                               <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
                                required step="any">
                     </div>
                     <div>
@@ -122,7 +133,7 @@ session_start();
                         <input type="number" id="PorSolicitudesAtendidas" name="PorSolicitudesAtendidas" 
                                value="<?= $row['PorSolicitudesAtendidas'] ?? '' ?>" 
                                placeholder="%:" 
-                               <?= ($solo_firma || $formulario_firmado) ? 'readonly' : '' ?>
+                               <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
                                required step="any">
                     </div>
                     <div>
@@ -130,7 +141,7 @@ session_start();
                         <input type="number" id="EventualidadesMes" name="EventualidadesMes" 
                                value="<?= $row['EventualidadesMes'] ?? '' ?>" 
                                placeholder="Ej. 0" 
-                               <?= ($solo_firma || $formulario_firmado) ? 'readonly' : '' ?>
+                               <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
                                required step="any">
                     </div>
                     <div>
@@ -138,7 +149,7 @@ session_start();
                         <input type="text" id="MetaEsperadaMB" name="MetaEsperadaMB" 
                                value="<?= $row['MetaEsperadaMB'] ?? '' ?>" 
                                placeholder="La meta esperada es:" 
-                               <?= ($solo_firma || $formulario_firmado) ? 'readonly' : '' ?>
+                               <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
                                required>
                     </div>
                     <div>
@@ -146,7 +157,7 @@ session_start();
                         <input type="text" id="RangoAceptMB" name="RangoAceptMB" 
                                value="<?= $row['RangoAceptMB'] ?? '' ?>" 
                                placeholder="Ej. 95% al 100%" 
-                               <?= ($solo_firma || $formulario_firmado) ? 'readonly' : '' ?>
+                               <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
                                required>
                     </div>
                     <div>
@@ -154,7 +165,7 @@ session_start();
                         <input type="text" id="TendenciaDeseadaMB" name="TendenciaDeseadaMB" 
                                value="<?= $row['TendenciaDeseadaMB'] ?? '' ?>" 
                                placeholder="Ej. Mantener el 100% de las Solicitudes Atendidas" 
-                               <?= ($solo_firma || $formulario_firmado) ? 'readonly' : '' ?>
+                               <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
                                required>
                     </div>
                     
@@ -165,14 +176,14 @@ session_start();
                         <input type="text" id="Responsable" name="Responsable" 
                                value="<?= $row['Responsable'] ?? '' ?>" 
                                placeholder="Nombre del responsable" 
-                               <?= ($solo_firma || $formulario_firmado) ? 'readonly' : '' ?>
+                               <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
                                required>
                     </div>
                     <div>
                         <label for="Fuente">Fuente:</label><br><br>
                         <textarea id="Fuente" name="Fuente" rows="4" 
                                   placeholder="Fuente" 
-                                  <?= ($solo_firma || $formulario_firmado) ? 'readonly' : '' ?>
+                                  <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
                                   required><?= $row['Fuente'] ?? '' ?></textarea>
                     </div>
                 </div>
@@ -218,16 +229,32 @@ session_start();
             </div>
 
             <div class="form-buttons">
-                <?php if (!$formulario_firmado): ?>
-                    <input type="submit" name="g" value="Guardar Cambios" class="btn">
-                    <input type="button" value="Limpiar Campos" class="btn" onclick="limpiarCampos()"
-                           <?= ($solo_firma) ? 'disabled' : '' ?>>
-                <?php else: ?>
-                    <div class="alert alert-warning">
-                        Este formulario ya ha sido firmado y no puede ser modificado.
-                    </div>
-                <?php endif; ?>
-            </div>
+                    <?php if (!$formulario_firmado): ?>
+                        <input type="submit" name="g" value="Guardar Cambios" class="btn btn-primary">
+                        <input type="button" value="Limpiar Campos" class="btn btn-secondary" onclick="limpiarCampos()"
+                            <?= ($solo_firma) ? 'disabled' : '' ?>>
+                    <?php else: ?>
+                        <input type="submit" name="g" value="Guardar Cambios" class="btn btn-primary" 
+                            <?= $es_admin ? '' : 'disabled' ?>>
+                        <input type="button" value="Limpiar Campos" class="btn btn-secondary" onclick="limpiarCampos()"
+                            <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'disabled' : '' ?>>
+                        
+                        <?php if ($es_admin && $formulario_firmado): ?>
+                            <form method="POST" action="HacerIndi.php" style="display:inline;">
+                                <input type="hidden" name="id" value="<?= $row['id'] ?>">
+                                <input type="hidden" name="action" value="undo_signature">
+                                <input type="submit" value="Deshacer Firma" class="btn btn-warning"
+                                    onclick="return confirm('¿Estás seguro de que deseas deshacer la firma de este formulario?')">
+                            </form>
+                        <?php endif; ?>
+                        
+                            <?php if (!$es_admin): ?>
+                                <div class="alert alert-warning mt-3">
+                                    Este formulario ya ha sido firmado y no puede ser modificado.
+                                </div>
+                            <?php endif; ?>
+                        <?php endif; ?>
+                </div>
         </form>
     </section>
 

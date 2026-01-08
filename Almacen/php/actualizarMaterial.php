@@ -1,3 +1,6 @@
+<?php
+session_start();
+?>
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -18,10 +21,11 @@
     <?php
     include "Conexion.php";
     
-    // Se usa 'sc' para obtener el ID
-    $ID = $_GET["sc"] ?? die("<div class='alert alert-danger'>Error: ID de registro (sc) no proporcionado.</div>");
-    // Consulta para obtener los datos existentes de la tabla a_existenciasmaterial
-    $query = "SELECT * FROM a_existenciasmaterial WHERE id='$ID'";
+    // Verificar si el usuario es administrador
+    $es_admin = isset($_SESSION['departamento']) && $_SESSION['departamento'] === 'ADMIN';
+    
+    $ID = $_GET["id"] ?? $_GET["sc"] ?? die("<div class='alert alert-danger'>Error: ID de registro no proporcionado.</div>");
+    $query = "SELECT * FROM a_existenciasmaterial WHERE id='$ID'"; 
     $res = mysqli_query($link, $query);
     
     if (!$res || mysqli_num_rows($res) == 0) {
@@ -30,36 +34,45 @@
     
     $row = mysqli_fetch_array($res);
 
-    // Verificar permisos (coincide con lógica de actualizarSubg)
-    $solo_firma = !empty($row['permitir_firmar']) && empty($row['permitir_modificar']);
+    // Verificar permisos
+    $solo_firma = $row['permitir_firmar'] && !$row['permitir_modificar'];
     $formulario_firmado = !empty($row['firma_usuario']);
     
-    // Si solo está permitido firmar y el formulario ya está firmado, bloquear todo
-    if ($solo_firma && $formulario_firmado) {
+    // Si solo está permitido firmar y el formulario ya está firmado, y NO es admin: bloquear
+    if ($solo_firma && $formulario_firmado && !$es_admin) {
         echo "<script>
             alert('Este formulario ya ha sido firmado y no puede ser modificado.');
             window.location.href = 'MenuModifi.php';
         </script>";
-        include 'Cerrar.php';
         exit();
     }
 
-    // Si no tiene permisos de modificación ni firma
-    if (empty($row['permitir_modificar']) && empty($row['permitir_firmar'])) {
+    // Si no tiene permisos de modificación ni firma, y NO es admin
+    if (!$row['permitir_modificar'] && !$row['permitir_firmar'] && !$es_admin) {
         echo "<script>
             alert('No tienes permisos para modificar o firmar este formulario. Contacta al administrador.');
             window.location.href = 'MenuModifi.php';
         </script>";
-        include 'Cerrar.php';
         exit();
     }
 
-    // Mostrar estado de firma si ya está firmado
-    if ($formulario_firmado) {
-        echo "<div class='alert alert-info'><strong>✅ Formulario Firmado</strong><br>Firmado por: {$row['firma_usuario']}<br>Fecha: {$row['fecha_firma']}</div>";
+    // Mostrar alerta si es admin accediendo a un registro firmado
+    if ($es_admin && $formulario_firmado) {
+        echo "<div class='alert alert-warning alert-section'>
+            <strong>🔓 Acceso de Administrador</strong><br>
+            Como administrador, puedes modificar este formulario firmado y deshacer la firma si es necesario.
+        </div>";
     }
-    ?>
 
+    // Mostrar estado de firma si ya está firmado
+    if ($formulario_firmado): ?>
+        <div class="alert alert-info alert-section">
+            <strong>✅ Formulario Firmado</strong><br>
+            Firmado por: <?= $row['firma_usuario'] ?><br>
+            Fecha: <?= $row['fecha_firma'] ?>
+        </div>
+    <?php endif; ?>
+    
     <section class="registro">
         <!-- El formulario envía los datos al script HacerMaterial.php (acción 'hacer' como en Subg) -->
         <form action="HacerMaterial.php?action=hacer" method="POST" class="needs-validation" id="formulario">
@@ -71,7 +84,7 @@
                     
                     <div>
                         <label for="Indicador">Material</label>
-                        <select id="Indicador" name="Indicador" <?= ($solo_firma || $formulario_firmado) ? 'disabled' : '' ?> required>
+                        <select id="Indicador" name="Indicador" <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'disabled' : '' ?> required>
                              <!-- Preselecciona la opción actual -->
                             <option value="Existencias de Materia Prima" <?= ($row['Indicador'] == 'Existencias de Materia Prima') ? 'selected' : '' ?>>Existencias de Materia Prima</option>
                             <option value="Existencias de Material de Envase" <?= ($row['Indicador'] == 'Existencias de Material de Envase') ? 'selected' : '' ?>>Existencias de Material de Envase</option>
@@ -80,37 +93,37 @@
 
                     <div>
                         <label for="Mes">Mes:</label>
-                        <input type="date" id="Mes" name="Mes" value="<?= $row['Mes'] ?? '' ?>" <?= ($solo_firma || $formulario_firmado) ? 'readonly' : '' ?> required>
+                        <input type="date" id="Mes" name="Mes" value="<?= $row['Mes'] ?? '' ?>" <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?> required>
                     </div>
                     
                     <h3 class="mt-4 mb-3">Detalles del Material</h3>
                     
                     <div>
                         <label for="CodigoTC">Código:</label>
-                        <input type="number" id="CodigoTC" name="CodigoTC" value="<?= $row['CodigoTC'] ?? '' ?>" <?= ($solo_firma || $formulario_firmado) ? 'readonly' : '' ?> placeholder="Ej. 576" required step="any">
+                        <input type="number" id="CodigoTC" name="CodigoTC" value="<?= $row['CodigoTC'] ?? '' ?>" <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?> placeholder="Ej. 576" required step="any">
                     </div>
                     <div>
                         <label for="DescripcionTD">Descripción:</label>
-                        <input type="text" id="DescripcionTD" name="DescripcionTD" value="<?= $row['DescripcionTD'] ?? '' ?>" <?= ($solo_firma || $formulario_firmado) ? 'readonly' : '' ?> placeholder="Ej. Polietileno para Frisia de 1LT" required>
+                        <input type="text" id="DescripcionTD" name="DescripcionTD" value="<?= $row['DescripcionTD'] ?? '' ?>" <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?> placeholder="Ej. Polietileno para Frisia de 1LT" required>
                     </div>
                     
                     <h3 class="mt-4 mb-3">Cantidades (en Kg o Unidad equivalente)</h3>
                     
                     <div>
                         <label for="CantidadITC">Cantidad Inicial:</label>
-                        <input type="number" id="CantidadITC" name="CantidadITC" value="<?= $row['CantidadITC'] ?? '' ?>" <?= ($solo_firma || $formulario_firmado) ? 'readonly' : '' ?> placeholder="Kg" required step="any">
+                        <input type="number" id="CantidadITC" name="CantidadITC" value="<?= $row['CantidadITC'] ?? '' ?>" <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?> placeholder="Kg" required step="any">
                     </div>
                     <div>
                         <label for="CantidadETC">Cantidad de Entradas:</label>
-                        <input type="number" id="CantidadETC" name="CantidadETC" value="<?= $row['CantidadETC'] ?? '' ?>" <?= ($solo_firma || $formulario_firmado) ? 'readonly' : '' ?> placeholder="Kg" required step="any">
+                        <input type="number" id="CantidadETC" name="CantidadETC" value="<?= $row['CantidadETC'] ?? '' ?>" <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?> placeholder="Kg" required step="any">
                     </div>
                     <div>
                         <label for="CantidadCTC">Cantidad de Consumo:</label>
-                        <input type="number" id="CantidadCTC" name="CantidadCTC" value="<?= $row['CantidadCTC'] ?? '' ?>" <?= ($solo_firma || $formulario_firmado) ? 'readonly' : '' ?> placeholder="Kg" required step="any">
+                        <input type="number" id="CantidadCTC" name="CantidadCTC" value="<?= $row['CantidadCTC'] ?? '' ?>" <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?> placeholder="Kg" required step="any">
                     </div>
                     <div>
                         <label for="CantidadFTC">Cantidad Final:</label>
-                        <input type="number" id="CantidadFTC" name="CantidadFTC" value="<?= $row['CantidadFTC'] ?? '' ?>" <?= ($solo_firma || $formulario_firmado) ? 'readonly' : '' ?> placeholder="Kg" required step="any">
+                        <input type="number" id="CantidadFTC" name="CantidadFTC" value="<?= $row['CantidadFTC'] ?? '' ?>" <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?> placeholder="Kg" required step="any">
                     </div>
                 </div>
             </div>
@@ -153,23 +166,39 @@
                     </div>
                 <?php endif; ?>
             </div>
+
             
-            <div class="row mt-4">
-                <div class="col-12 text-center">
-                    <?php if (!$formulario_firmado): ?>
-                        <input type="submit" value="Guardar Cambios" class="btn btn-primary me-2" id="btnGuardar">
-                        <input type="button" value="Limpiar Campos" class="btn btn-secondary" onclick="limpiarCampos()"
-                        <?= ($solo_firma) ? 'disabled' : '' ?>>
-                    <?php else: ?>
-                        <div class="alert alert-warning">Este formulario ya ha sido firmado y no puede ser modificado.</div>
+           <div class="form-buttons">
+                <?php if (!$formulario_firmado): ?>
+                    <input type="submit" name="g" value="Guardar Cambios" class="btn btn-primary">
+                    <input type="button" value="Limpiar Campos" class="btn btn-secondary" onclick="limpiarCampos()"
+                           <?= ($solo_firma) ? 'disabled' : '' ?>>
+                <?php else: ?>
+                    <input type="submit" name="g" value="Guardar Cambios" class="btn btn-primary" 
+                           <?= $es_admin ? '' : 'disabled' ?>>
+                    <input type="button" value="Limpiar Campos" class="btn btn-secondary" onclick="limpiarCampos()"
+                           <?= ($solo_firma || !$es_admin) ? 'disabled' : '' ?>>
+                    
+                    <?php if ($es_admin && $formulario_firmado): ?>
+                        <form method="POST" action="HacerMaterial.php" style="display:inline;">
+                            <input type="hidden" name="id" value="<?= $row['id'] ?>">
+                            <input type="hidden" name="action" value="undo_signature">
+                            <input type="submit" value="Deshacer Firma" class="btn btn-warning"
+                                   onclick="return confirm('¿Estás seguro de que deseas deshacer la firma de este formulario?')">
+                        </form>
                     <?php endif; ?>
-                </div>
-            </div>
+                    
+                        <?php if (!$es_admin): ?>
+                            <div class="alert alert-warning mt-3">
+                                Este formulario ya ha sido firmado y no puede ser modificado.
+                            </div>
+                        <?php endif; ?>
+                    <?php endif; ?>
+            
         </form>
     </section>
     
     <?php include "Cerrar.php"; ?>
-    
     <a href="MenuModifi.php" class="home-link"><img src="../imagenes/home.png" height="100" width="90"></a>
 </div>
 </body>

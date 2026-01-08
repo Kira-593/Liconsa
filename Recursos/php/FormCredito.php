@@ -5,6 +5,7 @@
 	<meta charset="UTF-8">
     <script src="../js/cargas.js"></script>
     <script src="../js/SumaT.js"></script>
+    <script src="../js/limpiar.js"></script>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
 	<link rel="stylesheet" href="../css/formCredito.css">
     <img src="../imagenes/AgriculturaLogo.png" class="logo-superior" alt="Logo Agricultura">
@@ -33,11 +34,11 @@
                     
 
                     <label for="CantidadLTF">Cantidad de litros:</label>
-                    <input type="text" id="CantidadLTF" name="CantidadLTF" placeholder="Lts" required step="any" >
+                    <input type="number" id="CantidadLTF" name="CantidadLTF" placeholder="Lts" required step="any" >
                 </div>
                 <div>
                     <label for="ImporteTF">Importe:</label>
-                    <input type="text" id="ImporteTF" name="ImporteTF" placeholder="$" required step="any">
+                    <input type="number" id="ImporteTF" name="ImporteTF" placeholder="$" required step="any">
                 </div>
                  <div>
                     <label for="PorcentajeTF">Porcentaje que Representa en la Factura:</label>
@@ -48,11 +49,11 @@
                     <label>Leche Frisia</label><br><br>
                     
                     <label for="CantidadLTFR">Cantidad de litros:</label>
-                    <input type="text" id="CantidadLTFR" name="CantidadLTFR" placeholder="Lts" required step="any">
+                    <input type="number" id="CantidadLTFR" name="CantidadLTFR" placeholder="Lts" required step="any">
                 </div>
                 <div>
                     <label for="ImporteTFR">Importe:</label>
-                    <input type="text" id="ImporteTFR" name="ImporteTFR" placeholder="$" required step="any">
+                    <input type="number" id="ImporteTFR" name="ImporteTFR" placeholder="$" required step="any">
                 </div>
                  <div>
                     <label for="PorcentajeTFR">Porcentaje que Representa en la Factura:</label>
@@ -63,11 +64,11 @@
                     <label>Leche de Polvo AS</label><br><br>
                     
                     <label for="CantidadLTPAS">Cantidad de litros:</label>
-                    <input type="text" id="CantidadLTPAS" name="CantidadLTPAS" placeholder="Lts" required step="any">
+                    <input type="number" id="CantidadLTPAS" name="CantidadLTPAS" placeholder="Lts" required step="any">
                 </div>
                 <div>
                     <label for="ImporteTPAS">Importe:</label>
-                    <input type="text" id="ImporteTPAS" name="ImporteTPAS" placeholder="$" required step="any">
+                    <input type="number" id="ImporteTPAS" name="ImporteTPAS" placeholder="$" required step="any">
                 </div>
                  <div>
                     <label for="PorcentajeTPAS">Porcentaje que Representa en la Factura:</label>
@@ -78,11 +79,11 @@
                     <label>Leche de Polvo Comercial</label><br><br>
                     
                     <label for="CantidadLTPC">Cantidad de litros:</label>
-                    <input type="text" id="CantidadLTPC" name="CantidadLTPC" placeholder="Lts" required step="any">
+                    <input type="number" id="CantidadLTPC" name="CantidadLTPC" placeholder="Lts" required step="any">
                 </div>
                 <div>
                     <label for="ImporteLTPC">Importe:</label>
-                    <input type="text" id="ImporteLTPC" name="ImporteLTPC" placeholder="$" required step="any">
+                    <input type="number" id="ImporteLTPC" name="ImporteLTPC" placeholder="$" required step="any">
                 </div>
                  <div>
                     <label for="PorcentajeLTPC">Porcentaje que Representa en la Factura:</label>
@@ -93,11 +94,11 @@
                     <label>Leche de UHT</label><br><br>
 
                     <label for="CantidadLTUHT">Cantidad de litros:</label>
-                    <input type="text" id="CantidadLTUHT" name="CantidadLTUHT" placeholder="Lts" required step="any">
+                    <input type="number" id="CantidadLTUHT" name="CantidadLTUHT" placeholder="Lts" required step="any">
                 </div>
                 <div>
                     <label for="ImporteLTUHT">Importe:</label>
-                    <input type="text" id="ImporteLTUHT" name="ImporteLTUHT" placeholder="$" required step="any">
+                    <input type="number" id="ImporteLTUHT" name="ImporteLTUHT" placeholder="$" required step="any">
                 </div>
                  <div>
                     <label for="PorcentajeLTUHT">Porcentaje que Representa en la Factura    :</label>
@@ -115,7 +116,7 @@
                     <label>Análisis de Saldos Vencidos</label><br>
                     <hr>
                     <label for="TotalFacturadoMes">Total Facturado en el Mes:</label>
-                    <input type="text" id="TotalFacturadoMes" name="TotalFacturadoMes" placeholder="$" required step="any">
+                    <input type="number" id="TotalFacturadoMes" name="TotalFacturadoMes" placeholder="$" required step="any">
                 </div>
                  <div>
                     <label for="TotalDepositosMes">Total de Depositos en el Mes:</label>
@@ -178,8 +179,8 @@
             </div>
              </div>
                 <div class="form-buttons">
-                <input type="submit" name="g" value="Guardar">
-                <input type="reset" name="b" value="Limpiar">
+                <input type="submit" name="g" value="Guardar" class="btn">
+                <input type="button" name="b" value="Limpiar" class="btn" onclick="limpiarCampos()">
             </div>
             
         </form>

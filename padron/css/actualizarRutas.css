@@ -4,7 +4,7 @@ body {
     color: #fcfcfc;
     text-align: center;
     margin: 0;
-    height: 120vh; /* Asegura que el body ocupe toda la altura de la ventana */
+    height: 150vh; /* Asegura que el body ocupe toda la altura de la ventana */
     display: flex;
     flex-direction: column;
     justify-content: center;

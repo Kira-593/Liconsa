@@ -1,7 +1,36 @@
 <?php
 date_default_timezone_set('America/Mexico_City');
+session_start();
+
 // Incluye la conexión a la base de datos
 include "Conexion.php";
+
+// Verificar si es administrador
+$es_admin = isset($_SESSION['departamento']) && $_SESSION['departamento'] === 'ADMIN';
+
+// Procesar acción de deshacer firma (solo admin)
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'undo_signature') {
+    if (!$es_admin) {
+        echo "<script>alert('No tienes permisos para deshacer firmas.'); window.history.back();</script>";
+        exit();
+    }
+    
+    $ID = intval($_POST['id'] ?? 0);
+    if ($ID <= 0) {
+        echo "<script>alert('ID inválido.'); window.history.back();</script>";
+        exit();
+    }
+    
+    // CORRECCIÓN: Eliminar el error de sintaxis en la consulta
+    $update_query = "UPDATE p_factorretiro SET firma_usuario = '', fecha_firma = NULL WHERE id = $ID";
+    
+    if (mysqli_query($link, $update_query)) {
+        echo "<script>alert('Firma deshacha correctamente. El formulario está listo para editar.'); window.location.href = 'actualizarFactor.php?id=$ID';</script>";
+    } else {
+        echo "<script>alert('Error al deshacer firma: " . addslashes(mysqli_error($link)) . "'); window.history.back();</script>";
+    }
+    exit();
+}
 
 // 1. Obtener los 5 datos del formulario (Factor de Retiro)
 $ID = $_POST["id"] ?? ''; // ID es la clave para el UPDATE
@@ -10,10 +39,13 @@ $Mes = $_POST["Mes"] ?? '';
 $FactorRTF = $_POST["FactorRTF"] ?? '';
 $AlcanceTA = $_POST["AlcanceTA"] ?? '';
 
-// Procesar firma si se solicitó
+// Variables para la firma
 $firma_usuario = null;
 $fecha_firma = null;
 $firma_realizada = false;
+$clave_firma = '';
+
+// Procesar firma si se solicitó
 if (isset($_POST['firmar_documento']) && $_POST['firmar_documento'] == 'on') {
     $clave_firma = $_POST['clave_firma'] ?? '';
     
@@ -34,6 +66,7 @@ if (isset($_POST['firmar_documento']) && $_POST['firmar_documento'] == 'on') {
         include "Cerrar.php";
         exit;
     }
+    
     // Verificar la clave de firma en la base de datos de usuarios
     $query_verificar_firma = "SELECT correo, claveF FROM users WHERE claveF = ? LIMIT 1";
     $stmt_verificar = mysqli_prepare($link_usuario, $query_verificar_firma);
@@ -48,28 +81,18 @@ if (isset($_POST['firmar_documento']) && $_POST['firmar_documento'] == 'on') {
             $firma_usuario = $usuario_firma['correo'];
             $fecha_firma = date('Y-m-d H:i:s');
             $firma_realizada = true;
-
-            // Consulta preparada CON firma
-            $query = "UPDATE p_factorretiro SET 
-                        Indicador = ?, 
-                        Mes = ?, 
-                        FactorRTF = ?, 
-                        AlcanceTA = ?,
-                        firma_usuario = ?, 
-                        fecha_firma = ?
-                      WHERE id = ?";
         } else {
-                echo "<script>
-                    alert('Clave de firma inválida. No se pudo firmar el documento.');
-                    window.history.back();
-                </script>";
-                mysqli_stmt_close($stmt_verificar);
-                $link_usuario->close();
-                include "Cerrar.php";
-                exit;
-            }
+            echo "<script>
+                alert('Clave de firma inválida. No se pudo firmar el documento.');
+                window.history.back();
+            </script>";
             mysqli_stmt_close($stmt_verificar);
             $link_usuario->close();
+            include "Cerrar.php";
+            exit;
+        }
+        mysqli_stmt_close($stmt_verificar);
+        $link_usuario->close();
     } else {
         echo "<script>
             alert('Error al verificar la firma.');
@@ -79,6 +102,20 @@ if (isset($_POST['firmar_documento']) && $_POST['firmar_documento'] == 'on') {
         include "Cerrar.php";
         exit;
     }
+}
+
+// Preparar la consulta según si hay firma o no
+if ($firma_realizada) {
+    // Consulta preparada CON firma
+    $query = "UPDATE p_factorretiro SET 
+                Indicador = ?, 
+                Mes = ?, 
+                FactorRTF = ?, 
+                AlcanceTA = ?,
+                firma_usuario = ?, 
+                fecha_firma = ?
+              WHERE id = ?";
+    $tipos = "sssssss"; // Tipos de datos: s=string, i=integer
 } else {
     // Consulta preparada SIN firma
     $query = "UPDATE p_factorretiro SET
@@ -87,6 +124,7 @@ if (isset($_POST['firmar_documento']) && $_POST['firmar_documento'] == 'on') {
                 FactorRTF = ?, 
                 AlcanceTA = ?
               WHERE id = ?";
+    $tipos = "sssss"; // Tipos de datos: s=string, i=integer
 }
 
 $stmt = mysqli_prepare($link, $query);
@@ -99,15 +137,26 @@ if (!$stmt) {
     include "Cerrar.php";
     exit;
 }
+
+// Vincular los parámetros según si hay firma o no
 if ($firma_realizada) {
-    // 2. Vincular los parámetros para la consulta CON firma
-    mysqli_stmt_bind_param($stmt, "sssssii",
-    $Indicador, $Mes, $FactorRTF, $AlcanceTA, $firma_usuario,
-     $fecha_firma, $ID);
+    mysqli_stmt_bind_param($stmt, $tipos, 
+        $Indicador, 
+        $Mes, 
+        $FactorRTF, 
+        $AlcanceTA,
+        $firma_usuario,
+        $fecha_firma,
+        $ID
+    );
 } else {
-    // 2. Vincular los parámetros para la consulta SIN firma
-    mysqli_stmt_bind_param($stmt, "ssssi",
-     $Indicador, $Mes, $FactorRTF, $AlcanceTA, $ID);
+    mysqli_stmt_bind_param($stmt, $tipos, 
+        $Indicador, 
+        $Mes, 
+        $FactorRTF, 
+        $AlcanceTA,
+        $ID
+    );
 }
 
 // Ejecutar la consulta preparada
@@ -123,7 +172,7 @@ mysqli_stmt_close($stmt);
 <head>
     <meta charset="UTF-8">
     <title>Registro Actualizado</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" xintegrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <!-- Se usa el CSS de hacer.css para el mensaje de resultado -->
     <link rel="stylesheet" href="../css/hacer.css"> 
     <img src="../imagenes/AgriculturaLogo.png" class="logo-superior" alt="Logo Agricultura">

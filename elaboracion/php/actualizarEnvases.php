@@ -1,48 +1,6 @@
 <?php
-    include "Conexion.php";
-
-    // Se usa 'sc' para obtener el ID del registro a modificar
-$ID = $_GET["sc"] ?? die("
-    <!DOCTYPE html><html lang='es'><head><meta charset='UTF-8'><title>Error</title></head><body>
-    <div class='container mt-5'><div class='alert alert-danger'>Error: ID de registro (sc) no proporcionado.</div></div>
-    </body></html>");   
-    // Consulta para obtener los datos existentes de la nueva tabla e_envases
-    $query = "SELECT * FROM e_envases_rotos WHERE id='$ID'"; 
-    $res = mysqli_query($link, $query);
-
-    if (!$res || mysqli_num_rows($res) == 0) {
-    die("
-    <!DOCTYPE html><html lang='es'><head><meta charset='UTF-8'><title>Error</title></head><body>
-    <div class='container mt-5'><div class='alert alert-danger'>Error: Registro con ID $ID no encontrado o error en la consulta.</div></div>
-    </body></html>");
-}
-
-    $row = mysqli_fetch_array($res);
-
-    // Verificar permisos (coincidente con actualizarMermas.php)
-    $solo_firma = !empty($row['permitir_firmar']) && empty($row['permitir_modificar']);
-    $formulario_firmado = !empty($row['firma_usuario']);
-
-    // Si solo está permitido firmar y el formulario ya está firmado, bloquear todo
-    if ($solo_firma && $formulario_firmado) {
-        echo "<script>
-            alert('Este formulario ya ha sido firmado y no puede ser modificado.');
-            window.location.href = 'MenuModifi.php';
-        </script>";
-        exit();
-    }
-
-    // Si no tiene permisos de modificación ni firma
-    if (empty($row['permitir_modificar']) && empty($row['permitir_firmar'])) {
-        echo "<script>
-            alert('No tienes permisos para modificar o firmar este formulario. Contacta al administrador.');
-            window.location.href = 'MenuModifi.php';
-        </script>";
-        exit();
-    }
-
-    include "Cerrar.php";
-    ?>
+session_start();
+?>
 
 <!DOCTYPE html>
 <html lang="es">
@@ -64,26 +22,73 @@ $ID = $_GET["sc"] ?? die("
     
     <h1>Modificar Registro de Envases Rotos</h1>
 
+      <?php
+    include "Conexion.php";
+    
+    // Verificar si el usuario es administrador
+    $es_admin = isset($_SESSION['departamento']) && $_SESSION['departamento'] === 'ADMIN';
+    
+    $ID = $_GET["id"] ?? $_GET["sc"] ?? die("<div class='alert alert-danger'>Error: ID de registro no proporcionado.</div>");
+    $query = "SELECT * FROM e_envases_rotos WHERE id='$ID'"; 
+    $res = mysqli_query($link, $query);
+    
+    if (!$res || mysqli_num_rows($res) == 0) {
+        die("<div class='alert alert-danger'>Error: Registro no encontrado.</div>");
+    }
+    
+    $row = mysqli_fetch_array($res);
+
+    // Verificar permisos
+    $solo_firma = $row['permitir_firmar'] && !$row['permitir_modificar'];
+    $formulario_firmado = !empty($row['firma_usuario']);
+    
+    // Si solo está permitido firmar y el formulario ya está firmado, y NO es admin: bloquear
+    if ($solo_firma && $formulario_firmado && !$es_admin) {
+        echo "<script>
+            alert('Este formulario ya ha sido firmado y no puede ser modificado.');
+            window.location.href = 'MenuModifi.php';
+        </script>";
+        exit();
+    }
+
+    // Si no tiene permisos de modificación ni firma, y NO es admin
+    if (!$row['permitir_modificar'] && !$row['permitir_firmar'] && !$es_admin) {
+        echo "<script>
+            alert('No tienes permisos para modificar o firmar este formulario. Contacta al administrador.');
+            window.location.href = 'MenuModifi.php';
+        </script>";
+        exit();
+    }
+
+    // Mostrar alerta si es admin accediendo a un registro firmado
+    if ($es_admin && $formulario_firmado) {
+        echo "<div class='alert alert-warning alert-section'>
+            <strong>🔓 Acceso de Administrador</strong><br>
+            Como administrador, puedes modificar este formulario firmado y deshacer la firma si es necesario.
+        </div>";
+    }
+
+    // Mostrar estado de firma si ya está firmado
+    if ($formulario_firmado): ?>
+        <div class="alert alert-info alert-section">
+            <strong>✅ Formulario Firmado</strong><br>
+            Firmado por: <?= $row['firma_usuario'] ?><br>
+            Fecha: <?= $row['fecha_firma'] ?>
+        </div>
+    <?php endif; ?>
+
     <section class="registro">
     <!-- El formulario envía los datos al nuevo script HacerEnvases.php -->
-    <form action="HacerEnvases.php" method="POST" class="needs-validation" id="formulario">
+        <form action="HacerEnvases.php" method="POST" class="needs-validation" id="formulario">
             <!-- Campo oculto para pasar el ID del registro a actualizar -->
-            <input type="hidden" value="<?= $row['id'] ?? '' ?>" name="id"> 
-
-            <?php if ($formulario_firmado): ?>
-            <div class="alert alert-info">
-                <strong>✅ Formulario Firmado</strong><br>
-                Firmado por: <?= $row['firma_usuario'] ?><br>
-                Fecha: <?= $row['fecha_firma'] ?>
-            </div>
-            <?php endif; ?>
+            <input type="hidden" name="id" value="<?= $row['id'] ?>">
         
             <div class="registro-container">
                 <div class="registro-column">
                     
                     <div>
                         <label for="Indicador">Indicador</label>
-                        <select id="Indicador" name="Indicador" <?= ($solo_firma || $formulario_firmado) ? 'disabled' : '' ?> required>
+                        <select id="Indicador" name="Indicador" <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'disabled' : '' ?> required>
                              <!-- Preselecciona la opción actual -->
                             <option value="Leche Frisia" <?= ($row['Indicador'] == 'Leche Frisia') ? 'selected' : '' ?>>Leche Frisia</option>
                             <option value="Leche de Abasto Social" <?= ($row['Indicador'] == 'Leche de Abasto Social') ? 'selected' : '' ?>>Leche de Abasto Social</option>
@@ -93,7 +98,7 @@ $ID = $_GET["sc"] ?? die("
                     <div>
                         <label for="Mes">Mes:</label>
                         <!-- Carga el valor actual de la base de datos -->
-                        <input type="date" id="Mes" name="Mes" value="<?= $row['Mes'] ?? '' ?>" <?= ($solo_firma || $formulario_firmado) ? 'readonly' : '' ?> required>
+                        <input type="date" id="Mes" name="Mes" value="<?= $row['Mes'] ?? '' ?>" <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?> required>
                     </div>
                     
                     <div>
@@ -102,25 +107,25 @@ $ID = $_GET["sc"] ?? die("
                         <div>
                             <label for="DF">Defecto de fabricación:</label>
                             <!-- Carga el valor actual de la base de datos -->
-                            <input type="number" id="DF" name="DF" value="<?= $row['DF'] ?? '' ?>" <?= ($solo_firma || $formulario_firmado) ? 'readonly' : '' ?> placeholder="Litros" required step="any">
+                            <input type="number" id="DF" name="DF" value="<?= $row['DF'] ?? '' ?>" <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?> placeholder="Litros" required step="any">
                         </div>
                         
                         <div>
                             <label for="MC">Manejo de canastilla:</label>
                             <!-- Carga el valor actual de la base de datos -->
-                            <input type="number" id="MC" name="MC" value="<?= $row['MC'] ?? '' ?>" <?= ($solo_firma || $formulario_firmado) ? 'readonly' : '' ?> placeholder="Litros" required step="any">
+                            <input type="number" id="MC" name="MC" value="<?= $row['MC'] ?? '' ?>" <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?> placeholder="Litros" required step="any">
                         </div>
 
                         <div>
                             <label for="MI">De manera intencional:</label>
                             <!-- Carga el valor actual de la base de datos -->
-                            <input type="number" id="MI" name="MI" value="<?= $row['MI'] ?? '' ?>" <?= ($solo_firma || $formulario_firmado) ? 'readonly' : '' ?> placeholder="Litros" required step="any">
+                            <input type="number" id="MI" name="MI" value="<?= $row['MI'] ?? '' ?>" <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?> placeholder="Litros" required step="any">
                         </div>
                         
                         <div>
                             <label for="Total">Total:</label>
                             <!-- Carga el valor actual de la base de datos -->
-                            <input type="number" id="Total" name="Total" value="<?= $row['Total'] ?? '' ?>" <?= ($solo_firma || $formulario_firmado) ? 'readonly' : '' ?> placeholder="Litros" required step="any">
+                            <input type="number" id="Total" name="Total" value="<?= $row['Total'] ?? '' ?>" <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?> placeholder="Litros" required step="any">
                         </div>
                     </div>
                 </div>
@@ -165,16 +170,33 @@ $ID = $_GET["sc"] ?? die("
                 <?php endif; ?>
             </div>
 
-            <div class="row mt-4">
-                <div class="col-12 text-center">
-                    <?php if (!$formulario_firmado): ?>
-                        <input type="submit" value="Guardar Cambios" class="btn btn-primary me-2" id="btnGuardar">
-                        <input type="button" value="Limpiar Campos" class="btn btn-secondary" onclick="limpiarCampos()"
-                        <?= ($solo_firma) ? 'disabled' : '' ?>>
-                    <?php else: ?>
-                        <div class="alert alert-warning">Este formulario ya ha sido firmado y no puede ser modificado.</div>
+           <div class="form-buttons">
+                <?php if (!$formulario_firmado): ?>
+                    <input type="submit" name="g" value="Guardar Cambios" class="btn btn-primary">
+                    <input type="button" value="Limpiar Campos" class="btn btn-secondary" onclick="limpiarCampos()"
+                           <?= ($solo_firma) ? 'disabled' : '' ?>>
+                <?php else: ?>
+                    <input type="submit" name="g" value="Guardar Cambios" class="btn" 
+                           <?= $es_admin ? '' : 'disabled' ?>>
+                    <input type="button" value="Limpiar Campos" class="btn" onclick="limpiarCampos()"
+                           <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'disabled' : '' ?>>
+                    
+                    <?php if ($es_admin && $formulario_firmado): ?>
+                        <form method="POST" action="HacerEnvases.php" style="display:inline;">
+                            <input type="hidden" name="id" value="<?= $row['id'] ?>">
+                            <input type="hidden" name="action" value="undo_signature">
+                            <input type="submit" value="Deshacer Firma" class="btn btn-warning"
+                                   onclick="return confirm('¿Estás seguro de que deseas deshacer la firma de este formulario?')">
+                        </form>
                     <?php endif; ?>
-                </div>
+                    
+                        <?php if (!$es_admin): ?>
+                            <div class="alert alert-warning mt-3">
+                                Este formulario ya ha sido firmado y no puede ser modificado.
+                            </div>
+                        <?php endif; ?>
+                    <?php endif; ?>
+            </div>
             </div>
         </form>
     </section>

@@ -1,51 +1,5 @@
 <?php
-// Incluye la conexión a la base de datos
-include "Conexion.php";
-
-// 1. Verificar y obtener el ID del registro a modificar
-// Se usa 'sc' para obtener el ID.
-$ID = $_GET["sc"] ?? die("
-    <!DOCTYPE html><html lang='es'><head><meta charset='UTF-8'><title>Error</title></head><body>
-    <div class='container mt-5'><div class='alert alert-danger'>Error: ID de registro (sc) no proporcionado.</div></div>
-    </body></html>");
-
-// NOTA: Se asume la tabla 'c_determinacion' basada en los nuevos campos.
-// Seleccionamos TODOS los campos para prellenar el formulario
-$query = "SELECT * FROM  c_formulariogps WHERE id='$ID'"; 
-$res = mysqli_query($link, $query);
-
-if (!$res || mysqli_num_rows($res) == 0) {
-    die("
-    <!DOCTYPE html><html lang='es'><head><meta charset='UTF-8'><title>Error</title></head><body>
-    <div class='container mt-5'><div class='alert alert-danger'>Error: Registro con ID $ID no encontrado o error en la consulta.</div></div>
-    </body></html>");
-}
-
-$row = mysqli_fetch_array($res);
-
-// Permisos y estado de firma
-$solo_firma = !empty($row['permitir_firmar']) && empty($row['permitir_modificar']);
-$formulario_firmado = !empty($row['firma_usuario']);
-
-// Si solo está permitido firmar y ya está firmado, bloquear todo
-if ($solo_firma && $formulario_firmado) {
-        echo "<script>
-            alert('Este formulario ya ha sido firmado y no puede ser modificado.');
-            window.location.href = 'MenuModifi.php';
-        </script>";
-        exit();
-}
-
-// Si no tiene permisos de modificación ni firma
-if (empty($row['permitir_modificar']) && empty($row['permitir_firmar'])) {
-        echo "<script>
-            alert('No tienes permisos para modificar o firmar este formulario. Contacta al administrador.');
-            window.location.href = 'MenuModifi.php';
-        </script>";
-        exit();
-}
-
-include "Cerrar.php"; 
+session_start();
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -70,20 +24,68 @@ include "Cerrar.php";
 <main class="container">
     
     <h1>Modificar Formulario de Determinación</h1>
+
+      <?php
+    include "Conexion.php";
+    
+    // Verificar si el usuario es administrador
+    $es_admin = isset($_SESSION['departamento']) && $_SESSION['departamento'] === 'ADMIN';
+    
+    $ID = $_GET["id"] ?? $_GET["sc"] ?? die("<div class='alert alert-danger'>Error: ID de registro no proporcionado.</div>");
+    $query = "SELECT * FROM c_formulariogps WHERE id='$ID'"; 
+    $res = mysqli_query($link, $query);
+    
+    if (!$res || mysqli_num_rows($res) == 0) {
+        die("<div class='alert alert-danger'>Error: Registro no encontrado.</div>");
+    }
+    
+    $row = mysqli_fetch_array($res);
+
+    // Verificar permisos
+    $solo_firma = $row['permitir_firmar'] && !$row['permitir_modificar'];
+    $formulario_firmado = !empty($row['firma_usuario']);
+    
+    // Si solo está permitido firmar y el formulario ya está firmado, y NO es admin: bloquear
+    if ($solo_firma && $formulario_firmado && !$es_admin) {
+        echo "<script>
+            alert('Este formulario ya ha sido firmado y no puede ser modificado.');
+            window.location.href = 'MenuModifi.php';
+        </script>";
+        exit();
+    }
+
+    // Si no tiene permisos de modificación ni firma, y NO es admin
+    if (!$row['permitir_modificar'] && !$row['permitir_firmar'] && !$es_admin) {
+        echo "<script>
+            alert('No tienes permisos para modificar o firmar este formulario. Contacta al administrador.');
+            window.location.href = 'MenuModifi.php';
+        </script>";
+        exit();
+    }
+
+    // Mostrar alerta si es admin accediendo a un registro firmado
+    if ($es_admin && $formulario_firmado) {
+        echo "<div class='alert alert-warning alert-section'>
+            <strong>🔓 Acceso de Administrador</strong><br>
+            Como administrador, puedes modificar este formulario firmado y deshacer la firma si es necesario.
+        </div>";
+    }
+
+    // Mostrar estado de firma si ya está firmado
+    if ($formulario_firmado): ?>
+        <div class="alert alert-info alert-section">
+            <strong>✅ Formulario Firmado</strong><br>
+            Firmado por: <?= $row['firma_usuario'] ?><br>
+            Fecha: <?= $row['fecha_firma'] ?>
+        </div>
+    <?php endif; ?>
+
     
     <section class="registro">
         <!-- La acción del formulario se dirige a HacerGPS.php para la actualización -->
         <form action="HacerGPS.php" method="POST" class="needs-validation" id="formulario">
             <!-- Campo oculto para pasar el ID del registro a actualizar -->
             <input type="hidden" value="<?= $row['id'] ?? '' ?>" name="id"> 
-
-            <?php if ($formulario_firmado): ?>
-            <div class="alert alert-info">
-                <strong>✅ Formulario Firmado</strong><br>
-                Firmado por: <?= $row['firma_usuario'] ?><br>
-                Fecha: <?= $row['fecha_firma'] ?>
-            </div>
-            <?php endif; ?>
         
             <div class="registro-container">
                 <div class="registro-column">
@@ -91,7 +93,7 @@ include "Cerrar.php";
                     <!-- Indicador (Select) -->
                     <div>
                         <label for="Indicador">Tipo de Determinación</label>
-                        <select id="Indicador" name="Indicador" required <?= ($solo_firma || $formulario_firmado) ? 'disabled' : '' ?>>
+                        <select id="Indicador" name="Indicador" required <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'disabled' : '' ?>>
                             <?php 
                                 $indicador_actual = $row['Indicador'] ?? '';
                                 $opciones = [
@@ -112,7 +114,7 @@ include "Cerrar.php";
                         <label for="Mes">Mes:</label>
                <input type="date" id="Mes" name="Mes" 
                    value="<?= $row['Mes'] ?? '' ?>" 
-                   <?= ($solo_firma || $formulario_firmado) ? 'readonly' : '' ?>
+                   <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
                    required>
                     </div>
 
@@ -121,7 +123,7 @@ include "Cerrar.php";
                         <label for="Metodo">Método:</label>
                <input type="text" id="Metodo" name="Metodo" 
                    value="<?= $row['Metodo'] ?? '' ?>" 
-                   <?= ($solo_firma || $formulario_firmado) ? 'readonly' : '' ?>
+                   <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
                    placeholder="MILKO SCAN" required>
                     </div>
 
@@ -130,7 +132,7 @@ include "Cerrar.php";
                         <label for="Muestra">Muestra:</label>
                <input type="text" id="Muestra" name="Muestra" 
                    value="<?= $row['Muestra'] ?? '' ?>" 
-                   <?= ($solo_firma || $formulario_firmado) ? 'readonly' : '' ?>
+                   <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
                    placeholder="Leche fortificada" required>
                     </div>
 
@@ -139,7 +141,7 @@ include "Cerrar.php";
                         <label for="ValorR">Valor de Referencia:</label>
                <input type="number" step="any" id="ValorR" name="ValorR" 
                    value="<?= $row['ValorR'] ?? '' ?>" 
-                   <?= ($solo_firma || $formulario_firmado) ? 'readonly' : '' ?>
+                   <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
                    placeholder="30.52" required>
                     </div>
 
@@ -148,7 +150,7 @@ include "Cerrar.php";
                         <label for="ValorMax">Valor Máximo:</label>
                <input type="number" step="any" id="ValorMax" name="ValorMax" 
                    value="<?= $row['ValorMax'] ?? '' ?>" 
-                   <?= ($solo_firma || $formulario_firmado) ? 'readonly' : '' ?>
+                   <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
                    placeholder="34.00" required>
                     </div>
 
@@ -157,7 +159,7 @@ include "Cerrar.php";
                         <label for="ValorMin">Valor Mínimo:</label>
                <input type="number" step="any" id="ValorMin" name="ValorMin" 
                    value="<?= $row['ValorMin'] ?? '' ?>" 
-                   <?= ($solo_firma || $formulario_firmado) ? 'readonly' : '' ?>
+                   <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
                    placeholder="13.3" required>
                     </div>
 
@@ -166,7 +168,7 @@ include "Cerrar.php";
                         <label for="UnidadesKG">Promedio Mensual:</label>
                <input type="number" step="any" id="UnidadesKG" name="UnidadesKG" 
                    value="<?= $row['UnidadesKG'] ?? '' ?>" 
-                   <?= ($solo_firma || $formulario_firmado) ? 'readonly' : '' ?>
+                   <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
                    placeholder="84.84" required>
                     </div>
                 </div>
@@ -211,14 +213,32 @@ include "Cerrar.php";
                 <?php endif; ?>
             </div>
 
-            <div class="form-buttons mt-4">
+          <div class="form-buttons">
                 <?php if (!$formulario_firmado): ?>
-                    <input type="submit" name="g" value="Guardar Cambios">
-                    <input type="button" name="b" value="Limpiar" onclick="limpiarCampos()"
-                    <?= ($solo_firma) ? 'disabled' : '' ?>>
+                    <input type="submit" name="g" value="Guardar Cambios" class="btn btn-primary">
+                    <input type="button" value="Limpiar Campos" class="btn btn-secondary" onclick="limpiarCampos()"
+                           <?= ($solo_firma) ? 'disabled' : '' ?>>
                 <?php else: ?>
-                    <div class="alert alert-warning">Este formulario ya ha sido firmado y no puede ser modificado.</div>
-                <?php endif; ?>
+                    <input type="submit" name="g" value="Guardar Cambios" class="btn btn-primary" 
+                           <?= $es_admin ? '' : 'disabled' ?>>
+                    <input type="button" value="Limpiar Campos" class="btn btn-secondary" onclick="limpiarCampos()"
+                           <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'disabled' : '' ?>>
+                    
+                    <?php if ($es_admin && $formulario_firmado): ?>
+                        <form method="POST" action="HacerGPS.php" style="display:inline;">
+                            <input type="hidden" name="id" value="<?= $row['id'] ?>">
+                            <input type="hidden" name="action" value="undo_signature">
+                            <input type="submit" value="Deshacer Firma" class="btn btn-warning"
+                                   onclick="return confirm('¿Estás seguro de que deseas deshacer la firma de este formulario?')">
+                        </form>
+                    <?php endif; ?>
+                    
+                        <?php if (!$es_admin): ?>
+                            <div class="alert alert-warning mt-3">
+                                Este formulario ya ha sido firmado y no puede ser modificado.
+                            </div>
+                        <?php endif; ?>
+                    <?php endif; ?>
             </div>
         </form>
     </section>

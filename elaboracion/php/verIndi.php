@@ -157,7 +157,7 @@ echo "
             
             <div class='links'>
                 <a href='ConElaboracion.php' class='btn btn-primary'>Realizar Otra Consulta</a>
-                <a href='ElaboracionP.php' class='home-link'><img src='../imagenes/home.png' alt='Inicio' height='50' width='50'></a>
+                <a href='MenuIndi.php' class='home-link'><img src='../imagenes/home.png' alt='Inicio' height='50' width='50'></a>
             </div>
         </section>
         

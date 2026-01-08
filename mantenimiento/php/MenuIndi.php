@@ -25,7 +25,7 @@ $es_admin = ($_SESSION['departamento'] === 'ADMIN');
         <section class="menu">
             <div class="menu-column">
                 <!-- FORMULARIOS - Siempre habilitado para todos -->
-                <a href="IndiMantenimito.php" class="opc habilitado">
+                <a href="IndiMantenimiento.php" class="opc habilitado">
                     <img src="../imagenes/registro.png" height="70" width="80" align="left" class="icono">
                     <span>INGRESAR INDICADOR</span>
                     <i class="fas fa-check icono-palomita"></i>

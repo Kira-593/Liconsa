@@ -21,11 +21,11 @@
         const valorcantacci = parseFloat(CantAcci.value) || 0;
         const valordiaslaborados = parseFloat(DiasLaborados.value) || 0;
 
-        DndSat.value = (valornosatis / valornopuntos) *100;
+        DndSat.value = ((valornosatis / valornopuntos) *100).toFixed(2);
 
-        DndSatUnif.value = (valornosatisunif / valornopuntosunif) *100;
+        DndSatUnif.value = ((valornosatisunif / valornopuntosunif) *100).toFixed(2);
 
-        Frecuencia.value = (valorcantacci / valordiaslaborados)*100;
+        Frecuencia.value = ((valorcantacci / valordiaslaborados)*100).toFixed(2);
         
     }
 

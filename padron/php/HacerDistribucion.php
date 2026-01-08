@@ -1,7 +1,36 @@
 <?php
 date_default_timezone_set('America/Mexico_City');
+session_start();
+
 // Incluye la conexión a la base de datos
 include "Conexion.php";
+
+// Verificar si es administrador
+$es_admin = isset($_SESSION['departamento']) && $_SESSION['departamento'] === 'ADMIN';
+
+// Procesar acción de deshacer firma (solo admin)
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'undo_signature') {
+    if (!$es_admin) {
+        echo "<script>alert('No tienes permisos para deshacer firmas.'); window.history.back();</script>";
+        exit();
+    }
+    
+    $ID = intval($_POST['id'] ?? 0);
+    if ($ID <= 0) {
+        echo "<script>alert('ID inválido.'); window.history.back();</script>";
+        exit();
+    }
+    
+    // Actualizar registro para limpiar datos de firma
+    $update_query = "UPDATE p_distribucionleche SET firma_usuario = '', fecha_firma = NULL = '' WHERE id = $ID";
+    
+    if (mysqli_query($link, $update_query)) {
+        echo "<script>alert('Firma deshacha correctamente. El formulario está listo para editar.'); window.location.href = 'actualizarDistribucion.php?id=$ID';</script>";
+    } else {
+        echo "<script>alert('Error al deshacer firma: " . addslashes(mysqli_error($link)) . "'); window.history.back();</script>";
+    }
+    exit();
+}
 
 // 1. Obtener solo los datos necesarios del formulario de Distribución de Leche
 // Se reciben los 5 campos de datos más el 'id' para la clausula WHERE.

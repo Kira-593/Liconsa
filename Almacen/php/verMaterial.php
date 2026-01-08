@@ -56,6 +56,15 @@
                 <tr><td>Permitir Firmar:</td><td>" . ($row['permitir_firmar'] ? '✅ ACTIVADO' : '❌ DESACTIVADO') . "</td></tr>
             
                 </table>
+
+                    " . (!empty($row['firma_usuario']) ? "
+                <div class='seccion-titulo'>📝 Estado de Firma</div>
+                <table class='info-tabla'>
+                    <tr><td>Documento Firmado por:</td><td>{$row['firma_usuario']}</td></tr>
+                    <tr><td>Fecha de Firma:</td><td>" . date('d/m/Y H:i:s', strtotime($row['fecha_firma'])) . "</td></tr>
+                </table>
+                " : "") . "
+            
                 <hr>
                 <div class='links'>
                     <a href='ConMaterial.php' class='btn'>Realizar Otra Consulta</a>

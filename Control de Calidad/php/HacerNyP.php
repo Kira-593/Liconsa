@@ -1,7 +1,37 @@
 <?php
 date_default_timezone_set("America/Mexico_City");
+session_start();
 // Incluye la conexión a la base de datos
 include "Conexion.php";
+
+
+// Verificar si es administrador
+$es_admin = isset($_SESSION['departamento']) && $_SESSION['departamento'] === 'ADMIN';
+
+// Procesar acción de deshacer firma (solo admin)
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'undo_signature') {
+    if (!$es_admin) {
+        echo "<script>alert('No tienes permisos para deshacer firmas.'); window.history.back();</script>";
+        exit();
+    }
+    
+    $ID = intval($_POST['id'] ?? 0);
+    if ($ID <= 0) {
+        echo "<script>alert('ID inválido.'); window.history.back();</script>";
+        exit();
+    }
+    
+    // Actualizar registro para limpiar datos de firma
+    $update_query = "UPDATE c_contenidonetopesoenvase SET firma_usuario = '', fecha_firma = NULL = '' WHERE id = $ID";
+    
+    if (mysqli_query($link, $update_query)) {
+        echo "<script>alert('Firma deshacha correctamente. El formulario está listo para editar.'); window.location.href = 'actualizarNyP.php?id=$ID';</script>";
+    } else {
+        echo "<script>alert('Error al deshacer firma: " . addslashes(mysqli_error($link)) . "'); window.history.back();</script>";
+    }
+    exit();
+}
+
 
 // 1. Obtener los datos del formulario de Modificación de Contenido Neto y Peso
 // Usamos el operador de fusión de null (??) para asegurar que las variables existan.
@@ -197,7 +227,7 @@ if ($firma_realizada) {
         ?> 
         <!-- Enlaces de navegación actualizados para el contexto de Contenido Neto y Peso -->
         <!-- Asumimos un script de modificación para este contexto, por ejemplo: ModNyP.php -->
-        <a href="./ModContenidoNyP.php" class="btn btn-primary mt-3">Regresar a Actualizar Otro Registro de Contenido Neto y Peso</a><br>
+        <a href="./ModContenidoNyP.php" class="btn">Regresar a Actualizar Otro Registro</a><br>
         <!-- Se usa el enlace de regreso que se ve en el código destino -->
         <br><a href='MenuModifi.php'><img src='../imagenes/home.png' height='100' width='90' alt='Volver al menú de modificación'></a>
     </div>

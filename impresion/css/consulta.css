@@ -1,0 +1,87 @@
+body {
+   background: radial-gradient(circle, rgb(255, 254, 254), #eae4e4, rgb(241, 234, 234)); 
+    font-family: NotoSans;
+    color: brown;
+    text-align: center;
+    margin: 0;
+    height: 100vh; /* Asegura que el body ocupe toda la altura de la ventana */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+}
+.logo-superior {
+    position: absolute;
+    top: 30px;
+    left: 20px;
+    width: 30%; /* Ajusta el tamaño según tu preferencia */
+    height: auto;
+    z-index: 10;
+}
+
+.logo-sgc {
+    position: absolute;
+    top: -175px; /* Más arriba que 0px */
+    right: 20px;
+    width: 30%; /* Ajusta el tamaño según tu preferencia */
+    height: auto;
+    z-index: 10;
+}
+/* Contenedor principal */
+.contenedor {
+    background-color: rgba(0, 0, 0, 0.8);
+    border-radius: 15px;
+    padding: 30px;
+    max-width: 500px;
+    width: 90%;
+    box-shadow: 0 0 15px rgba(255, 255, 255, 0.3);
+}
+
+/* Encabezado */
+h1 {
+    color: beige;
+    font-size: 1.8em;
+    margin-bottom: 20px;
+}
+
+/* Selección de opciones */
+select {
+    width: 25%;
+    padding: 8px;
+    border-radius: 5px;
+    border: 1px solid brown;
+    background-color: #333;
+    color: white;
+    margin-top: 15px;
+}
+
+/* Botón de envío */
+input[type="submit"] {
+    padding: 10px 20px;
+    font-size: 1em;
+    cursor: pointer;
+    background-color: gray;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    margin-top: 20px;
+    transition: 0.3s;
+}
+
+input[type="submit"]:hover {
+    background-color: #ccff66;
+    color: #000;
+}
+
+/* Enlace de regreso */
+.link {
+    display: inline-block;
+    margin-top: 20px;
+}
+
+.firmado { background-color: #d4edda; color: #155724; }
+.completo { background-color: #cce7ff; color: #004085; }
+.modificar { background-color: #fff3cd; color: #856404; }
+.firmar { background-color: #d1ecf1; color: #0c5460; }
+.bloqueado { background-color: #f8d7da; color: #721c24; }

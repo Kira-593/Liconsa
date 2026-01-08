@@ -757,7 +757,7 @@ body {
     border-radius: 6px;
     transition: all 0.2s ease;
     border: 1px solid transparent;
-    min-width: 36px; /* Ancho mínimo consistente */
+    min-width: 70px; /* Ancho mínimo consistente */
     display: flex;
     align-items: center;
     justify-content: center;

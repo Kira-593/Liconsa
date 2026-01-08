@@ -57,16 +57,16 @@ document.addEventListener('DOMContentLoaded', function() {
 
         // CALCULOS
         Diferiencia.value = valorgasto - valoreje;
-        prc.value = valorhorasdisponibles ? ((valorhorashombre - valorhorasparo) / valorhorasdisponibles * 100) : 0;
-        PorcentTP.value = valortp ? ((valortpe / valortp) * 100) : 0;
-        PorcentTC.value = valortp ? ((valortc / valortp) * 100) : 0;
-        ConsTA.value = valorlecheproducida ? (valorconsumoagua / valorlecheproducida) : 0;
+        prc.value = (valorhorasdisponibles ? ((valorhorashombre - valorhorasparo) / valorhorasdisponibles) * 100 : 0).toFixed(2);
+        PorcentTP.value = valortp ? (((valortpe / valortp) * 100)).toFixed(2) : 0;
+        PorcentTC.value = valortp ? (((valortc / valortp) * 100)).toFixed(2) : 0;
+        ConsTA.value = (valorlecheproducida ? (valorconsumoagua / valorlecheproducida) : 0).toFixed(2);
 
         // NUEVO → Cálculo Consumo TÉRMICO
-        ConsTT.value = valorlechetermica ? (valorconsumotermico / valorlechetermica) : 0;
+        ConsTT.value = (valorlechetermica ? (valorconsumotermico / valorlechetermica) : 0).toFixed(2);
 
         // NUEVO → Cálculo Consumo ELÉCTRICO
-        ConsTE.value = valorlecheelectrica ? (valorconsumoelectrico / valorlecheelectrica) : 0;
+        ConsTE.value = (valorlecheelectrica ? (valorconsumoelectrico / valorlecheelectrica) : 0).toFixed(2);
     }
 
 

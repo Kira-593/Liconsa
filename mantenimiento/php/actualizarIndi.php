@@ -1,49 +1,6 @@
 <?php
-    // Incluye la conexión a la base de datos
-    include "Conexion.php";
-    
-    // Asumimos que la clave (id) se pasa por la URL
-$ID = $_GET["sc"] ?? die("
-    <!DOCTYPE html><html lang='es'><head><meta charset='UTF-8'><title>Error</title></head><body>
-    <div class='container mt-5'><div class='alert alert-danger'>Error: ID de registro (sc) no proporcionado.</div></div>
-    </body></html>");    
-    // Consulta para obtener los datos existentes
-    $query = "SELECT * FROM m_indicador WHERE id='$ID'"; 
-    $res = mysqli_query($link, $query);
-    
-    if (!$res || mysqli_num_rows($res) == 0) {
-        die("
-        <!DOCTYPE html><html lang='es'><head><meta charset='UTF-8'><title>Error</title></head><body>
-        <div class='container mt-5'><div class='alert alert-danger'>Error: Registro con ID $ID no encontrado o error en la consulta.</div></div>
-        </body></html>");
-    }
-    
-    $row = mysqli_fetch_array($res);
-
-    // Verificar permisos (coincidente con actualizarSubG.php)
-    $solo_firma = !empty($row['permitir_firmar']) && empty($row['permitir_modificar']);
-    $formulario_firmado = !empty($row['firma_usuario']);
-
-    // Si solo está permitido firmar y el formulario ya está firmado, bloquear todo
-    if ($solo_firma && $formulario_firmado) {
-        echo "<script>
-            alert('Este formulario ya ha sido firmado y no puede ser modificado.');
-            window.location.href = 'MantenimientoP.php';
-        </script>";
-        exit();
-    }
-
-    // Si no tiene permisos de modificación ni firma
-    if (empty($row['permitir_modificar']) && empty($row['permitir_firmar'])) {
-        echo "<script>
-            alert('No tienes permisos para modificar o firmar este formulario. Contacta al administrador.');
-            window.location.href = 'MantenimientoP.php';
-        </script>";
-        exit();
-    }
-
-    include "Cerrar.php";
-    ?>
+   session_start();
+?>
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -71,20 +28,67 @@ $ID = $_GET["sc"] ?? die("
     <h1>Indicadores</h1>
     <h4>Actualizar Mantenimiento</h4>
 
+      <?php
+    include "Conexion.php";
+    
+    // Verificar si el usuario es administrador
+    $es_admin = isset($_SESSION['departamento']) && $_SESSION['departamento'] === 'ADMIN';
+    
+    $ID = $_GET["id"] ?? $_GET["sc"] ?? die("<div class='alert alert-danger'>Error: ID de registro no proporcionado.</div>");
+    $query = "SELECT * FROM m_indicador WHERE id='$ID'"; 
+    $res = mysqli_query($link, $query);
+    
+    if (!$res || mysqli_num_rows($res) == 0) {
+        die("<div class='alert alert-danger'>Error: Registro no encontrado.</div>");
+    }
+    
+    $row = mysqli_fetch_array($res);
+
+    // Verificar permisos
+    $solo_firma = $row['permitir_firmar'] && !$row['permitir_modificar'];
+    $formulario_firmado = !empty($row['firma_usuario']);
+    
+    // Si solo está permitido firmar y el formulario ya está firmado, y NO es admin: bloquear
+    if ($solo_firma && $formulario_firmado && !$es_admin) {
+        echo "<script>
+            alert('Este formulario ya ha sido firmado y no puede ser modificado.');
+            window.location.href = 'MenuIndi.php';
+        </script>";
+        exit();
+    }
+
+    // Si no tiene permisos de modificación ni firma, y NO es admin
+    if (!$row['permitir_modificar'] && !$row['permitir_firmar'] && !$es_admin) {
+        echo "<script>
+            alert('No tienes permisos para modificar o firmar este formulario. Contacta al administrador.');
+            window.location.href = 'MenuIndi.php';
+        </script>";
+        exit();
+    }
+
+    // Mostrar alerta si es admin accediendo a un registro firmado
+    if ($es_admin && $formulario_firmado) {
+        echo "<div class='alert alert-warning alert-section'>
+            <strong>🔓 Acceso de Administrador</strong><br>
+            Como administrador, puedes modificar este formulario firmado y deshacer la firma si es necesario.
+        </div>";
+    }
+
+    // Mostrar estado de firma si ya está firmado
+    if ($formulario_firmado): ?>
+        <div class="alert alert-info alert-section">
+            <strong>✅ Formulario Firmado</strong><br>
+            Firmado por: <?= $row['firma_usuario'] ?><br>
+            Fecha: <?= $row['fecha_firma'] ?>
+        </div>
+    <?php endif; ?>
+
     <section class="registro">
 
     <!-- El formulario envía los datos a HacerMantenimiento.php -->
     <form method="post" action="HacerIndi.php" class="needs-validation" id="formulario">
         <!-- Campo oculto para pasar el ID del registro a actualizar -->
         <input type="hidden" value="<?= $row['id'] ?? '' ?>" name="id"> 
-
-        <?php if ($formulario_firmado): ?>
-        <div class="alert alert-info alert-section">
-            <strong>✅ Formulario Firmado</strong><br>
-            Firmado por: <?= $row['firma_usuario'] ?><br>
-            Fecha: <?= $row['fecha_firma'] ?>
-        </div>
-        <?php endif; ?>
 
         <div class="registro-container">
             <div class="registro-column">
@@ -95,20 +99,20 @@ $ID = $_GET["sc"] ?? die("
                     <label for="Claveregis">Clave de Registro:</label>
                     <input type="text" id="Claveregis" name="Claveregis" 
                            value="<?= $row['Claveregis'] ?? '' ?>" 
-                           <?= ($solo_firma || $formulario_firmado) ? 'readonly' : '' ?>
+                           <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
                            placeholder="Ingrese la Clave" required>
                     </div>
                     
                     <label for="Mes">Fecha de Elaboración:</label>
                     <input type="date" id="Mes" name="Mes" 
                            value="<?= $row['Mes'] ?? '' ?>" 
-                           <?= ($solo_firma || $formulario_firmado) ? 'readonly' : '' ?>
+                           <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
                            required>
                     
                     <label for="Periodo">Periodo:</label>
                     <input type="date" id="Periodo" name="Periodo" 
                            value="<?= $row['Periodo'] ?? '' ?>" 
-                           <?= ($solo_firma || $formulario_firmado) ? 'readonly' : '' ?>
+                           <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
                            required>
                 </div>
                 
@@ -121,7 +125,7 @@ $ID = $_GET["sc"] ?? die("
                     <label for="PresEje">Presupuesto Ejercido:</label>
                     <input type="number" id="PresEje" name="PresEje" 
                            value="<?= $row['PresEje'] ?? '' ?>" 
-                           <?= ($solo_firma || $formulario_firmado) ? 'readonly' : '' ?>
+                           <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
                            placeholder="Ingrese la cantidad" required step="any">
                     
                     <label>Menor ó Igual Al</label>
@@ -129,31 +133,31 @@ $ID = $_GET["sc"] ?? die("
                     <label for="GastoAutorizado">Gasto Autorizado:</label>
                     <input type="number" id="GastoAutorizado" name="GastoAutorizado" 
                            value="<?= $row['GastoAutorizado'] ?? '' ?>" 
-                           <?= ($solo_firma || $formulario_firmado) ? 'readonly' : '' ?>
+                           <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
                            placeholder="Ingrese la meta" required step="any">
                     
                     <label for="Diferiencia">Diferencia:</label>
                     <input type="number" id="Diferiencia" name="Diferiencia" 
                            value="<?= $row['Diferiencia'] ?? '' ?>" 
-                           <?= ($solo_firma || $formulario_firmado) ? 'readonly' : '' ?>
+                           <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
                            placeholder="Los Puntos son:" required step="any">
                     
                     <label for="MetaEsperadaGO">Meta Esperada:</label>
                     <input type="text" id="MetaEsperadaGO" name="MetaEsperadaGO" 
                            value="<?= $row['MetaEsperadaGO'] ?? '' ?>" 
-                           <?= ($solo_firma || $formulario_firmado) ? 'readonly' : '' ?>
+                           <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
                            placeholder="La meta esperada es:" required>
                     
                     <label for="RangoAceptGO">Rango de Aceptación:</label>
                     <input type="text" id="RangoAceptGO" name="RangoAceptGO" 
                            value="<?= $row['RangoAceptGO'] ?? '' ?>" 
-                           <?= ($solo_firma || $formulario_firmado) ? 'readonly' : '' ?>
+                           <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
                            placeholder="Ej. Max el gasto autorizado" required>
                     
                     <label for="TendenciaDeseadaGO">Tendencia Deseada:</label>
                     <input type="text" id="TendenciaDeseadaGO" name="TendenciaDeseadaGO" 
                            value="<?= $row['TendenciaDeseadaGO'] ?? '' ?>" 
-                           <?= ($solo_firma || $formulario_firmado) ? 'readonly' : '' ?>
+                           <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
                            placeholder="Ej. No Rebasar el Gasto Autorizado" required>
                 </div>
 
@@ -166,43 +170,43 @@ $ID = $_GET["sc"] ?? die("
                     <label for="HorasHombre"> Total de Horas Hombre Disponible:</label>
                     <input type="number" id="HorasHombre" name="HorasHombre" 
                            value="<?= $row['HorasHombre'] ?? '' ?>" 
-                           <?= ($solo_firma || $formulario_firmado) ? 'readonly' : '' ?>
+                           <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
                            placeholder="Ingrese la cantidad" required step="any">
                     
                     <label for="HorasParo">Horas de paro:</label>
                     <input type="number" id="HorasParo" name="HorasParo" 
                            value="<?= $row['HorasParo'] ?? '' ?>" 
-                           <?= ($solo_firma || $formulario_firmado) ? 'readonly' : '' ?>
+                           <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
                            placeholder="Ingrese la meta" required step="any">
                     
                     <label for="HorasDisponibles">Total de Horas Disponibles:</label>
                     <input type="number" id="HorasDisponibles" name="HorasDisponibles" 
                            value="<?= $row['HorasDisponibles'] ?? '' ?>" 
-                           <?= ($solo_firma || $formulario_firmado) ? 'readonly' : '' ?>
+                           <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
                            placeholder="Ingrese la meta" required step="any">
                     
                     <label for="prc">Porcentaje de Disponibilidad del Equipo:</label>
                     <input type="number" id="prc" name="prc" 
                            value="<?= $row['prc'] ?? '' ?>" 
-                           <?= ($solo_firma || $formulario_firmado) ? 'readonly' : '' ?>
+                           <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
                            placeholder="%" required step="any">
                     
                     <label for="MetaEsperadaDEP">Meta Esperada:</label>
                     <input type="text" id="MetaEsperadaDEP" name="MetaEsperadaDEP" 
                            value="<?= $row['MetaEsperadaDEP'] ?? '' ?>" 
-                           <?= ($solo_firma || $formulario_firmado) ? 'readonly' : '' ?>
+                           <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
                            placeholder="La meta esperada es:" required>
                     
                     <label for="RangoAceptDEP">Rango de Aceptación:</label>
                     <input type="text" id="RangoAceptDEP" name="RangoAceptDEP" 
                            value="<?= $row['RangoAceptDEP'] ?? '' ?>" 
-                           <?= ($solo_firma || $formulario_firmado) ? 'readonly' : '' ?>
+                           <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
                            placeholder="Ej. 99.50-100%" required>
                     
                     <label for="TendenciaDeseadaDEP">Tendencia Deseada:</label>
                     <input type="text" id="TendenciaDeseadaDEP" name="TendenciaDeseadaDEP" 
                            value="<?= $row['TendenciaDeseadaDEP'] ?? '' ?>" 
-                           <?= ($solo_firma || $formulario_firmado) ? 'readonly' : '' ?>
+                           <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
                            placeholder="Ej. 100%" required>
                 </div>
 
@@ -215,37 +219,37 @@ $ID = $_GET["sc"] ?? die("
                     <label for="TPE">Trabajos Programados Ejecutados:</label>
                     <input type="number" id="TPE" name="TPE" 
                            value="<?= $row['TPE'] ?? '' ?>" 
-                           <?= ($solo_firma || $formulario_firmado) ? 'readonly' : '' ?>
+                           <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
                            placeholder="Ingrese la cantidad" required step="any">
                     
                     <label for="TP">Trabajos Programados:</label>
                     <input type="number" id="TP" name="TP" 
                            value="<?= $row['TP'] ?? '' ?>" 
-                           <?= ($solo_firma || $formulario_firmado) ? 'readonly' : '' ?>
+                           <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
                            placeholder="Ingrese la meta" required step="any">
                     
                     <label for="PorcentTP">Porcentaje de Trabajos  Preventivos:</label>
                     <input type="number" id="PorcentTP" name="PorcentTP" 
                            value="<?= $row['PorcentTP'] ?? '' ?>" 
-                           <?= ($solo_firma || $formulario_firmado) ? 'readonly' : '' ?>
+                           <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
                            placeholder="%" required step="any">
                     
                     <label for="MetaEsperadaTP">Meta Esperada:</label>
                     <input type="text" id="MetaEsperadaTP" name="MetaEsperadaTP" 
                            value="<?= $row['MetaEsperadaTP'] ?? '' ?>" 
-                           <?= ($solo_firma || $formulario_firmado) ? 'readonly' : '' ?>
+                           <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
                            placeholder="La meta esperada es:" required>
                     
                     <label for="RangoAceptTP">Rango de Aceptación:</label>
                     <input type="text" id="RangoAceptTP" name="RangoAceptTP" 
                            value="<?= $row['RangoAceptTP'] ?? '' ?>" 
-                           <?= ($solo_firma || $formulario_firmado) ? 'readonly' : '' ?>
+                           <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
                            placeholder="Ej. 99.50-100%" required>
                     
                     <label for="TendenciaDeseadaTP">Tendencia Deseada:</label>
                     <input type="text" id="TendenciaDeseadaTP" name="TendenciaDeseadaTP" 
                            value="<?= $row['TendenciaDeseadaTP'] ?? '' ?>" 
-                           <?= ($solo_firma || $formulario_firmado) ? 'readonly' : '' ?>
+                           <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
                            placeholder="Ej. 100%" required>
                 </div>
 
@@ -258,31 +262,31 @@ $ID = $_GET["sc"] ?? die("
                     <label for="TC">Trabajos correctivos realizados:</label>
                     <input type="number" id="TC" name="TC" 
                            value="<?= $row['TC'] ?? '' ?>" 
-                           <?= ($solo_firma || $formulario_firmado) ? 'readonly' : '' ?>
+                           <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
                            placeholder="Ingrese la cantidad" required step="any">
                     
                     <label for="PorcentTC">Porcentaje de Trabajos  Correctivos:</label>
                     <input type="number" id="PorcentTC" name="PorcentTC" 
                            value="<?= $row['PorcentTC'] ?? '' ?>" 
-                           <?= ($solo_firma || $formulario_firmado) ? 'readonly' : '' ?>
+                           <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
                            placeholder="%" required step="any">
                     
                     <label for="MetaEsperadaTC">Meta Esperada:</label>
                     <input type="text" id="MetaEsperadaTC" name="MetaEsperadaTC" 
                            value="<?= $row['MetaEsperadaTC'] ?? '' ?>" 
-                           <?= ($solo_firma || $formulario_firmado) ? 'readonly' : '' ?>
+                           <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
                            placeholder="La meta esperada es:" required>
                     
                     <label for="RangoAceptTC">Rango de Aceptación:</label>
                     <input type="text" id="RangoAceptTC" name="RangoAceptTC" 
                            value="<?= $row['RangoAceptTC'] ?? '' ?>" 
-                           <?= ($solo_firma || $formulario_firmado) ? 'readonly' : '' ?>
+                           <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
                            placeholder="Ej. 0 - 0.15%" required>
                     
                     <label for="TendenciaDeseadaTC">Tendencia Deseada:</label>
                     <input type="text" id="TendenciaDeseadaTC" name="TendenciaDeseadaTC" 
                            value="<?= $row['TendenciaDeseadaTC'] ?? '' ?>" 
-                           <?= ($solo_firma || $formulario_firmado) ? 'readonly' : '' ?>
+                           <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
                            placeholder="Ej. 0%" required>
                 </div>
 
@@ -295,37 +299,37 @@ $ID = $_GET["sc"] ?? die("
                     <label for="ConsumoTermico">Consumo Térmico (litros):</label>
                     <input type="number" id="ConsumoTermico" name="ConsumoTermico" 
                            value="<?= $row['ConsumoTermico'] ?? '' ?>" 
-                           <?= ($solo_firma || $formulario_firmado) ? 'readonly' : '' ?>
+                           <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
                            placeholder="Ingrese la cantidad en Litros" required step="any">
                     
                     <label for="LitrosLecheProducidatermica">Litros de Leche Producida:</label>
                     <input type="number" id="LitrosLecheProducidatermica" name="LitrosLecheProducidatermica" 
                            value="<?= $row['LitrosLecheProducidatermica'] ?? '' ?>" 
-                           <?= ($solo_firma || $formulario_firmado) ? 'readonly' : '' ?>
+                           <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
                            placeholder="Ingrese la cantidad en Litros" required step="any">
                     
                     <label for="ConsTT">Consumo Total Térmico:</label>
                     <input type="number" id="ConsTT" name="ConsTT" 
                            value="<?= $row['ConsTT'] ?? '' ?>" 
-                           <?= ($solo_firma || $formulario_firmado) ? 'readonly' : '' ?>
+                           <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
                            placeholder="Ingrese la cantidad en Litros" required step="any">
                     
                     <label for="MetaEsperadaCT">Meta Esperada:</label>
                     <input type="text" id="MetaEsperadaCT" name="MetaEsperadaCT" 
                            value="<?= $row['MetaEsperadaCT'] ?? '' ?>" 
-                           <?= ($solo_firma || $formulario_firmado) ? 'readonly' : '' ?>
+                           <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
                            placeholder="1.8500 litros de agua / Litro de leche" required>
                     
                     <label for="RangoAceptCT">Rango de Aceptación:</label>
                     <input type="text" id="RangoAceptCT" name="RangoAceptCT" 
                            value="<?= $row['RangoAceptCT'] ?? '' ?>" 
-                           <?= ($solo_firma || $formulario_firmado) ? 'readonly' : '' ?>
+                           <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
                            placeholder="Ej. Maximo 1.85" required>
                     
                     <label for="TendenciaDeseadaCT">Tendencia Deseada:</label>
                     <input type="text" id="TendenciaDeseadaCT" name="TendenciaDeseadaCT" 
                            value="<?= $row['TendenciaDeseadaCT'] ?? '' ?>" 
-                           <?= ($solo_firma || $formulario_firmado) ? 'readonly' : '' ?>
+                           <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
                            placeholder="Ej. Max 1.85" required>
                 </div>
 
@@ -338,37 +342,37 @@ $ID = $_GET["sc"] ?? die("
                     <label for="ConsumoAgua">Consumo de Agua (litros):</label>
                     <input type="number" id="ConsumoAgua" name="ConsumoAgua" 
                            value="<?= $row['ConsumoAgua'] ?? '' ?>" 
-                           <?= ($solo_firma || $formulario_firmado) ? 'readonly' : '' ?>
+                           <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
                            placeholder="Ingrese la cantidad en Litros" required step="any">
                     
                     <label for="LitrosLecheProducida">Litros de Leche Producida:</label>
                     <input type="number" id="LitrosLecheProducida" name="LitrosLecheProducida" 
                            value="<?= $row['LitrosLecheProducida'] ?? '' ?>" 
-                           <?= ($solo_firma || $formulario_firmado) ? 'readonly' : '' ?>
+                           <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
                            placeholder="Ingrese la cantidad en Litros" required step="any">
                     
                     <label for="ConsTA">Consumo Total de Agua:</label>
                     <input type="number" id="ConsTA" name="ConsTA" 
                            value="<?= $row['ConsTA'] ?? '' ?>" 
-                           <?= ($solo_firma || $formulario_firmado) ? 'readonly' : '' ?>
+                           <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
                            placeholder="Ingrese la cantidad en Litros" required step="any">
                     
                     <label for="MetaEsperadaCA">Meta Esperada:</label>
                     <input type="text" id="MetaEsperadaCA" name="MetaEsperadaCA" 
                            value="<?= $row['MetaEsperadaCA'] ?? '' ?>" 
-                           <?= ($solo_firma || $formulario_firmado) ? 'readonly' : '' ?>
+                           <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
                            placeholder="1.8500 litros de agua / Litro de leche" required>
                     
                     <label for="RangoAceptCA">Rango de Aceptación:</label>
                     <input type="text" id="RangoAceptCA" name="RangoAceptCA" 
                            value="<?= $row['RangoAceptCA'] ?? '' ?>" 
-                           <?= ($solo_firma || $formulario_firmado) ? 'readonly' : '' ?>
+                           <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
                            placeholder="Ej. Maximo 1.85" required>
                     
                     <label for="TendenciaDeseadaCA">Tendencia Deseada:</label>
                     <input type="text" id="TendenciaDeseadaCA" name="TendenciaDeseadaCA" 
                            value="<?= $row['TendenciaDeseadaCA'] ?? '' ?>" 
-                           <?= ($solo_firma || $formulario_firmado) ? 'readonly' : '' ?>
+                           <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
                            placeholder="Ej. Max 1.85" required>
                 </div>
 
@@ -381,37 +385,38 @@ $ID = $_GET["sc"] ?? die("
                     <label for="ConsumoElectrico">Consumo Eléctrico (kWh):</label>
                     <input type="number" id="ConsumoElectrico" name="ConsumoElectrico" 
                            value="<?= $row['ConsumoElectrico'] ?? '' ?>" 
-                           <?= ($solo_firma || $formulario_firmado) ? 'readonly' : '' ?>
+                           <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
                            placeholder="Ingrese la cantidad en kWh" required step="any">
                     
                     <label for="LitrosLecheProducidaElectrico">Litros de Leche Producida:</label>
                     <input type="number" id="LitrosLecheProducidaElectrico" name="LitrosLecheProducidaElectrico" 
                            value="<?= $row['LitrosLecheProducidaElectrico'] ?? '' ?>" 
+                           <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
                            <?= ($solo_firma || $formulario_firmado) ? 'readonly' : '' ?>
                            placeholder="Ingrese la cantidad en Litros" required step="any">
                     
                     <label for="ConsTE">Consumo Total Eléctrico:</label>
                     <input type="number" id="ConsTE" name="ConsTE" 
                            value="<?= $row['ConsTE'] ?? '' ?>" 
-                           <?= ($solo_firma || $formulario_firmado) ? 'readonly' : '' ?>
+                           <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
                            placeholder="Ingrese la cantidad en kWh" required step="any">
                     
                     <label for="MetaEsperadaCE">Meta Esperada:</label>
                     <input type="text" id="MetaEsperadaCE" name="MetaEsperadaCE" 
                            value="<?= $row['MetaEsperadaCE'] ?? '' ?>" 
-                           <?= ($solo_firma || $formulario_firmado) ? 'readonly' : '' ?>
+                           <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
                            placeholder="1.8500 kWh / Litro de leche" required>
                     
                     <label for="RangoAceptCE">Rango de Aceptación:</label>
                     <input type="text" id="RangoAceptCE" name="RangoAceptCE" 
                            value="<?= $row['RangoAceptCE'] ?? '' ?>" 
-                           <?= ($solo_firma || $formulario_firmado) ? 'readonly' : '' ?>
+                           <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
                            placeholder="Ej. Maximo 1.85" required>
                     
                     <label for="TendenciaDeseadaCE">Tendencia Deseada:</label>
                     <input type="text" id="TendenciaDeseadaCE" name="TendenciaDeseadaCE" 
                            value="<?= $row['TendenciaDeseadaCE'] ?? '' ?>" 
-                           <?= ($solo_firma || $formulario_firmado) ? 'readonly' : '' ?>
+                           <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
                            placeholder="Ej. Max 1.85" required>
                 </div>
 
@@ -421,12 +426,12 @@ $ID = $_GET["sc"] ?? die("
                     <label for="Responsable">Responsable:</label>
                     <input type="text" id="Responsable" name="Responsable" 
                            value="<?= $row['Responsable'] ?? '' ?>" 
-                           <?= ($solo_firma || $formulario_firmado) ? 'readonly' : '' ?>
+                           <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
                            placeholder="Nombre del responsable" required>
                 
                     <label for="Fuente">Fuente:</label><br><br>
                     <textarea id="Fuente" name="Fuente" rows="4" 
-                              <?= ($solo_firma || $formulario_firmado) ? 'readonly' : '' ?>
+                              <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
                               placeholder="Fuente" required><?= $row['Fuente'] ?? '' ?></textarea>
                 </div>
                 <hr>
@@ -478,10 +483,26 @@ $ID = $_GET["sc"] ?? die("
                     <input type="button" value="Limpiar Campos" class="btn btn-secondary" onclick="limpiarCampos()"
                            <?= ($solo_firma) ? 'disabled' : '' ?>>
                 <?php else: ?>
-                    <div class="alert alert-warning">
-                        Este formulario ya ha sido firmado y no puede ser modificado.
-                    </div>
-                <?php endif; ?>
+                    <input type="submit" name="g" value="Guardar Cambios" class="btn btn-primary" 
+                           <?= $es_admin ? '' : 'disabled' ?>>
+                    <input type="button" value="Limpiar Campos" class="btn btn-secondary" onclick="limpiarCampos()"
+                           <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'disabled' : '' ?>>
+                    
+                    <?php if ($es_admin && $formulario_firmado): ?>
+                        <form method="POST" action="HacerIndi.php" style="display:inline;">
+                            <input type="hidden" name="id" value="<?= $row['id'] ?>">
+                            <input type="hidden" name="action" value="undo_signature">
+                            <input type="submit" value="Deshacer Firma" class="btn btn-warning"
+                                   onclick="return confirm('¿Estás seguro de que deseas deshacer la firma de este formulario?')">
+                        </form>
+                    <?php endif; ?>
+                    
+                        <?php if (!$es_admin): ?>
+                            <div class="alert alert-warning mt-3">
+                                Este formulario ya ha sido firmado y no puede ser modificado.
+                            </div>
+                        <?php endif; ?>
+                    <?php endif; ?>
             </div>
     </form>
     </section>
@@ -489,7 +510,7 @@ $ID = $_GET["sc"] ?? die("
     <?php include "Cerrar.php"; // Cierra la conexión ?>
     
     <!-- Enlace de regreso a MantenimientoP.php -->
-    <a href="./MantenimientoP.php" class="home-link">
+    <a href="MenuIndi.php" class="home-link">
         <img src="../imagenes/home.png" height="100" width="90">
     </a>
 

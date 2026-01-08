@@ -1,8 +1,38 @@
 <?php
 date_default_timezone_set('America/Mexico_City');
+session_start();
 
 // Incluye la conexión a la base de datos
 include "Conexion.php";
+
+
+// Verificar si es administrador
+$es_admin = isset($_SESSION['departamento']) && $_SESSION['departamento'] === 'ADMIN';
+
+// Procesar acción de deshacer firma (solo admin)
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'undo_signature') {
+    if (!$es_admin) {
+        echo "<script>alert('No tienes permisos para deshacer firmas.'); window.history.back();</script>";
+        exit();
+    }
+    
+    $ID = intval($_POST['id'] ?? 0);
+    if ($ID <= 0) {
+        echo "<script>alert('ID inválido.'); window.history.back();</script>";
+        exit();
+    }
+    
+    // Actualizar registro para limpiar datos de firma
+    $update_query = "UPDATE c_formulariofm SET firma_usuario = '', fecha_firma = NULL = '' WHERE id = $ID";
+    
+    if (mysqli_query($link, $update_query)) {
+        echo "<script>alert('Firma deshacha correctamente. El formulario está listo para editar.'); window.location.href = 'actualizarFM.php?id=$ID';</script>";
+    } else {
+        echo "<script>alert('Error al deshacer firma: " . addslashes(mysqli_error($link)) . "'); window.history.back();</script>";
+    }
+    exit();
+}
+
 
 // 1. Obtener los datos del formulario de Modificación de Formulario FM
 $ID = $_POST["id"] ?? ''; // ID es la clave para el UPDATE
@@ -191,7 +221,7 @@ if ($firma_realizada){
         ?>  
         <!-- Enlaces de navegación actualizados para el contexto de Formulario FM -->
         <!-- Se asume que 'ModFormularioFM.php' es la página para modificar otros registros -->
-        <a href="ModFM.php" class="btn btn-primary mt-3">Regresar a Actualizar Otro Formulario FM</a><br>
+        <a href="ModFM.php" class="btn">Regresar a Actualizar Otro Formulario FM</a><br>
         <!-- Se usa el enlace de regreso que se ve en el código destino -->
         <br><a href='MenuModifi.php'><img src='../imagenes/home.png' height='100' width='90' alt='Volver al menú de modificación'></a>
     </div>

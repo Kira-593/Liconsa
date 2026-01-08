@@ -24,7 +24,8 @@ $permisos_por_departamento = [
         'INFORMÁTICA',
         'ELABORACIÓN',
         'GESTIÓN DEL TRABAJO',
-        'RECURSOS FINANCIEROS'
+        'RECURSOS FINANCIEROS',
+		'IMPRESIÓN'
     ],
     'ENVASADO' => ['ENVASADO'],
     'CONTROL DE CALIDAD' => ['CONTROL DE CALIDAD'],
@@ -36,7 +37,8 @@ $permisos_por_departamento = [
     'INFORMATICA' => ['INFORMÁTICA'],
     'ELABORACION' => ['ELABORACIÓN'],
     'GESTION DE TRABAJO' => ['GESTIÓN DEL TRABAJO'],
-    'RECURSOS FINANCIEROS' => ['RECURSOS FINANCIEROS']
+    'RECURSOS FINANCIEROS' => ['RECURSOS FINANCIEROS'],
+	'IMPRESIÓN' => ['IMPRESIÓN']
 ];
 
 // Obtener departamento del usuario
@@ -67,7 +69,8 @@ $urls_departamentos = [
     'INFORMÁTICA' => '../../Informatica/php/InformaticaP.php',
     'ELABORACIÓN' => '../../elaboracion/php/elaboracionP.php',
     'GESTIÓN DEL TRABAJO' => '../../gestion/php/gestionP.php',
-    'RECURSOS FINANCIEROS' => '../../Recursos/php/RecursosP.php'
+    'RECURSOS FINANCIEROS' => '../../Recursos/php/RecursosP.php',
+	'IMPRESIÓN' => '../../impresion/php/MenuImpresion.php'
 ];
 
 // Mapeo CORREGIDO de nombres de imágenes
@@ -82,7 +85,8 @@ $imagenes_departamentos = [
     'INFORMÁTICA' => 'informatica',
     'ELABORACIÓN' => 'elaboracion',
     'GESTIÓN DEL TRABAJO' => 'gestion de trabajo',
-    'RECURSOS FINANCIEROS' => 'recursos financieros'
+    'RECURSOS FINANCIEROS' => 'recursos financieros',
+	'IMPRESIÓN' => 'impresion'
 ];
 
 // Verificar si es administrador
@@ -159,7 +163,8 @@ $es_admin = ($departamento_usuario === 'ADMIN');
 				$departamentos_columna2 = [
 					'DISTRIBUCIÓN',
 					'MANTENIMIENTO',
-					'GESTIÓN DEL TRABAJO'
+					'GESTIÓN DEL TRABAJO',
+					'IMPRESIÓN'
 				];
 				
 				foreach ($departamentos_columna2 as $depto): 

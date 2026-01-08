@@ -1,48 +1,5 @@
 <?php
-// Incluye la conexión a la base de datos
-include "Conexion.php";
-
-// Se usa 'sc' para obtener el ID del registro a modificar
-$ID = $_GET["sc"] ?? die("
-    <!DOCTYPE html><html lang='es'><head><meta charset='UTF-8'><title>Error</title></head><body>
-    <div class='container mt-5'><div class='alert alert-danger'>Error: ID de registro (sc) no proporcionado.</div></div>
-    </body></html>"); 
-    
-$query = "SELECT * FROM g_indicador_da WHERE id='$ID'"; 
-$res = mysqli_query($link, $query);
-
-if (!$res || mysqli_num_rows($res) == 0) {
-        die("
-        <!DOCTYPE html><html lang='es'><head><meta charset='UTF-8'><title>Error</title></head><body>
-        <div class='container mt-5'><div class='alert alert-danger'>Error: Registro con ID $ID no encontrado o error en la consulta.</div></div>
-        </body></html>");
-}
-
-$row = mysqli_fetch_array($res);
-
-// Verificar permisos (coincidente con otros formularios)
-$solo_firma = !empty($row['permitir_firmar']) && empty($row['permitir_modificar']);
-$formulario_firmado = !empty($row['firma_usuario']);
-
-// Si solo está permitido firmar y el formulario ya está firmado, bloquear todo
-if ($solo_firma && $formulario_firmado) {
-        echo "<script>
-            alert('Este formulario ya ha sido firmado y no puede ser modificado.');
-            window.location.href = 'ModIndicadoresDa.php';
-        </script>";
-        exit();
-}
-
-// Si no tiene permisos de modificación ni firma
-if (empty($row['permitir_modificar']) && empty($row['permitir_firmar'])) {
-        echo "<script>
-            alert('No tienes permisos para modificar o firmar este formulario. Contacta al administrador.');
-            window.location.href = 'ModIndicadoresDa.php';
-        </script>";
-        exit();
-}
-
-include "Cerrar.php";
+session_start();
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -66,20 +23,68 @@ include "Cerrar.php";
     <h1>Indicadores</h1>
     <h4>Gestión del Ambiente de trabajo</h4>
     <h4>y de las Competencias de Personal</h4>
+
+     <?php
+    include "Conexion.php";
+    
+    // Verificar si el usuario es administrador
+    $es_admin = isset($_SESSION['departamento']) && $_SESSION['departamento'] === 'ADMIN';
+    
+    $ID = $_GET["id"] ?? $_GET["sc"] ?? die("<div class='alert alert-danger'>Error: ID de registro no proporcionado.</div>");
+    $query = "SELECT * FROM g_indicador_da WHERE id='$ID'"; 
+    $res = mysqli_query($link, $query);
+    
+    if (!$res || mysqli_num_rows($res) == 0) {
+        die("<div class='alert alert-danger'>Error: Registro no encontrado.</div>");
+    }
+    
+    $row = mysqli_fetch_array($res);
+
+    // Verificar permisos
+    $solo_firma = $row['permitir_firmar'] && !$row['permitir_modificar'];
+    $formulario_firmado = !empty($row['firma_usuario']);
+    
+    // Si solo está permitido firmar y el formulario ya está firmado, y NO es admin: bloquear
+    if ($solo_firma && $formulario_firmado && !$es_admin) {
+        echo "<script>
+            alert('Este formulario ya ha sido firmado y no puede ser modificado.');
+            window.location.href = 'MenuIndiDa.php';
+        </script>";
+        exit();
+    }
+
+    // Si no tiene permisos de modificación ni firma, y NO es admin
+    if (!$row['permitir_modificar'] && !$row['permitir_firmar'] && !$es_admin) {
+        echo "<script>
+            alert('No tienes permisos para modificar o firmar este formulario. Contacta al administrador.');
+            window.location.href = 'MenuIndiDa.php';
+        </script>";
+        exit();
+    }
+
+    // Mostrar alerta si es admin accediendo a un registro firmado
+    if ($es_admin && $formulario_firmado) {
+        echo "<div class='alert alert-warning alert-section'>
+            <strong>🔓 Acceso de Administrador</strong><br>
+            Como administrador, puedes modificar este formulario firmado y deshacer la firma si es necesario.
+        </div>";
+    }
+
+    // Mostrar estado de firma si ya está firmado
+    if ($formulario_firmado): ?>
+        <div class="alert alert-info alert-section">
+            <strong>✅ Formulario Firmado</strong><br>
+            Firmado por: <?= $row['firma_usuario'] ?><br>
+            Fecha: <?= $row['fecha_firma'] ?>
+        </div>
+    <?php endif; ?>
+
     
     <section class="registro">
         <form method="post" action="HacerIndiDa.php" class="needs-validation" id="formulario">
         
             <!-- Campo oculto para pasar el ID del registro a actualizar -->
             <input type="hidden" value="<?= $row['id'] ?? '' ?>" name="id"> 
-
-            <?php if ($formulario_firmado): ?>
-            <div class="alert alert-info">
-                <strong>✅ Formulario Firmado</strong><br>
-                Firmado por: <?= $row['firma_usuario'] ?><br>
-                Fecha: <?= $row['fecha_firma'] ?>
-            </div>
-            <?php endif; ?>
             
             <div class="registro-container">
                 <div class="registro-column">
@@ -88,18 +93,18 @@ include "Cerrar.php";
                         <label for="Claveregis">Clave de Registro:</label>
                         <input type="text" id="Claveregis" name="Claveregis" 
                                value="<?= $row['Claveregis'] ?? '' ?>" 
-                               <?= ($solo_firma || $formulario_firmado) ? 'readonly' : '' ?> 
+                               <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?> 
                                placeholder="Ingrese la Clave" required>
 
                         <label for="Mes">Fecha de Elaboración:</label>
                         <input type="date" id="Mes" name="Mes" 
                                value="<?= $row['Mes'] ?? '' ?>" 
-                               <?= ($solo_firma || $formulario_firmado) ? 'readonly' : '' ?> required>
+                               <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?> required>
 
                         <label for="Periodo">Periodo:</label>
                         <input type="date" id="Periodo" name="Periodo" 
                                value="<?= $row['Periodo'] ?? '' ?>" 
-                               <?= ($solo_firma || $formulario_firmado) ? 'readonly' : '' ?> required>
+                               <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?> required>
                     </div>
 
                     <div>
@@ -110,7 +115,7 @@ include "Cerrar.php";
                         <label for="NoSatis">No. de Satisfacciones:</label>
                         <input type="number" id="NoSatis" name="NoSatis" 
                                value="<?= $row['NoSatis'] ?? '' ?>" 
-                               <?= ($solo_firma || $formulario_firmado) ? 'readonly' : '' ?>
+                               <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
                                placeholder="Ingrese la cantidad" required step="any">
                     </div>
 
@@ -118,7 +123,7 @@ include "Cerrar.php";
                         <label for="NoPuntos">No. de Puntos:</label>
                         <input type="number" id="NoPuntos" name="NoPuntos" 
                                value="<?= $row['NoPuntos'] ?? '' ?>" 
-                               <?= ($solo_firma || $formulario_firmado) ? 'readonly' : '' ?>
+                               <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
                                placeholder="Ingrese la cantidad" required step="any">
                     </div>
 
@@ -126,7 +131,7 @@ include "Cerrar.php";
                         <label for="DndSat">Donde la Satisfacción es Equivalente a:</label>
                         <input type="number" id="DndSat" name="DndSat" 
                                value="<?= $row['DndSat'] ?? '' ?>" 
-                               <?= ($solo_firma || $formulario_firmado) ? 'readonly' : '' ?>
+                               <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
                                placeholder="%" required step="any">
                     </div>
 
@@ -134,7 +139,7 @@ include "Cerrar.php";
                         <label for="MetaEsperadaRIO">Meta Esperada:</label>
                         <input type="text" id="MetaEsperadaRIO" name="MetaEsperadaRIO" 
                                value="<?= $row['MetaEsperadaRIO'] ?? '' ?>" 
-                               <?= ($solo_firma || $formulario_firmado) ? 'readonly' : '' ?>
+                               <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
                                placeholder="La meta esperada es:" required>
                     </div>
 
@@ -142,14 +147,14 @@ include "Cerrar.php";
                         <label for="RangoAceptRIO">Rango de Aceptación:</label>
                         <input type="text" id="RangoAceptRIO" name="RangoAceptRIO" 
                                value="<?= $row['RangoAceptRIO'] ?? '' ?>" 
-                               <?= ($solo_firma || $formulario_firmado) ? 'readonly' : '' ?>
+                               <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
                                placeholder="Ej. MIN=95% MAX=100%" required>
                     </div>
 
                     <div>
                         <label for="TendenciaDeseadaRIO">Tendencia Deseada:</label>
                         <textarea id="TendenciaDeseadaRIO" name="TendenciaDeseadaRIO" 
-                                  <?= ($solo_firma || $formulario_firmado) ? 'readonly' : '' ?>
+                                  <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
                                   placeholder="Tendencia deseada:" required><?= $row['TendenciaDeseadaRIO'] ?? '' ?></textarea>
                     </div>
 
@@ -161,7 +166,7 @@ include "Cerrar.php";
                         <label for="NoSatisUnif">No. de Satisfacciones:</label>
                         <input type="number" id="NoSatisUnif" name="NoSatisUnif" 
                                value="<?= $row['NoSatisUnif'] ?? '' ?>" 
-                               <?= ($solo_firma || $formulario_firmado) ? 'readonly' : '' ?>
+                               <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
                                placeholder="Ingrese la cantidad" required step="any">
                     </div>
 
@@ -169,7 +174,7 @@ include "Cerrar.php";
                         <label for="NoPuntosUnif">No. de Puntos:</label>
                         <input type="number" id="NoPuntosUnif" name="NoPuntosUnif" 
                                value="<?= $row['NoPuntosUnif'] ?? '' ?>" 
-                               <?= ($solo_firma || $formulario_firmado) ? 'readonly' : '' ?>
+                               <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
                                placeholder="Ingrese la cantidad" required step="any">
                     </div>
 
@@ -177,7 +182,7 @@ include "Cerrar.php";
                         <label for="DndSatUnif">Donde la Satisfacción es Equivalente a:</label>
                         <input type="number" id="DndSatUnif" name="DndSatUnif" 
                                value="<?= $row['DndSatUnif'] ?? '' ?>" 
-                               <?= ($solo_firma || $formulario_firmado) ? 'readonly' : '' ?>
+                               <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
                                placeholder="%" required step="any">
                     </div>
 
@@ -185,7 +190,7 @@ include "Cerrar.php";
                         <label for="MetaEsperadaUTE">Meta Esperada:</label>
                         <input type="text" id="MetaEsperadaUTE" name="MetaEsperadaUTE" 
                                value="<?= $row['MetaEsperadaUTE'] ?? '' ?>" 
-                               <?= ($solo_firma || $formulario_firmado) ? 'readonly' : '' ?>
+                               <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
                                placeholder="La meta esperada es:" required>
                     </div>
 
@@ -193,14 +198,14 @@ include "Cerrar.php";
                         <label for="RangoAceptUTE">Rango de Aceptación:</label>
                         <input type="text" id="RangoAceptUTE" name="RangoAceptUTE" 
                                value="<?= $row['RangoAceptUTE'] ?? '' ?>" 
-                               <?= ($solo_firma || $formulario_firmado) ? 'readonly' : '' ?>
+                               <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
                                placeholder="Ej. MIN=95% MAX=100%" required>
                     </div>
 
                     <div>
                         <label for="TendenciaDeseadaUTE">Tendencia Deseada:</label>
                         <textarea id="TendenciaDeseadaUTE" name="TendenciaDeseadaUTE" 
-                                  <?= ($solo_firma || $formulario_firmado) ? 'readonly' : '' ?>
+                                  <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
                                   placeholder="Tendencia deseada:" required><?= $row['TendenciaDeseadaUTE'] ?? '' ?></textarea>
                     </div>
 
@@ -212,7 +217,7 @@ include "Cerrar.php";
                         <label for="CantAcci">Cantidad de Accidentes:</label>
                         <input type="number" id="CantAcci" name="CantAcci" 
                                value="<?= $row['CantAcci'] ?? '' ?>" 
-                               <?= ($solo_firma || $formulario_firmado) ? 'readonly' : '' ?>
+                               <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
                                placeholder="Ingrese la cantidad" required step="any">
                     </div>
 
@@ -220,7 +225,7 @@ include "Cerrar.php";
                         <label for="DiasLaborados">Dias Laborados:</label>
                         <input type="number" id="DiasLaborados" name="DiasLaborados" 
                                value="<?= $row['DiasLaborados'] ?? '' ?>" 
-                               <?= ($solo_firma || $formulario_firmado) ? 'readonly' : '' ?>
+                               <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
                                placeholder="Ingrese la cantidad" required step="any">
                     </div>
 
@@ -228,7 +233,7 @@ include "Cerrar.php";
                         <label for="Frecuencia">Frecuencia:</label>
                         <input type="number" id="Frecuencia" name="Frecuencia" 
                                value="<?= $row['Frecuencia'] ?? '' ?>" 
-                               <?= ($solo_firma || $formulario_firmado) ? 'readonly' : '' ?>
+                               <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
                                placeholder="Frecuencia" required step="any">
                     </div>
 
@@ -236,7 +241,7 @@ include "Cerrar.php";
                         <label for="MetaEsperadaAIR">Meta Esperada:</label>
                         <input type="text" id="MetaEsperadaAIR" name="MetaEsperadaAIR" 
                                value="<?= $row['MetaEsperadaAIR'] ?? '' ?>" 
-                               <?= ($solo_firma || $formulario_firmado) ? 'readonly' : '' ?>
+                               <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
                                placeholder="La meta esperada es:" required>
                     </div>
 
@@ -244,14 +249,14 @@ include "Cerrar.php";
                         <label for="RangoAceptAIR">Rango de Aceptación:</label>
                         <input type="text" id="RangoAceptAIR" name="RangoAceptAIR" 
                                value="<?= $row['RangoAceptAIR'] ?? '' ?>" 
-                               <?= ($solo_firma || $formulario_firmado) ? 'readonly' : '' ?>
+                               <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
                                placeholder="Ej. Minimo NO APLICA" required>
                     </div>
 
                     <div>
                         <label for="TendenciaDeseadaAIR">Tendencia Deseada:</label>
                         <textarea id="TendenciaDeseadaAIR" name="TendenciaDeseadaAIR" 
-                                  <?= ($solo_firma || $formulario_firmado) ? 'readonly' : '' ?>
+                                  <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
                                   placeholder="Tendencia deseada:" required><?= $row['TendenciaDeseadaAIR'] ?? '' ?></textarea>
                     </div>
 
@@ -263,7 +268,7 @@ include "Cerrar.php";
                         <label for="CantActCondInseg">Actos y/o Condiciones Inseguras Reportadas en el Mes:</label>
                         <input type="number" id="CantActCondInseg" name="CantActCondInseg" 
                                value="<?= $row['CantActCondInseg'] ?? '' ?>" 
-                               <?= ($solo_firma || $formulario_firmado) ? 'readonly' : '' ?>
+                               <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
                                placeholder="Ingrese la cantidad" required step="any">
                     </div>
 
@@ -271,7 +276,7 @@ include "Cerrar.php";
                         <label for="MetaEsperadaACI">Meta Esperada:</label>
                         <input type="text" id="MetaEsperadaACI" name="MetaEsperadaACI" 
                                value="<?= $row['MetaEsperadaACI'] ?? '' ?>" 
-                               <?= ($solo_firma || $formulario_firmado) ? 'readonly' : '' ?>
+                               <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
                                placeholder="La meta esperada es:" required>
                     </div>
 
@@ -279,14 +284,14 @@ include "Cerrar.php";
                         <label for="RangoAceptACI">Rango de Aceptación:</label>
                         <input type="text" id="RangoAceptACI" name="RangoAceptACI" 
                                value="<?= $row['RangoAceptACI'] ?? '' ?>" 
-                               <?= ($solo_firma || $formulario_firmado) ? 'readonly' : '' ?>
+                               <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
                                placeholder="Ej. Minimo NO APLICA" required>
                     </div>
 
                     <div>
                         <label for="TendenciaDeseadaACI">Tendencia Deseada:</label>
                         <textarea id="TendenciaDeseadaACI" name="TendenciaDeseadaACI" 
-                                  <?= ($solo_firma || $formulario_firmado) ? 'readonly' : '' ?>
+                                  <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
                                   placeholder="Tendencia deseada:" required><?= $row['TendenciaDeseadaACI'] ?? '' ?></textarea>
                     </div>
 
@@ -295,14 +300,14 @@ include "Cerrar.php";
                         <label for="Responsable">Responsable:</label>
                         <input type="text" id="Responsable" name="Responsable" 
                                value="<?= $row['Responsable'] ?? '' ?>" 
-                               <?= ($solo_firma || $formulario_firmado) ? 'readonly' : '' ?>
+                               <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
                                placeholder="Nombre del responsable" required>
                     </div>
 
                     <div>
                         <label for="ObservacionesRes">Fuente:</label><br><br>
                         <textarea id="ObservacionesRes" name="ObservacionesRes" rows="4" 
-                                  <?= ($solo_firma || $formulario_firmado) ? 'readonly' : '' ?>
+                                  <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
                                   placeholder="Fuente" required><?= $row['ObservacionesRes'] ?? '' ?></textarea>
                     </div>
 
@@ -348,16 +353,31 @@ include "Cerrar.php";
                     <hr>
 
                     <div class="form-buttons">
-                        <?php if (!$formulario_firmado): ?>
-                            <input type="submit" name="g" value="Guardar Cambios" class="btn" id="btnGuardar">
-                            <input type="button" value="Limpiar Campos" class="btn" onclick="limpiarCampos()"
-                            <?= ($solo_firma) ? 'disabled' : '' ?>>
-                        <?php else: ?>
-                            <div class="alert alert-warning">Este formulario ya ha sido firmado y no puede ser modificado.</div>
+                <?php if (!$formulario_firmado): ?>
+                    <input type="submit" name="g" value="Guardar Cambios" class="btn btn-primary">
+                    <input type="button" value="Limpiar Campos" class="btn btn-secondary" onclick="limpiarCampos()"
+                           <?= ($solo_firma) ? 'disabled' : '' ?>>
+                <?php else: ?>
+                    <input type="submit" name="g" value="Guardar Cambios" class="btn btn-primary" 
+                           <?= $es_admin ? '' : 'disabled' ?>>
+                    <input type="button" value="Limpiar Campos" class="btn btn-secondary" onclick="limpiarCampos()"
+                           <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'disabled' : '' ?>>
+                    
+                    <?php if ($es_admin && $formulario_firmado): ?>
+                        <form method="POST" action="HacerIndi.php" style="display:inline;">
+                            <input type="hidden" name="id" value="<?= $row['id'] ?>">
+                            <input type="hidden" name="action" value="undo_signature">
+                            <input type="submit" value="Deshacer Firma" class="btn btn-warning"
+                                   onclick="return confirm('¿Estás seguro de que deseas deshacer la firma de este formulario?')">
+                        </form>
+                    <?php endif; ?>
+                    
+                        <?php if (!$es_admin): ?>
+                            <div class="alert alert-warning mt-3">
+                                Este formulario ya ha sido firmado y no puede ser modificado.
+                            </div>
                         <?php endif; ?>
-                    </div>
-
-                </div>
+                    <?php endif; ?>
             </div>
         </form>
     </section>

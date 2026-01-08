@@ -3,6 +3,7 @@ include "Conexion.php";
 
 // Obtener los datos del formulario
 $Claveregis = $_POST["Claveregis"];
+$FechaAct = $_POST["FechaAct"];
 $Mes = $_POST["Mes"];
 $Periodo = $_POST["Periodo"];
 
@@ -63,7 +64,7 @@ $Fuente = $_POST["Fuente"];
 
 // Consulta para insertar los datos en la base de datos
 $query = "INSERT INTO P_indicador (
-    Claveregis, Mes, Periodo,
+    Claveregis, FechaAct, Mes, Periodo,
     NumBenefi, MetaBeneficiarios, MetaReal, MetaEsperadaMB, RangoAceptMB, TendenciaDeseadaMB,
     LitrosVendidos, NumBenefiActivos, DiasVenta, FacRetLi, MetaEsperadaFRL, RangoAceptFRL, TendenciaDeseadaFRL,
     LitrosVendidosPol, NumBenefiActivosPol, DiasVentaPol, FacRetPol, MetaEsperadaFRP, RangoAceptFRP, TendenciaDeseadaFRP,
@@ -72,7 +73,7 @@ $query = "INSERT INTO P_indicador (
     TotalEncues, MaxPuntos, TPTE, PorcentajeEncuestas, MetaEsperadaES, RangoAceptES, TendenciaDeseadaES,
     Responsable, Fuente
 ) VALUES (
-    '$Claveregis', '$Mes', '$Periodo',
+    '$Claveregis', '$FechaAct', '$Mes', '$Periodo',
     '$NumBenefi', '$MetaBeneficiarios', '$MetaReal', '$MetaEsperadaMB', '$RangoAceptMB', '$TendenciaDeseadaMB',
     '$LitrosVendidos', '$NumBenefiActivos', '$DiasVenta', '$FacRetLi', '$MetaEsperadaFRL', '$RangoAceptFRL', '$TendenciaDeseadaFRL',
     '$LitrosVendidosPol', '$NumBenefiActivosPol', '$DiasVentaPol', '$FacRetPol', '$MetaEsperadaFRP', '$RangoAceptFRP', '$TendenciaDeseadaFRP',

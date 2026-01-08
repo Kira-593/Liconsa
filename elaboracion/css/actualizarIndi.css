@@ -4,7 +4,7 @@ body {
     color: #fcfcfc;
     text-align: center;
     margin: 0;
-    height: 720vh; /* Asegura que el body ocupe toda la altura de la ventana */
+    height: 750vh; /* Asegura que el body ocupe toda la altura de la ventana */
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -109,7 +109,8 @@ input[type="button"]:hover {
 /* Estilos para inputs deshabilitados */
 input[readonly],
 input[disabled],
-select[disabled] {
+select[disabled],
+textarea[readonly] {
     background-color: #333 !important;
     opacity: 0.6 !important;
     color: #ccc !important;

@@ -57,7 +57,7 @@ select,
 input[type="number"],
 input[type="text"],
 input[type="date"] {
-    width: 85%;
+    width: 90%;
     padding: 8px;
     border-radius: 5px;
     border: 1px solid brown;

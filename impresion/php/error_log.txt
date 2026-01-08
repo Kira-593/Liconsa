@@ -1,0 +1,7 @@
+2025-12-23 18:28:29 - Inicio del script
+2025-12-23 18:28:29 - mPDF cargado
+2025-12-23 18:28:29 - Creando instancia mPDF
+2025-12-23 18:28:29 - Instancia creada
+2025-12-23 18:28:29 - Escribiendo HTML
+2025-12-23 18:28:29 - Generando salida
+2025-12-23 18:28:30 - PDF generado exitosamente

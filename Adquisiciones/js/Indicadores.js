@@ -14,8 +14,8 @@
         const valorEncuSatisfa = parseFloat(EncuSatisfa.value) || 0;
         const valorEncEnvia = parseFloat(EncEnvia.value) || 0;
 
-        Satisfaccion.value = (valorEncuSatisfa / valorEncEnvia)*100;
-        Cumplimiento.value = (valorExpAtend / valorExpRecib)*100;
+        Satisfaccion.value = ((valorEncuSatisfa / valorEncEnvia)*100).toFixed(2);
+        Cumplimiento.value = ((valorExpAtend / valorExpRecib)*100).toFixed(2);
     }
 
     ExpAtend.addEventListener('input', actualizarTotal);

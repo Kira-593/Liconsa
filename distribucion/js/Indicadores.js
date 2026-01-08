@@ -36,11 +36,11 @@ document.addEventListener('DOMContentLoaded', function() {
         const valorgastostd= parseFloat(gastostd.value) || 0;
         const valorlitrosdistribucion= parseFloat(litrosdistribucion.value) || 0;
     
-        pcdp.value = (valorcumplimiento / valordespacho)*100;
-        cumplimientoVentas.value = (valorventatot / valordotacion)*100;
-        CantidadEnvRotos.value = (valormermas / valordotacionenva)*100;
-        DevolucionesDPAS.value = (valordevoluciones / valordotaciondev)*100;
-        gastosdistribucion.value = (valorgastostd / valorlitrosdistribucion);
+        pcdp.value = ((valorcumplimiento / valordespacho)*100).toFixed(2);
+        cumplimientoVentas.value = (valorventatot / valordotacion*100).toFixed(2);
+        CantidadEnvRotos.value = (valormermas / valordotacionenva*100).toFixed(2);
+        DevolucionesDPAS.value = (valordevoluciones / valordotaciondev*100).toFixed(2);
+        gastosdistribucion.value = (valorgastostd / valorlitrosdistribucion).toFixed(2);
     }
 
     cumplimiento.addEventListener('input', actualizarTotal);

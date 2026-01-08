@@ -102,7 +102,7 @@ echo "
             </div>
             
             <div class='links'>
-                <a href='ConInformatica.php' class='btn'>Realizar Otra Consulta</a>
+                <a href='ConIndicador.php' class='btn'>Realizar Otra Consulta</a>
                 <a href='InformaticaP.php' class='home-link'><img src='../imagenes/home.png' alt='Inicio' height='50' width='50'></a>
             </div>
         </section>

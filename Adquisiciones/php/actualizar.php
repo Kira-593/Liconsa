@@ -1,50 +1,5 @@
 <?php
-// Incluye la conexión a la base de datos
-include "Conexion.php";
-
-// 1. Verificar y obtener el ID del registro a modificar (usando 'sc' como clave)
-$ID = $_GET["sc"] ?? die("
-    <!DOCTYPE html><html lang='es'><head><meta charset='UTF-8'><title>Error</title></head><body>
-    <div class='container mt-5'><div class='alert alert-danger'>Error: ID de registro (sc) no proporcionado.</div></div>
-    </body></html>");
-
-
-$query = "SELECT * FROM c_resumenadquisiciones WHERE id='$ID'"; 
-$res = mysqli_query($link, $query);
-
-if (!$res || mysqli_num_rows($res) == 0) {
-    // Si no hay resultados o hay error, detenemos la ejecución y mostramos un error
-    die("
-    <!DOCTYPE html><html lang='es'><head><meta charset='UTF-8'><title>Error</title></head><body>
-    <div class='container mt-5'><div class='alert alert-danger'>Error: Registro con ID $ID_e no encontrado o error en la consulta.</div></div>
-    </body></html>");
-}
-
-$row = mysqli_fetch_array($res);
-
-// Permisos y estado de firma
-$solo_firma = !empty($row['permitir_firmar']) && empty($row['permitir_modificar']);
-$formulario_firmado = !empty($row['firma_usuario']);
-
-// Si solo está permitido firmar y ya está firmado, bloquear todo
-if ($solo_firma && $formulario_firmado) {
-    echo "<script>
-        alert('Este formulario ya ha sido firmado y no puede ser modificado.');
-        window.location.href = 'AdquisicionesP.php';
-    </script>";
-    exit();
-}
-
-// Si no tiene permisos de modificación ni firma
-if (empty($row['permitir_modificar']) && empty($row['permitir_firmar'])) {
-        echo "<script>
-            alert('No tienes permisos para modificar o firmar este formulario. Contacta al administrador.');
-            window.location.href = 'Modificación.php';
-        </script>";
-        exit();
-}
-
-include "Cerrar.php"; 
+session_start();
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -67,18 +22,65 @@ include "Cerrar.php";
 <main class="container">
 
     <h1>Modificar Registro de Resumen de Adquisiciones</h1>
+
+    <?php
+    include "Conexion.php";
+    
+    // Verificar si el usuario es administrador
+    $es_admin = isset($_SESSION['departamento']) && $_SESSION['departamento'] === 'ADMIN';
+    
+    $ID = $_GET["id"] ?? $_GET["sc"] ?? die("<div class='alert alert-danger'>Error: ID de registro no proporcionado.</div>");
+    $query = "SELECT * FROM c_resumenadquisiciones WHERE id='$ID'"; 
+    $res = mysqli_query($link, $query);
+    
+    if (!$res || mysqli_num_rows($res) == 0) {
+        die("<div class='alert alert-danger'>Error: Registro no encontrado.</div>");
+    }
+    
+    $row = mysqli_fetch_array($res);
+
+    // Verificar permisos
+    $solo_firma = $row['permitir_firmar'] && !$row['permitir_modificar'];
+    $formulario_firmado = !empty($row['firma_usuario']);
+    
+    // Si solo está permitido firmar y el formulario ya está firmado, y NO es admin: bloquear
+    if ($solo_firma && $formulario_firmado && !$es_admin) {
+        echo "<script>
+            alert('Este formulario ya ha sido firmado y no puede ser modificado.');
+            window.location.href = 'AdquisicionesP.php';
+        </script>";
+        exit();
+    }
+
+    // Si no tiene permisos de modificación ni firma, y NO es admin
+    if (!$row['permitir_modificar'] && !$row['permitir_firmar'] && !$es_admin) {
+        echo "<script>
+            alert('No tienes permisos para modificar o firmar este formulario. Contacta al administrador.');
+            window.location.href = 'AdquisicionesP.php';
+        </script>";
+        exit();
+    }
+
+    // Mostrar alerta si es admin accediendo a un registro firmado
+    if ($es_admin && $formulario_firmado) {
+        echo "<div class='alert alert-warning alert-section'>
+            <strong>🔓 Acceso de Administrador</strong><br>
+            Como administrador, puedes modificar este formulario firmado y deshacer la firma si es necesario.
+        </div>";
+    }
+
+    // Mostrar estado de firma si ya está firmado
+    if ($formulario_firmado): ?>
+        <div class="alert alert-info alert-section">
+            <strong>✅ Formulario Firmado</strong><br>
+            Firmado por: <?= $row['firma_usuario'] ?><br>
+            Fecha: <?= $row['fecha_firma'] ?>
+        </div>
+    <?php endif; ?>
     
     <section class="registro">
         <form method="post" action="Hacer.php" class="needs-validation" id="formulario"> 
             <input type="hidden" value="<?= $row['id'] ?? '' ?>" name="id"> 
-
-            <?php if ($formulario_firmado): ?>
-            <div class="alert alert-info">
-                <strong>✅ Formulario Firmado</strong><br>
-                Firmado por: <?= $row['firma_usuario'] ?><br>
-                Fecha: <?= $row['fecha_firma'] ?>
-            </div>
-            <?php endif; ?>
 
         <div class="registro-container">
             <div class="registro-column">
@@ -87,7 +89,7 @@ include "Cerrar.php";
                     <label for="Mes">Mes:</label>
                     <input type="date" id="Mes" name="Mes" 
                         value="<?= $row['Mes'] ?? '' ?>" required 
-                        <?= ($solo_firma || $formulario_firmado) ? 'readonly' : '' ?>>
+                        <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>>
                 </div>
                 
                 <div>
@@ -95,42 +97,42 @@ include "Cerrar.php";
                     <label for="CodigoTC">Codigo:</label>
                     <input type="number" id="CodigoTC" name="CodigoTC" placeholder="Ej. 1" 
                         value="<?= $row['CodigoTC'] ?? '' ?>" required 
-                        <?= ($solo_firma || $formulario_firmado) ? 'readonly' : '' ?>>
+                        <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>>
                 </div>
                 
                 <div>
                     <label for="DescripcionBTD">Descripcion de los Bienes y/o Servicios:</label>
                     <input type="text" id="DescripcionBTD" name="DescripcionBTD" placeholder="Ej.EQUIPO DE PROTECCIÓN PERSONAL" 
                         value="<?= $row['DescripcionBTD'] ?? '' ?>" required 
-                        <?= ($solo_firma || $formulario_firmado) ? 'readonly' : '' ?>>
+                        <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>>
                 </div>
                 
                 <div>
                     <label for="MontoSIT">Monto sin Iva:</label>
                     <input type="number" id="MontoSIT" name="MontoSIT" placeholder="Ej. $33,434.48" 
                         value="<?= $row['MontoSIT'] ?? '' ?>" required step="any" 
-                        <?= ($solo_firma || $formulario_firmado) ? 'readonly' : '' ?>>
+                        <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>>
                 </div>
                 
                 <div>
                     <label for="LPAD">(LP,I3P,AD):</label>
                     <input type="text" id="LPAD" name="LPAD" placeholder="Ej. 55 PRIMER PARRAFO" 
                         value="<?= $row['LPAD'] ?? '' ?>" required 
-                        <?= ($solo_firma || $formulario_firmado) ? 'readonly' : '' ?>>
+                        <?= ($solo_firma || $formulario_firmado) && !$es_admin? 'readonly' : '' ?>>
                 </div>
                 
                 <div>
                     <label for="EmpresaATE">Empresa Adjudicada:</label>
                     <input type="text" id="EmpresaATE" name="EmpresaATE" placeholder="HOC MAC, S.A de CV" 
                         value="<?= $row['EmpresaATE'] ?? '' ?>" required 
-                        <?= ($solo_firma || $formulario_firmado) ? 'readonly' : '' ?>>
+                        <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>>
                 </div>
                 
                 <div>
                     <label for="TotalGET">Total Gerencia Estatal Tlaxcala:</label>
                     <input type="number" id="TotalGET" name="TotalGET" placeholder="Ej. $7,736,698.35" 
                         value="<?= $row['TotalGET'] ?? '' ?>" required step="any"
-                        <?= ($solo_firma || $formulario_firmado) ? 'readonly' : '' ?>>
+                        <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>>
                 </div>
 
             </div>
@@ -175,15 +177,33 @@ include "Cerrar.php";
                 <?php endif; ?>
             </div>
         
-       <div class="form-buttons mt-4">
-                <?php if (!$formulario_firmado): ?>
-                    <input type="submit" name="g" value="Guardar Cambios">
-                    <input type="button" name="b" value="Limpiar" onclick="limpiarCampos()"
-                    <?= ($solo_firma) ? 'disabled' : '' ?>>
-                <?php else: ?>
-                    <div class="alert alert-warning">Este formulario ya ha sido firmado y no puede ser modificado.</div>
-                <?php endif; ?>
-            </div>
+       <div class="form-buttons">
+                    <?php if (!$formulario_firmado): ?>
+                        <input type="submit" name="g" value="Guardar Cambios" class="btn btn-primary">
+                        <input type="button" value="Limpiar Campos" class="btn btn-secondary" onclick="limpiarCampos()"
+                            <?= ($solo_firma) ? 'disabled' : '' ?>>
+                    <?php else: ?>
+                        <input type="submit" name="g" value="Guardar Cambios" class="btn btn-primary" 
+                            <?= $es_admin ? '' : 'disabled' ?>>
+                        <input type="button" value="Limpiar Campos" class="btn btn-secondary" onclick="limpiarCampos()"
+                            <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'disabled' : '' ?>>
+                        
+                        <?php if ($es_admin && $formulario_firmado): ?>
+                            <form method="POST" action="Hacer.php" style="display:inline;">
+                                <input type="hidden" name="id" value="<?= $row['id'] ?>">
+                                <input type="hidden" name="action" value="undo_signature">
+                                <input type="submit" value="Deshacer Firma" class="btn btn-warning"
+                                    onclick="return confirm('¿Estás seguro de que deseas deshacer la firma de este formulario?')">
+                            </form>
+                        <?php endif; ?>
+                        
+                            <?php if (!$es_admin): ?>
+                                <div class="alert alert-warning mt-3">
+                                    Este formulario ya ha sido firmado y no puede ser modificado.
+                                </div>
+                            <?php endif; ?>
+                        <?php endif; ?>
+                </div>
         </form>
     </section>
     

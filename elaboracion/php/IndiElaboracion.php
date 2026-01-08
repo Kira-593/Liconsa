@@ -1,3 +1,27 @@
+<?php
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
+$responsable_value = '';
+if (!empty($_SESSION['correo'])) {
+    $correo_sess = $_SESSION['correo'];
+    $db = new mysqli('localhost', 'root', '', 'usuario');
+    if (!$db->connect_error) {
+        $stmt = $db->prepare("SELECT Nombre, Ap_P, Ap_M FROM users WHERE correo = ? LIMIT 1");
+        if ($stmt) {
+            $stmt->bind_param('s', $correo_sess);
+            $stmt->execute();
+            $stmt->bind_result($n, $ap, $am);
+            if ($stmt->fetch()) {
+                $responsable_value = trim($n . ' ' . $ap . ' ' . $am);
+            }
+            $stmt->close();
+        }
+        $db->close();
+    }
+}
+?>
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -24,10 +48,10 @@
                 <div>
                     <div>
                     <label for="Claveregis">Clave de Registro:</label>
-                    <input type="text" id="Claveregis" name="Claveregis" placeholder="Ingrese la Clave" required step="any">
+                    <input type="text" id="Claveregis" name="Claveregis" value="TX-MSGC-500-01-R01" placeholder="Ingrese la Clave" required step="any">
                     </div>
                     <label for="Mes">Fecha de Elaboración:</label>
-                    <input type="date" id="Mes" name="Mes" required>
+                    <input type="date" id="Mes" name="Mes" value="2025-10-01" required>
                     <label for="Periodo">Periodo:</label>
                     <input type="date" id="Periodo" name="Periodo" required>
                     </div>
@@ -206,7 +230,7 @@
                 <div>
                 <hr>
                     <label for="Responsable">Responsable:</label>
-                    <input type="text" id="Responsable" name="Responsable" placeholder="Nombre del responsable" required>
+                    <input type="text" id="Responsable" name="Responsable" placeholder="Nombre del responsable" required value="<?php echo htmlspecialchars($responsable_value); ?>">
                 </div>
             
                 <div>

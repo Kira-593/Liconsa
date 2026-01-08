@@ -1,50 +1,6 @@
 <?php
-    // Asegúrate de que este archivo exista y contenga la lógica de conexión a la base de datos
-    include "Conexion.php";
-    
-    // Se usa 'sc' para obtener el ID del registro a modificar
-$ID = $_GET["sc"] ?? die("
-    <!DOCTYPE html><html lang='es'><head><meta charset='UTF-8'><title>Error</title></head><body>
-    <div class='container mt-5'><div class='alert alert-danger'>Error: ID de registro (sc) no proporcionado.</div></div>
-    </body></html>");      
-    // Consulta para obtener los datos existentes de la nueva tabla
-    // Se asume el nombre de tabla 'e_subgerencia_operaciones'
-    $query = "SELECT * FROM e_subgerencia_operaciones WHERE id='$ID'"; 
-    $res = mysqli_query($link, $query);
-    
-    if (!$res || mysqli_num_rows($res) == 0) {
-        die("
-        <!DOCTYPE html><html lang='es'><head><meta charset='UTF-8'><title>Error</title></head><body>
-        <div class='container mt-5'><div class='alert alert-danger'>Error: Registro con ID $ID no encontrado o error en la consulta.</div></div>
-        </body></html>");
-    }
-    
-    $row = mysqli_fetch_array($res);
-
-    // Verificar permisos (coincidente con actualizarEnvases.php)
-    $solo_firma = !empty($row['permitir_firmar']) && empty($row['permitir_modificar']);
-    $formulario_firmado = !empty($row['firma_usuario']);
-
-    // Si solo está permitido firmar y el formulario ya está firmado, bloquear todo
-    if ($solo_firma && $formulario_firmado) {
-        echo "<script>
-            alert('Este formulario ya ha sido firmado y no puede ser modificado.');
-            window.location.href = 'MenuModifi.php';
-        </script>";
-        exit();
-    }
-
-    // Si no tiene permisos de modificación ni firma
-    if (empty($row['permitir_modificar']) && empty($row['permitir_firmar'])) {
-        echo "<script>
-            alert('No tienes permisos para modificar o firmar este formulario. Contacta al administrador.');
-            window.location.href = 'MenuModifi.php';
-        </script>";
-        exit();
-    }
-
-    include "Cerrar.php";
-    ?>
+session_start();
+?>
 
 <!DOCTYPE html>
 <html lang="es">
@@ -66,20 +22,68 @@ $ID = $_GET["sc"] ?? die("
 <main class="container">
     
     <h1>Modificar Registro de Subgerencia de Operaciones</h1>
+
+    <?php
+    include "Conexion.php";
+    
+    // Verificar si el usuario es administrador
+    $es_admin = isset($_SESSION['departamento']) && $_SESSION['departamento'] === 'ADMIN';
+    
+    $ID = $_GET["id"] ?? $_GET["sc"] ?? die("<div class='alert alert-danger'>Error: ID de registro no proporcionado.</div>");
+    $query = "SELECT * FROM e_subgerencia_operaciones WHERE id='$ID'"; 
+    $res = mysqli_query($link, $query);
+    
+    if (!$res || mysqli_num_rows($res) == 0) {
+        die("<div class='alert alert-danger'>Error: Registro no encontrado.</div>");
+    }
+    
+    $row = mysqli_fetch_array($res);
+
+    // Verificar permisos
+    $solo_firma = $row['permitir_firmar'] && !$row['permitir_modificar'];
+    $formulario_firmado = !empty($row['firma_usuario']);
+    
+    // Si solo está permitido firmar y el formulario ya está firmado, y NO es admin: bloquear
+    if ($solo_firma && $formulario_firmado && !$es_admin) {
+        echo "<script>
+            alert('Este formulario ya ha sido firmado y no puede ser modificado.');
+            window.location.href = 'MenuModifi.php';
+        </script>";
+        exit();
+    }
+
+    // Si no tiene permisos de modificación ni firma, y NO es admin
+    if (!$row['permitir_modificar'] && !$row['permitir_firmar'] && !$es_admin) {
+        echo "<script>
+            alert('No tienes permisos para modificar o firmar este formulario. Contacta al administrador.');
+            window.location.href = 'MenuModifi.php';
+        </script>";
+        exit();
+    }
+
+    // Mostrar alerta si es admin accediendo a un registro firmado
+    if ($es_admin && $formulario_firmado) {
+        echo "<div class='alert alert-warning alert-section'>
+            <strong>🔓 Acceso de Administrador</strong><br>
+            Como administrador, puedes modificar este formulario firmado y deshacer la firma si es necesario.
+        </div>";
+    }
+
+    // Mostrar estado de firma si ya está firmado
+    if ($formulario_firmado): ?>
+        <div class="alert alert-info alert-section">
+            <strong>✅ Formulario Firmado</strong><br>
+            Firmado por: <?= $row['firma_usuario'] ?><br>
+            Fecha: <?= $row['fecha_firma'] ?>
+        </div>
+    <?php endif; ?>
     
     <section class="registro">
+
     <!-- El formulario envía los datos al script de actualización -->
     <form action="HacerSubG.php" method="POST" class="needs-validation" id="formulario">
             <!-- Campo oculto para pasar el ID del registro a actualizar -->
             <input type="hidden" value="<?= $row['id'] ?>" name="id"> 
-
-            <?php if ($formulario_firmado): ?>
-            <div class="alert alert-info">
-                <strong>✅ Formulario Firmado</strong><br>
-                Firmado por: <?= $row['firma_usuario'] ?><br>
-                Fecha: <?= $row['fecha_firma'] ?>
-            </div>
-            <?php endif; ?>
             
             <div class="registro-container">
                 <div class="registro-column">
@@ -87,7 +91,7 @@ $ID = $_GET["sc"] ?? die("
                     <!-- Mes -->
                     <div>
                         <label for="Mes">Mes:</label>
-                        <input type="date" id="Mes" name="Mes" value="<?= $row['Mes'] ?>" <?= ($solo_firma || $formulario_firmado) ? 'readonly' : '' ?> required>
+                        <input type="date" id="Mes" name="Mes" value="<?= $row['Mes'] ?>" <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?> required>
                     </div>
 
                     <!-- Leche Fresca -->
@@ -95,15 +99,15 @@ $ID = $_GET["sc"] ?? die("
                     <label>Leche Fresca</label><br><br>
                     <div>
                         <label for="LitrosFres">Litros:</label>
-                        <input type="number" id="LitrosFres" name="LitrosFres" value="<?= $row['LitrosFres'] ?>" <?= ($solo_firma || $formulario_firmado) ? 'readonly' : '' ?> placeholder="Litros" required step="any">
+                        <input type="number" id="LitrosFres" name="LitrosFres" value="<?= $row['LitrosFres'] ?>" <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?> placeholder="Litros" required step="any">
                     </div>
                     <div>
                         <label for="SHp">SG Promedio:</label>
-                        <input type="number" id="SHp" name="SHp" value="<?= $row['SHp'] ?>" <?= ($solo_firma || $formulario_firmado) ? 'readonly' : '' ?> placeholder="%" required step="any">
+                        <input type="number" id="SHp" name="SHp" value="<?= $row['SHp'] ?>" <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?> placeholder="%" required step="any">
                     </div>
                     <div>
                         <label for="SNGp">SNG Promedio:</label>
-                        <input type="number" id="SNGp" name="SNGp" value="<?= $row['SNGp'] ?>" <?= ($solo_firma || $formulario_firmado) ? 'readonly' : '' ?> placeholder="%" required step="any">
+                        <input type="number" id="SNGp" name="SNGp" value="<?= $row['SNGp'] ?>" <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?> placeholder="%" required step="any">
                     </div>
                     
                     <!-- Leche Abasto Social -->
@@ -111,11 +115,11 @@ $ID = $_GET["sc"] ?? die("
                     <label class="h5">Leche Abasto Social</label><br><br>
                     <div>
                         <label for="volumenTA">Volumen:</label>
-                        <input type="number" id="volumenTA" name="volumenTA" value="<?= $row['volumenTA'] ?>" <?= ($solo_firma || $formulario_firmado) ? 'readonly' : '' ?> placeholder="Litros" required step="any">
+                        <input type="number" id="volumenTA" name="volumenTA" value="<?= $row['volumenTA'] ?>" <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?> placeholder="Litros" required step="any">
                     </div>
                     <div>
                         <label for="solidosTA">Solidos grasos en producto terminado:</label>
-                        <input type="number" id="solidosTA" name="solidosTA" value="<?= $row['solidosTA'] ?>" <?= ($solo_firma || $formulario_firmado) ? 'readonly' : '' ?> placeholder="Gramos/Litros" required step="any">
+                        <input type="number" id="solidosTA" name="solidosTA" value="<?= $row['solidosTA'] ?>" <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?> placeholder="Gramos/Litros" required step="any">
                     </div>
 
                     <!-- Leche Comercial Frisia -->
@@ -123,12 +127,12 @@ $ID = $_GET["sc"] ?? die("
                     <label class="h5">Leche Comercial Frisia</label><br><br>
                     <div>
                         <label for="VolumenTC">Volumen:</label>
-                        <input type="number" id="VolumenTC" name="VolumenTC" value="<?= $row['VolumenTC'] ?>" <?= ($solo_firma || $formulario_firmado) ? 'readonly' : '' ?> placeholder="Litros" required step="any">
+                        <input type="number" id="VolumenTC" name="VolumenTC" value="<?= $row['VolumenTC'] ?>" <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?> placeholder="Litros" required step="any">
                     </div>
                     <div>
                         <label for="TotalTC">% Total de Leche Fresca:</label>
                         <!-- Se usa TotalTC como el nombre del campo, ya que así aparece en la DB -->
-                        <input type="number" id="%TotalTC" name="TotalTC" value="<?= $row['TotalTC'] ?>" <?= ($solo_firma || $formulario_firmado) ? 'readonly' : '' ?> placeholder="%" required step="any">
+                        <input type="number" id="%TotalTC" name="TotalTC" value="<?= $row['TotalTC'] ?>" <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?> placeholder="%" required step="any">
                     </div>
                     
                     <!-- Producción de abasto social -->
@@ -136,19 +140,19 @@ $ID = $_GET["sc"] ?? die("
                     <label class="h5">Produccion de abasto social</label><br><br>
                     <div>
                         <label for="VolumenTP">Volumen:</label>
-                        <input type="number" id="VolumenTP" name="VolumenTP" value="<?= $row['VolumenTP'] ?>" <?= ($solo_firma || $formulario_firmado) ? 'readonly' : '' ?> placeholder="Litros" required step="any">
+                        <input type="number" id="VolumenTP" name="VolumenTP" value="<?= $row['VolumenTP'] ?>" <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?> placeholder="Litros" required step="any">
                     </div>
                     <div>
                         <label for="LecheTP">Leche Fresca Para Abasto social:</label>
-                        <input type="number" id="LecheTP" name="LecheTP" value="<?= $row['LecheTP'] ?>" <?= ($solo_firma || $formulario_firmado) ? 'readonly' : '' ?> placeholder="Litros" required step="any">
+                        <input type="number" id="LecheTP" name="LecheTP" value="<?= $row['LecheTP'] ?>" <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?> placeholder="Litros" required step="any">
                     </div>
                     <div>
                         <label for="PorsentajeTP">%:</label>
-                        <input type="number" id="PorsentajeTP" name="PorsentajeTP" value="<?= $row['PorsentajeTP'] ?>" <?= ($solo_firma || $formulario_firmado) ? 'readonly' : '' ?> placeholder="%" required step="any">
+                        <input type="number" id="PorsentajeTP" name="PorsentajeTP" value="<?= $row['PorsentajeTP'] ?>" <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?> placeholder="%" required step="any">
                     </div>
                     <div>
                         <label for="ProduccionTP">Produccion con LPD Estandarizado</label>
-                        <input type="number" id="ProduccionTP" name="ProduccionTP" value="<?= $row['ProduccionTP'] ?>" <?= ($solo_firma || $formulario_firmado) ? 'readonly' : '' ?> placeholder="Litros" required step="any">
+                        <input type="number" id="ProduccionTP" name="ProduccionTP" value="<?= $row['ProduccionTP'] ?>" <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?> placeholder="Litros" required step="any">
                     </div>
                     
                     <!-- Estandarización de leche -->
@@ -156,7 +160,7 @@ $ID = $_GET["sc"] ?? die("
                     <label class="h5">Estandarización de leche</label><br><br>
                     <div>
                         <label for="ContenidoTC">Contenido de Solidos Grasos en el Producto Terminado:</label>
-                        <input type="number" id="ContenidoTC" name="ContenidoTC" value="<?= $row['ContenidoTC'] ?>" <?= ($solo_firma || $formulario_firmado) ? 'readonly' : '' ?> placeholder="Gramos/Litros" required step="any">
+                        <input type="number" id="ContenidoTC" name="ContenidoTC" value="<?= $row['ContenidoTC'] ?>" <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?> placeholder="Gramos/Litros" required step="any">
                     </div>
                     
                     <!-- Aprovechamiento de la capacidad utilizada -->
@@ -164,27 +168,27 @@ $ID = $_GET["sc"] ?? die("
                     <label class="h5">Aprovechamiento de la capacidad utilizada</label><br><br>
                     <div>
                         <label for="DiasOTD">Dias Operativos:</label>
-                        <input type="number" id="DiasOTD" name="DiasOTD" value="<?= $row['DiasOTD'] ?>" <?= ($solo_firma || $formulario_firmado) ? 'readonly' : '' ?> placeholder="Dias" required step="any">
+                        <input type="number" id="DiasOTD" name="DiasOTD" value="<?= $row['DiasOTD'] ?>" <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?> placeholder="Dias" required step="any">
                     </div>
                     <div>
                         <label for="CapacidadITC">Capacidad Instalada Estandar de Maquina:</label>
-                        <input type="number" id="CapacidadITC" name="CapacidadITC" value="<?= $row['CapacidadITC'] ?>" <?= ($solo_firma || $formulario_firmado) ? 'readonly' : '' ?> placeholder="Litros/Dias" required step="any">
+                        <input type="number" id="CapacidadITC" name="CapacidadITC" value="<?= $row['CapacidadITC'] ?>" <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?> placeholder="Litros/Dias" required step="any">
                     </div>
                     <div>
                         <label for="TotalCapacidad">Total Capacidad por Mes:</label>
-                        <input type="number" id="TotalCapacidad" name="TotalCapacidad" value="<?= $row['TotalCapacidad'] ?>" <?= ($solo_firma || $formulario_firmado) ? 'readonly' : '' ?> placeholder="Litros" required step="any">
+                        <input type="number" id="TotalCapacidad" name="TotalCapacidad" value="<?= $row['TotalCapacidad'] ?>" <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?> placeholder="Litros" required step="any">
                     </div>
                     <div>
                         <label for="ProduccionATP">Producción Abasto:</label>
-                        <input type="number" id="ProduccionATP" name="ProduccionATP" value="<?= $row['ProduccionATP'] ?>" <?= ($solo_firma || $formulario_firmado) ? 'readonly' : '' ?> placeholder="Litros" required step="any">
+                        <input type="number" id="ProduccionATP" name="ProduccionATP" value="<?= $row['ProduccionATP'] ?>" <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?> placeholder="Litros" required step="any">
                     </div>
                     <div>
                         <label for="ProduccionFTP">Producción Frisia:</label>
-                        <input type="number" id="ProduccionFTP" name="ProduccionFTP" value="<?= $row['ProduccionFTP'] ?>" <?= ($solo_firma || $formulario_firmado) ? 'readonly' : '' ?> placeholder="Litros" required step="any">
+                        <input type="number" id="ProduccionFTP" name="ProduccionFTP" value="<?= $row['ProduccionFTP'] ?>" <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?> placeholder="Litros" required step="any">
                     </div>
                     <div>
                         <label for="TotalProduccion">Total de Producción por mes:</label>
-                        <input type="number" id="TotalProduccion" name="TotalProduccion" value="<?= $row['TotalProduccion'] ?>" <?= ($solo_firma || $formulario_firmado) ? 'readonly' : '' ?> placeholder="Litros" required step="any">
+                        <input type="number" id="TotalProduccion" name="TotalProduccion" value="<?= $row['TotalProduccion'] ?>" <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?> placeholder="Litros" required step="any">
                     </div>
                     
                     <!-- Productos Utilizados en la Limpieza Química -->
@@ -192,7 +196,7 @@ $ID = $_GET["sc"] ?? die("
                     <label class="h5">Productos Utilizados en la Limpieza Química de Lineas y Equipos de Proceso</label><br><br>
                     <div>
                         <label for="DiasATD">Dias Operativos Acumulados hasta el mes:</label>
-                        <input type="number" id="DiasATD" name="DiasATD" value="<?= $row['DiasATD'] ?>" <?= ($solo_firma || $formulario_firmado) ? 'readonly' : '' ?> placeholder="Dias" required step="any">
+                        <input type="number" id="DiasATD" name="DiasATD" value="<?= $row['DiasATD'] ?>" <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?> placeholder="Dias" required step="any">
                     </div>
 
                     <!-- Hidróxido de sodio -->
@@ -200,15 +204,15 @@ $ID = $_GET["sc"] ?? die("
                     <label class="h6">Hidroxido de sodio</label><br>
                     <div>
                         <label for="HidroxidoTH">Consumo Mensual:</label>
-                        <input type="number" id="HidroxidoTH" name="HidroxidoTH" value="<?= $row['HidroxidoTH'] ?>" <?= ($solo_firma || $formulario_firmado) ? 'readonly' : '' ?> placeholder="Kg/Mes" required step="any">
+                        <input type="number" id="HidroxidoTH" name="HidroxidoTH" value="<?= $row['HidroxidoTH'] ?>" <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?> placeholder="Kg/Mes" required step="any">
                     </div>
                     <div>
                         <label for="TotalATT_Hidroxido">Total Anual:</label>
-                        <input type="number" id="TotalATT_Hidroxido" name="TotalATT_Hidroxido" value="<?= $row['TotalATT_Hidroxido'] ?>" <?= ($solo_firma || $formulario_firmado) ? 'readonly' : '' ?> placeholder="Kg" required step="any">
+                        <input type="number" id="TotalATT_Hidroxido" name="TotalATT_Hidroxido" value="<?= $row['TotalATT_Hidroxido'] ?>" <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?> placeholder="Kg" required step="any">
                     </div>
                     <div>
                         <label for="AcumuladoCTA_Hidroxido">Acumulado consumo diario:</label>
-                        <input type="number" id="AcumuladoCTA_Hidroxido" name="AcumuladoCTA_Hidroxido" value="<?= $row['AcumuladoCTA_Hidroxido'] ?>" <?= ($solo_firma || $formulario_firmado) ? 'readonly' : '' ?> placeholder="Kg" required step="any">
+                        <input type="number" id="AcumuladoCTA_Hidroxido" name="AcumuladoCTA_Hidroxido" value="<?= $row['AcumuladoCTA_Hidroxido'] ?>" <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?> placeholder="Kg" required step="any">
                     </div>
 
                     <!-- Ácido Fosfórico -->
@@ -216,15 +220,15 @@ $ID = $_GET["sc"] ?? die("
                     <label class="h6">Ácido Fosfórico</label><br>
                     <div>
                         <label for="AcidoFTA">Consumo Mensual:</label>
-                        <input type="number" id="AcidoFTA" name="AcidoFTA" value="<?= $row['AcidoFTA'] ?>" <?= ($solo_firma || $formulario_firmado) ? 'readonly' : '' ?> placeholder="Kg/Mes" required step="any">
+                        <input type="number" id="AcidoFTA" name="AcidoFTA" value="<?= $row['AcidoFTA'] ?>" <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?> placeholder="Kg/Mes" required step="any">
                     </div>
                     <div>
                         <label for="TotalATT_Acido">Total Anual:</label>
-                        <input type="number" id="TotalATT_Acido" name="TotalATT_Acido" value="<?= $row['TotalATT_Acido'] ?>" <?= ($solo_firma || $formulario_firmado) ? 'readonly' : '' ?> placeholder="Kg" required step="any">
+                        <input type="number" id="TotalATT_Acido" name="TotalATT_Acido" value="<?= $row['TotalATT_Acido'] ?>" <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?> placeholder="Kg" required step="any">
                     </div>
                     <div>
                         <label for="AcumuladoCTA_Acido">Acumulado consumo diario:</label>
-                        <input type="number" id="AcumuladoCTA_Acido" name="AcumuladoCTA_Acido" value="<?= $row['AcumuladoCTA_Acido'] ?>" <?= ($solo_firma || $formulario_firmado) ? 'readonly' : '' ?> placeholder="Kg" required step="any">
+                        <input type="number" id="AcumuladoCTA_Acido" name="AcumuladoCTA_Acido" value="<?= $row['AcumuladoCTA_Acido'] ?>" <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?> placeholder="Kg" required step="any">
                     </div>
                 </div>
             </div>
@@ -268,16 +272,32 @@ $ID = $_GET["sc"] ?? die("
                 <?php endif; ?>
             </div>
 
-            <div class="row mt-4">
-                <div class="col-12 text-center">
-                    <?php if (!$formulario_firmado): ?>
-                        <input type="submit" value="Guardar Cambios" class="btn btn-primary me-2" id="btnGuardar">
-                        <input type="button" value="Limpiar Campos" class="btn btn-secondary" onclick="limpiarCampos()"
-                        <?= ($solo_firma) ? 'disabled' : '' ?>>
-                    <?php else: ?>
-                        <div class="alert alert-warning">Este formulario ya ha sido firmado y no puede ser modificado.</div>
+            <div class="form-buttons">
+                <?php if (!$formulario_firmado): ?>
+                    <input type="submit" name="g" value="Guardar Cambios" class="btn btn-primary">
+                    <input type="button" value="Limpiar Campos" class="btn btn-secondary" onclick="limpiarCampos()"
+                           <?= ($solo_firma) ? 'disabled' : '' ?>>
+                <?php else: ?>
+                    <input type="submit" name="g" value="Guardar Cambios" class="btn btn-primary" 
+                           <?= $es_admin ? '' : 'disabled' ?>>
+                    <input type="button" value="Limpiar Campos" class="btn btn-secondary" onclick="limpiarCampos()"
+                           <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'disabled' : '' ?>>
+                    
+                    <?php if ($es_admin && $formulario_firmado): ?>
+                        <form method="POST" action="HacerSubG.php" style="display:inline;">
+                            <input type="hidden" name="id" value="<?= $row['id'] ?>">
+                            <input type="hidden" name="action" value="undo_signature">
+                            <input type="submit" value="Deshacer Firma" class="btn btn-warning"
+                                   onclick="return confirm('¿Estás seguro de que deseas deshacer la firma de este formulario?')">
+                        </form>
                     <?php endif; ?>
-                </div>
+                    
+                        <?php if (!$es_admin): ?>
+                            <div class="alert alert-warning mt-3">
+                                Este formulario ya ha sido firmado y no puede ser modificado.
+                            </div>
+                        <?php endif; ?>
+                    <?php endif; ?>
             </div>
         </form>
     </section>
