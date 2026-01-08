@@ -50,6 +50,7 @@ echo "
             <div class='seccion-titulo'>📋 Datos Generales</div>
             <table class='info-tabla'>
                 <tr><td>Clave de Registro:</td><td>{$row['Claveregis']}</td></tr>
+                <tr><td>Fecha de Actualización:</td><td>".date('d/m/Y', strtotime($row['FechaAct']))."</td></tr>
                 <tr><td>Fecha de Elaboración:</td><td>{$mes_formateado}</td></tr>
                 <tr><td>Periodo:</td><td>{$periodo_formateado}</td></tr>
             </table>
@@ -64,16 +65,37 @@ echo "
                 <tr><td>Tendencia Deseada:</td><td>{$row['TendenciaDeseadaGO']}</td></tr>
             </table>
             
-            <div class='seccion-titulo'>⚙️ Disponibilidad de Equipo Para la Producción, Envasado y ReHidratado</div>
+            <div class='seccion-titulo'>⚙️ Disponibilidad de Equipo Para la Producción (Pasteurizado)</div>
             <table class='info-tabla'>
                 <tr><td>Total de Horas Hombre Disponible:</td><td>{$row['HorasHombre']} horas</td></tr>
                 <tr><td>Horas de paro:</td><td>{$row['HorasParo']} horas</td></tr>
                 <tr><td>Total de Horas Disponibles:</td><td>{$row['HorasDisponibles']} horas</td></tr>
                 <tr><td>Porcentaje de Disponibilidad del Equipo:</td><td>{$row['prc']}%</td></tr>
-                <tr><td>Meta Esperada:</td><td>{$row['MetaEsperadaDEP']}</td></tr>
+                 
+            </table>
+            <div class='seccion-titulo'>-Disponibilidad de Equipo Para la Producción (Envasado)</div>
+            <table class='info-tabla'>
+                <tr><td>Total de Horas Hombre Disponible:</td><td>{$row['HorasHombreEnv']} horas</td></tr>
+                <tr><td>Horas de paro:</td><td>{$row['HorasParoEnv']} horas</td></tr>
+                <tr><td>Total de Horas Disponibles:</td><td>{$row['HorasDisponiblesEnv']} horas</td></tr>
+                <tr><td>Porcentaje de Disponibilidad del Equipo:</td><td>{$row['prcEnv']}%</td></tr>
+            </table>
+            <div class='seccion-titulo'>-Disponibilidad de Equipo Para la Producción (Rehidratado)</div>
+            <table class='info-tabla'>
+                <tr><td>Total de Horas Hombre Disponible:</td><td>{$row['HorasHombreReh']} horas</td></tr>
+                <tr><td>Horas de paro:</td><td>{$row['HorasParoReh']} horas</td></tr>
+                <tr><td>Total de Horas Disponibles:</td><td>{$row['HorasDisponiblesReh']} horas</td></tr>
+                <tr><td>Porcentaje de Disponibilidad del Equipo:</td><td>{$row['prcReh']}%</td></tr>
+                
+            </table>
+            <table class='info-tabla'>
+
+                 <tr><td>Meta Esperada:</td><td>{$row['MetaEsperadaDEP']}</td></tr>
                 <tr><td>Rango de Aceptación:</td><td>{$row['RangoAceptDEP']}</td></tr>
                 <tr><td>Tendencia Deseada:</td><td>{$row['TendenciaDeseadaDEP']}</td></tr>
             </table>
+
+            
             
             <div class='seccion-titulo'>🔧 Trabajos Preventivos</div>
             <table class='info-tabla'>

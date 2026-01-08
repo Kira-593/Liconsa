@@ -54,8 +54,10 @@ if (!empty($_SESSION['correo'])) {
                 <label for="Claveregis">Clave de Registro:</label>
                 <input type="text" id="Claveregis" name="Claveregis" value="TX-MSGC-500-01-R01" placeholder="Ingrese la Clave" required>
 
+                <label for="FechaAct">Fecha de Actualización:</label>
+                <input type="date" id="FechaAct" name="FechaAct" value="2025-10-01" required>
                 <label for="Mes">Fecha de Elaboración:</label>
-                <input type="date" id="Mes" name="Mes" value="2025-10-01" required>
+                <input type="date" id="Mes" name="Mes" min="<?php echo date('Y-m-d'); ?>" required>
 
                 <label for="Periodo">Periodo:</label>
                 <input type="date" id="Periodo" name="Periodo" required>

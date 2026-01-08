@@ -40,6 +40,7 @@ $ID = $_POST["id"] ?? '';
 
 // Datos básicos
 $Claveregis = $_POST["Claveregis"] ?? '';
+$FechaAct = $_POST["FechaAct"] ?? '';
 $Mes = $_POST["Mes"] ?? '';
 $Periodo = $_POST["Periodo"] ?? '';
 
@@ -108,6 +109,7 @@ if (isset($_POST['firmar_documento']) && $_POST['firmar_documento'] == 'on') {
             // Consulta preparada CON firma
             $query = "UPDATE envasado_indicador SET 
                         Claveregis = ?, 
+                        FechaAct = ?,
                         Mes = ?, 
                         Periodo = ?,
                         RepAbasto = ?, 
@@ -145,6 +147,7 @@ if (isset($_POST['firmar_documento']) && $_POST['firmar_documento'] == 'on') {
     // Consulta preparada SIN firma
     $query = "UPDATE envasado_indicador SET 
                 Claveregis = ?, 
+                FechaAct = ?,
                 Mes = ?, 
                 Periodo = ?,
                 RepAbasto = ?, 
@@ -174,8 +177,8 @@ $param_count = mysqli_stmt_param_count($stmt);
 if ($firma_realizada) {
     // Con firma: 11 parámetros + ID = 12 en total
     // Tipos: s = string, i = integer (ID)
-    mysqli_stmt_bind_param($stmt, "sssssssssssss",
-        $Claveregis, $Mes, $Periodo,
+    mysqli_stmt_bind_param($stmt, "ssssssssssssss",
+        $Claveregis, $FechaAct, $Mes, $Periodo,
         $RepAbasto, $RepFrisia, $MetaEsperadaMB, $RangoAcept, $TendenciaDeseadaMB,
         $Responsable, $ObservacionesRes,
         $firma_usuario, $fecha_firma,
@@ -184,8 +187,8 @@ if ($firma_realizada) {
 } else {
     // Sin firma: 9 parámetros + ID = 10 en total
     // Tipos: s = string, i = integer (ID)
-    mysqli_stmt_bind_param($stmt, "sssssssssss",
-        $Claveregis, $Mes, $Periodo,
+    mysqli_stmt_bind_param($stmt, "ssssssssssss",
+        $Claveregis, $FechaAct, $Mes, $Periodo,
         $RepAbasto, $RepFrisia, $MetaEsperadaMB, $RangoAcept, $TendenciaDeseadaMB,
         $Responsable, $ObservacionesRes,
         $ID

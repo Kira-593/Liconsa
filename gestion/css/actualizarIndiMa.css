@@ -1,10 +1,12 @@
+/* actualizarIndiMa.css - MODIFICADO para 2 columnas igual que IndiGestionMa.css */
+
 body {
    background: radial-gradient(circle, rgb(255, 254, 254), #eae4e4, rgb(241, 234, 234)); 
     font-family: NotoSans;
     color: #fcfcfc;
     text-align: center;
     margin: 0;
-    height: 180vh; /* Asegura que el body ocupe toda la altura de la ventana */
+    height: 100vh; /* Cambiado de 180vh a 100vh para coincidir */
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -14,21 +16,23 @@ body {
 .container {
     background-color: rgba(0, 0, 0, 0.8);
     border-radius: 15px;
-    padding: 10px;
-    width: 70%;
+    padding: 30px; /* Aumentado para coincidir */
+    width: 90%; /* Cambiado de 70% a 90% */
     box-shadow: 0 0 15px rgba(255, 255, 255, 0.3);
-    max-width: 500px; /* Ajusta según el diseño deseado */
-    margin: 1050px auto 20px auto; ;
+    max-width: 1000px; /* Cambiado de 500px a 1000px */
+    margin: 1400px auto 15px auto; /* Cambiado para coincidir */
 }
 
+/* MODIFICACIÓN: 2 columnas igual que el primer archivo */
 .registro-container {
     display: flex;
-    justify-content:center; /* Separa las columnas */
+    justify-content: space-between; /* Cambiado de center a space-between */
     gap: 2rem; /* Ajusta el espacio entre columnas */
     width: 100%;
 }
+
 .registro-column {
-    width: 100%; /* Cada columna ocupa el 48% del ancho */
+    width: 48%; /* Cambiado de 100% a 48% para 2 columnas */
     display: flex;
     flex-direction: column;
     gap: 1rem; /* Espaciado entre campos dentro de cada columna */
@@ -45,19 +49,28 @@ h1 {
     font-size: 1.8em;
     margin-bottom: 20px;
 }
+
+h4 {
+    margin: 15px 0 10px 0;
+    color: white; /* Añadido para coincidir con el primer archivo */
+}
+
 textarea {
-    width: 80%;
+    width: 100%; /* Cambiado de 80% a 100% */
     padding: 8px;
     border-radius: 5px;
     border: 1px solid brown;
     background-color: #333;
     color: white;
+    resize: vertical;
+    min-height: 80px; /* Añadido para coincidir */
 }
+
 select,
 input[type="number"],
 input[type="text"],
 input[type="date"] {
-    width: 90%;
+    width: 100%; /* Cambiado de 90% a 100% */
     padding: 8px;
     border-radius: 5px;
     border: 1px solid brown;
@@ -111,6 +124,20 @@ input[type="button"]:hover {
     width: 30%; /* Ajusta el tamaño según tu preferencia */
     height: auto;
     z-index: 10;
+}
+
+hr {
+    margin: 15px 0; /* Añadido para coincidir */
+    border: 0; /* Añadido para coincidir */
+    height: 1px; /* Añadido para coincidir */
+    background-color: rgba(255, 255, 255, 0.2); /* Añadido para coincidir */
+}
+
+label {
+    display: block; /* Añadido para coincidir */
+    text-align: left; /* Añadido para coincidir */
+    margin-bottom: 5px; /* Añadido para coincidir */
+    font-size: 0.9em; /* Añadido para coincidir */
 }
 
 /* Estilos para inputs deshabilitados */

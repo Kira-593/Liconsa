@@ -8,6 +8,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const HorasDisponibles = document.getElementById('HorasDisponibles');
     const prc = document.getElementById('prc');
 
+
     const TPE = document.getElementById('TPE');
     const TP = document.getElementById('TP');
     const PorcentTP = document.getElementById('PorcentTP');
@@ -29,6 +30,15 @@ document.addEventListener('DOMContentLoaded', function() {
     const LitrosLecheProducidaElectrico = document.getElementById('LitrosLecheProducidaElectrico');
     const ConsTE = document.getElementById('ConsTE');
 
+    const HorasHombreEnv = document.getElementById('HorasHombreEnv');
+    const HorasParoEnv = document.getElementById('HorasParoEnv');
+    const HorasDisponiblesEnv = document.getElementById('HorasDisponiblesEnv');
+    const prcEnv = document.getElementById('prcEnv');
+
+    const HorasHombreReh = document.getElementById('HorasHombreReh');
+    const HorasParoReh = document.getElementById('HorasParoReh');
+    const HorasDisponiblesReh = document.getElementById('HorasDisponiblesReh');
+    const prcReh = document.getElementById('prcReh');
 
     function actualizarTotal() {
         const valoreje = parseFloat(PresEje.value) || 0;
@@ -54,10 +64,25 @@ document.addEventListener('DOMContentLoaded', function() {
         const valorconsumoelectrico = parseFloat(ConsumoElectrico.value) || 0;
         const valorlecheelectrica = parseFloat(LitrosLecheProducidaElectrico.value) || 0;
 
+        const valorhorashombreEnv = parseFloat(HorasHombreEnv.value) || 0;
+        const valorhorasparoEnv = parseFloat(HorasParoEnv.value) || 0;
+        const valorhorasdisponiblesEnv = parseFloat(HorasDisponiblesEnv.value) || 0;
+
+        const valorhorashombreReh = parseFloat(HorasHombreReh.value) || 0;
+        const valorhorasparoReh = parseFloat(HorasParoReh.value) || 0;
+        const valorhorasdisponiblesReh = parseFloat(HorasDisponiblesReh.value) || 0;
+
+        
+
 
         // CALCULOS
         Diferiencia.value = valorgasto - valoreje;
+
         prc.value = (valorhorasdisponibles ? ((valorhorashombre - valorhorasparo) / valorhorasdisponibles) * 100 : 0).toFixed(2);
+
+        prcEnv.value = (valorhorasdisponiblesEnv ? ((valorhorashombreEnv - valorhorasparoEnv) / valorhorasdisponiblesEnv) * 100 : 0).toFixed(2);
+        prcReh.value = (valorhorasdisponiblesReh ? ((valorhorashombreReh - valorhorasparoReh) / valorhorasdisponiblesReh) * 100 : 0).toFixed(2);
+
         PorcentTP.value = valortp ? (((valortpe / valortp) * 100)).toFixed(2) : 0;
         PorcentTC.value = valortp ? (((valortc / valortp) * 100)).toFixed(2) : 0;
         ConsTA.value = (valorlecheproducida ? (valorconsumoagua / valorlecheproducida) : 0).toFixed(2);
@@ -87,5 +112,13 @@ document.addEventListener('DOMContentLoaded', function() {
     LitrosLecheProducidatermica.addEventListener('input', actualizarTotal);
     ConsumoElectrico.addEventListener('input', actualizarTotal);
     LitrosLecheProducidaElectrico.addEventListener('input', actualizarTotal);
+
+    HorasHombreEnv.addEventListener('input', actualizarTotal);
+    HorasParoEnv.addEventListener('input', actualizarTotal);
+    HorasDisponiblesEnv.addEventListener('input', actualizarTotal); 
+
+    HorasHombreReh.addEventListener('input', actualizarTotal);
+    HorasParoReh.addEventListener('input', actualizarTotal);
+    HorasDisponiblesReh.addEventListener('input', actualizarTotal);      
 
 });

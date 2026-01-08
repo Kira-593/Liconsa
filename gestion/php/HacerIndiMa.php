@@ -36,6 +36,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
 // 1. Obtener los datos del formulario de Indicadores de Gestión
 $ID = $_POST["id"] ?? ''; // ID es la clave para el UPDATE
 $Claveregis = $_POST["Claveregis"] ?? '';
+$FechaAct = $_POST["FechaAct"] ?? '';
 $Mes = $_POST["Mes"] ?? '';
 $Periodo = $_POST["Periodo"] ?? '';
 $CapaImpar = $_POST["CapaImpar"] ?? '';
@@ -121,6 +122,7 @@ if ($firma_realizada) {
     // Si se firmó, incluir los campos de firma en la consulta
     $query = "UPDATE g_indicador_ma SET
                 Claveregis = ?,
+                FechaAct = ?,
                 Mes = ?,
                 Periodo = ?,
                 CapaImpar = ?,
@@ -144,6 +146,7 @@ if ($firma_realizada) {
     // Si no se firma, solo se actualizan los demás campos
     $query = "UPDATE g_indicador_ma SET
                 Claveregis = ?,
+                FechaAct = ?,
                 Mes = ?,
                 Periodo = ?,
                 CapaImpar = ?,
@@ -167,8 +170,9 @@ $stmt = mysqli_prepare($link, $query);
 
 if ($firma_realizada) {
     // Vincular parámetros con firma
-    mysqli_stmt_bind_param($stmt, 'ssssssssssssssssssss',
+    mysqli_stmt_bind_param($stmt, 'sssssssssssssssssssss',
         $Claveregis,
+        $FechaAct,
         $Mes,
         $Periodo,
         $CapaImpar,
@@ -191,8 +195,9 @@ if ($firma_realizada) {
     );
 } else {
     // Vincular parámetros sin firma
-    mysqli_stmt_bind_param($stmt, 'ssssssssssssssssss',
+    mysqli_stmt_bind_param($stmt, 'sssssssssssssssssss',
         $Claveregis,
+        $FechaAct,
         $Mes,
         $Periodo,
         $CapaImpar,

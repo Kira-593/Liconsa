@@ -57,17 +57,17 @@ error_log("Áreas habilitadas: " . implode(', ', $areas_habilitadas));
 
 // Mapeo de departamentos a URLs
 $urls_departamentos = [
-    'ENVASADO' => '../../envasado/php/envasadoP.php',
-    'CONTROL DE CALIDAD' => '../../Control de Calidad/php/ControlP.php',
+    'ENVASADO' => 'ConEnvasado.php',
+    'CONTROL DE CALIDAD' => 'ConControl.php',
     'PADRÓN DE BENEFICIARIOS' => 'ConPadron.php',
-    'DISTRIBUCIÓN' => '../../distribucion/php/distribucionP.php',
-    'ADQUISICIONES' => '../../Adquisiciones/php/AdquisicionesP.php',
-    'ALMACÉN' => '../../Almacen/php/AlmacenP.php',
-    'MANTENIMIENTO' => '../../mantenimiento/php/mantenimientoP.php',
-    'INFORMÁTICA' => '../../Informatica/php/InformaticaP.php',
-    'ELABORACIÓN' => '../../elaboracion/php/elaboracionP.php',
-    'GESTIÓN DEL TRABAJO' => '../../gestion/php/gestionP.php',
-    'RECURSOS FINANCIEROS' => '../../Recursos/php/RecursosP.php',
+    'DISTRIBUCIÓN' => 'ConDistribucion.php',
+    'ADQUISICIONES' => 'ConAdquisiciones.php',
+    'ALMACÉN' => 'ConAlmacen.php',
+    'MANTENIMIENTO' => 'ConMantenimiento.php',
+    'INFORMÁTICA' => 'ConInformatica.php',
+    'ELABORACIÓN' => 'ConElaboracion.php',
+    'GESTIÓN DEL TRABAJO' => 'MenuIndiGestion.php',
+    'RECURSOS FINANCIEROS' => 'ConRecursos.php',
 ];
 
 // Mapeo CORREGIDO de nombres de imágenes

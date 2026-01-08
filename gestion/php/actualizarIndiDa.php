@@ -96,6 +96,11 @@ session_start();
                                <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?> 
                                placeholder="Ingrese la Clave" required>
 
+                        <label for="FechaAct">Fecha de Actualización:</label>
+                        <input type="date" id="FechaAct" name="FechaAct" 
+                               value="<?= $row['FechaAct'] ?? '' ?>" 
+                               <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?> required>
+
                         <label for="Mes">Fecha de Elaboración:</label>
                         <input type="date" id="Mes" name="Mes" 
                                value="<?= $row['Mes'] ?? '' ?>" 
@@ -354,20 +359,20 @@ session_start();
 
                     <div class="form-buttons">
                 <?php if (!$formulario_firmado): ?>
-                    <input type="submit" name="g" value="Guardar Cambios" class="btn btn-primary">
-                    <input type="button" value="Limpiar Campos" class="btn btn-secondary" onclick="limpiarCampos()"
+                    <input type="submit" name="g" value="Guardar Cambios" class="btn">
+                    <input type="button" value="Limpiar Campos" class="btn" onclick="limpiarCampos()"
                            <?= ($solo_firma) ? 'disabled' : '' ?>>
                 <?php else: ?>
                     <input type="submit" name="g" value="Guardar Cambios" class="btn btn-primary" 
                            <?= $es_admin ? '' : 'disabled' ?>>
-                    <input type="button" value="Limpiar Campos" class="btn btn-secondary" onclick="limpiarCampos()"
+                    <input type="button" value="Limpiar Campos" class="btn" onclick="limpiarCampos()"
                            <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'disabled' : '' ?>>
                     
                     <?php if ($es_admin && $formulario_firmado): ?>
                         <form method="POST" action="HacerIndi.php" style="display:inline;">
                             <input type="hidden" name="id" value="<?= $row['id'] ?>">
                             <input type="hidden" name="action" value="undo_signature">
-                            <input type="submit" value="Deshacer Firma" class="btn btn-warning"
+                            <input type="submit" value="Deshacer Firma" class="btn"
                                    onclick="return confirm('¿Estás seguro de que deseas deshacer la firma de este formulario?')">
                         </form>
                     <?php endif; ?>

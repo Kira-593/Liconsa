@@ -20,74 +20,92 @@
     <section class="registro">
         <form method="post" action="GuardarRelaciones.php">
         <div class="registro-container">
+            
+            <!-- Columna 1 -->
             <div class="registro-column">
                 <div>
                     <label for="Mes">Mes:</label>
                     <input type="date" id="Mes" name="Mes" required>
                 </div>
-               <div>
-                    <hr>
-                    <label>Plantilla de Personal</label><br>
-                    <hr>
+                
+                <hr>
+                
+                <h4>Plantilla de Personal</h4>
+                
+                <div>
                     <label for="NumeroTrabajadores">Numero de Trabajadores:</label>
                     <input type="number" id="NumeroTrabajadores" name="NumeroTrabajadores" placeholder="EJ. 118" required>
                 </div>
-                 <div>
+                
+                <div>
                     <label for="TrabajadoresH">Cantidad de Trabajadores Hombres:</label>
                     <input type="number" id="TrabajadoresH" name="TrabajadoresH" placeholder="EJ. 87" required>
                 </div>
+                
                 <div>
                     <label for="HombresConfianza">Cantidad de Hombres de Confianza:</label>
                     <input type="number" id="HombresConfianza" name="HombresConfianza" placeholder="EJ. 87" required>
                 </div>
+                
                 <div>
                     <label for="HombresSindicato">Cantidad de Hombres de Sindicato:</label>
                     <input type="number" id="HombresSindicato" name="HombresSindicato" placeholder="EJ. 87" required>
                 </div>
-                 <div>
+                
+                <div>
                     <label for="TrabajadoresM">Cantidad de Trabajadoras Mujeres:</label>
                     <input type="number" id="TrabajadoresM" name="TrabajadoresM" placeholder="EJ. 87" required>
                 </div>
+                
                 <div>
                     <label for="MujeresConfianza">Cantidad de Mujeres de Confianza:</label>
                     <input type="number" id="MujeresConfianza" name="MujeresConfianza" placeholder="EJ. 87" required>
                 </div>
+            </div>
+            
+            <!-- Columna 2 -->
+            <div class="registro-column">
                 <div>
                     <label for="MujeresSindicato">Cantidad de Mujeres de Sindicato:</label>
                     <input type="number" id="MujeresSindicato" name="MujeresSindicato" placeholder="EJ. 87" required>
                 </div>
+                
                 <div>
                     <label for="TrabajadoresConfianza">Cantidad De Trabajadores de Confianza:</label>
                     <input type="number" id="TrabajadoresConfianza" name="TrabajadoresConfianza" placeholder="EJ. 57" required>
                 </div>
+                
                 <div>
                     <label for="TrabajadoresSindicato">Cantidad De Trabajadores de Sindicato:</label>
                     <input type="number" id="TrabajadoresSindicato" name="TrabajadoresSindicato" placeholder="EJ. 57" required>
                 </div>
+                
                 <div>
                     <label for="NumeroPlazasOcupadas">Numero Total de Plazas Ocupadas:</label>
                     <input type="number" id="NumeroPlazasOcupadas" name="NumeroPlazasOcupadas" placeholder="EJ. 117" required>
                 </div>
+                
                 <div>
-                    <label for="VacantesTV">Vacantes:</label><br><br>
-                    <textarea id="VacantesTV" name="VacantesTV" rows="4" placeholder="Ej. Jefe Operativo, Renuncia Voluntaria 11/09/2025" required></textarea>
-                </div>
-                <div>
-                    <label for="IncapacidadesTI">Incapacidades (Nombre, Personal, Dias, Fecha inicio, Fecha de Termino, Folio):</label><br><br>
-                    <textarea id="IncapacidadesTI" name="IncapacidadesTI" rows="4" placeholder="Ej. Abraham Rojas, Auxiliar, 5 dias, 01/09/2025, 06/09/2025, Folio:12345" required></textarea>
+                    <label for="VacantesTV">Vacantes:</label>
+                    <textarea id="VacantesTV" name="VacantesTV" rows="3" placeholder="Ej. Jefe Operativo, Renuncia Voluntaria 11/09/2025" required></textarea>
                 </div>
                 
-                
-        </div>
-         </div>
-                <div class="form-buttons">
-                <input type="submit" name="g" value="Guardar">
-                <input type="button" name="b" value="Limpiar" onclick="limpiarCampos()">
+                <div>
+                    <label for="IncapacidadesTI">Incapacidades (Nombre, Personal, Dias, Fecha inicio, Fecha de Termino, Folio):</label>
+                    <textarea id="IncapacidadesTI" name="IncapacidadesTI" rows="3" placeholder="Ej. Abraham Rojas, Auxiliar, 5 dias, 01/09/2025, 06/09/2025, Folio:12345" required></textarea>
+                </div>
             </div>
-                
-        </form>
+            
+        </div>
         
+        <div class="form-buttons">
+            <input type="submit" name="g" value="Guardar">
+            <input type="button" name="b" value="Limpiar" onclick="limpiarCampos()">
+        </div>
+        
+        </form>
     </section>
+    
     <a href="GestionP.php" class="home-link">
         <img src="../imagenes/home.png" height="100" width="90">
     </a>

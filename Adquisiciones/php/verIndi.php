@@ -51,6 +51,7 @@ echo "
             <div class='seccion-titulo'>📋 Datos Generales</div>
             <table class='info-tabla'>
                 <tr><td>Clave de Registro:</td><td>{$row['Claveregis']}</td></tr>
+                <tr><td>Fecha de Actualización:</td><td>".date('d/m/Y', strtotime($row['FechaAct']))."</td></tr>
                 <tr><td>Fecha de Elaboración:</td><td>{$mes_formateado}</td></tr>
                 <tr><td>Periodo:</td><td>{$periodo_formateado}</td></tr>
             </table>

@@ -15,39 +15,41 @@
 <body>
 <main class="container">
 
-    <h1>Depto. Credito y Cobranza</h1>
+    <h1>Depto. Crédito y Cobranza</h1> 
     
     <section class="registro">
         <form method="post" action="GuardarCredito.php">
         <div class="registro-container">
+            
+            <!-- Columna 1 -->
             <div class="registro-column">
-
                 <div>
                     <label for="Mes">Mes:</label>
                     <input type="date" id="Mes" name="Mes" required>
                 </div>
+                
+                <hr>
+                
+                <h4>Resumen de Facturación</h4>
+                
+                <h5>Leche Fortificada</h5>
                 <div>
-                    <hr>
-                    <label>Resumen de Facturación</label><br>
-                    <hr>
-                    <label>Leche Fortificada</label><br><br>
-                    
-
                     <label for="CantidadLTF">Cantidad de litros:</label>
-                    <input type="number" id="CantidadLTF" name="CantidadLTF" placeholder="Lts" required step="any" >
+                    <input type="number" id="CantidadLTF" name="CantidadLTF" placeholder="Lts" required step="any">
                 </div>
                 <div>
                     <label for="ImporteTF">Importe:</label>
                     <input type="number" id="ImporteTF" name="ImporteTF" placeholder="$" required step="any">
                 </div>
-                 <div>
+                <div>
                     <label for="PorcentajeTF">Porcentaje que Representa en la Factura:</label>
                     <input type="number" id="PorcentajeTF" name="PorcentajeTF" placeholder="%" required step="any">
                 </div>
+                
+                <hr>
+                
+                <h5>Leche Frisia</h5>
                 <div>
-                    <hr>
-                    <label>Leche Frisia</label><br><br>
-                    
                     <label for="CantidadLTFR">Cantidad de litros:</label>
                     <input type="number" id="CantidadLTFR" name="CantidadLTFR" placeholder="Lts" required step="any">
                 </div>
@@ -55,29 +57,36 @@
                     <label for="ImporteTFR">Importe:</label>
                     <input type="number" id="ImporteTFR" name="ImporteTFR" placeholder="$" required step="any">
                 </div>
-                 <div>
+                <div>
                     <label for="PorcentajeTFR">Porcentaje que Representa en la Factura:</label>
                     <input type="number" id="PorcentajeTFR" name="PorcentajeTFR" placeholder="%" required step="any">
                 </div>
+                
+                <hr>
+                
+                <h5>Leche de Polvo AS</h5>
                 <div>
-                    <hr>
-                    <label>Leche de Polvo AS</label><br><br>
-                    
                     <label for="CantidadLTPAS">Cantidad de litros:</label>
                     <input type="number" id="CantidadLTPAS" name="CantidadLTPAS" placeholder="Lts" required step="any">
                 </div>
-                <div>
+                 <div>
                     <label for="ImporteTPAS">Importe:</label>
                     <input type="number" id="ImporteTPAS" name="ImporteTPAS" placeholder="$" required step="any">
                 </div>
-                 <div>
+                <div>
                     <label for="PorcentajeTPAS">Porcentaje que Representa en la Factura:</label>
                     <input type="number" id="PorcentajeTPAS" name="PorcentajeTPAS" placeholder="%" required step="any">
                 </div>
+            </div>
+            
+            <!-- Columna 2 -->
+            <div class="registro-column">
+               
+                
+                <hr>
+                
+                <h5>Leche de Polvo Comercial</h5>
                 <div>
-                    <hr>
-                    <label>Leche de Polvo Comercial</label><br><br>
-                    
                     <label for="CantidadLTPC">Cantidad de litros:</label>
                     <input type="number" id="CantidadLTPC" name="CantidadLTPC" placeholder="Lts" required step="any">
                 </div>
@@ -85,14 +94,15 @@
                     <label for="ImporteLTPC">Importe:</label>
                     <input type="number" id="ImporteLTPC" name="ImporteLTPC" placeholder="$" required step="any">
                 </div>
-                 <div>
+                <div>
                     <label for="PorcentajeLTPC">Porcentaje que Representa en la Factura:</label>
                     <input type="number" id="PorcentajeLTPC" name="PorcentajeLTPC" placeholder="%" required step="any">
                 </div>
+                
+                <hr>
+                
+                <h5>Leche de UHT</h5>
                 <div>
-                    <hr>
-                    <label>Leche de UHT</label><br><br>
-
                     <label for="CantidadLTUHT">Cantidad de litros:</label>
                     <input type="number" id="CantidadLTUHT" name="CantidadLTUHT" placeholder="Lts" required step="any">
                 </div>
@@ -100,41 +110,47 @@
                     <label for="ImporteLTUHT">Importe:</label>
                     <input type="number" id="ImporteLTUHT" name="ImporteLTUHT" placeholder="$" required step="any">
                 </div>
-                 <div>
-                    <label for="PorcentajeLTUHT">Porcentaje que Representa en la Factura    :</label>
+                <div>
+                    <label for="PorcentajeLTUHT">Porcentaje que Representa en la Factura:</label>
                     <input type="number" id="PorcentajeLTUHT" name="PorcentajeLTUHT" placeholder="%" required step="any">
-                </div>
-                <hr>
-                 <div>
-                    <label for="ObservacionesRes">Observaciones Resumen de Facturación:</label><br><br>
-                    <textarea id="ObservacionesRes" name="ObservacionesRes" rows="4" placeholder="Ej. La Facturación Disminuyó 5.25% al cierre del mes" required ></textarea>
                 </div>
                 
                 <div>
-                    
-                    <hr>
-                    <label>Análisis de Saldos Vencidos</label><br>
-                    <hr>
+                    <label for="ObservacionesRes">Observaciones Resumen de Facturación:</label>
+                    <textarea id="ObservacionesRes" name="ObservacionesRes" rows="3" placeholder="Ej. La Facturación Disminuyó 5.25% al cierre del mes" required></textarea>
+                </div>
+                 <hr>
+                
+                <h4>Análisis de Saldos Vencidos</h4>
+                
+                <div>
                     <label for="TotalFacturadoMes">Total Facturado en el Mes:</label>
                     <input type="number" id="TotalFacturadoMes" name="TotalFacturadoMes" placeholder="$" required step="any">
                 </div>
-                 <div>
-                    <label for="TotalDepositosMes">Total de Depositos en el Mes:</label>
-                    <input type="number" id="TotalDepositosMes" name="TotalDepositosMes" placeholder="$" required step="any"    >
-                </div>
-                <hr>
                 <div>
-                    <label for="ObservacionesFacturasDepositos">Observaciones Facturas y Depositos:</label><br><br>
-                    <textarea id="ObservacionesFacturasDepositos" name="ObservacionesFacturasDepositos" rows="4" placeholder="Ej. Al cierre del Mes , Los Depositos comparados con nuestra facturación Representan un Deficit del 8.37%" required></textarea>
+                    <label for="TotalDepositosMes">Total de Depositos en el Mes:</label>
+                    <input type="number" id="TotalDepositosMes" name="TotalDepositosMes" placeholder="$" required step="any">
                 </div>
                 
-                 <div>
-                    <hr>
-                    <label>Saldos del Mes</label><br><br>
+                <div>
+                    <label for="ObservacionesFacturasDepositos">Observaciones Facturas y Depositos:</label>
+                    <textarea id="ObservacionesFacturasDepositos" name="ObservacionesFacturasDepositos" rows="3" placeholder="Ej. Al cierre del Mes, Los Depositos comparados con nuestra facturación Representan un Deficit del 8.37%" required></textarea>
+                </div>
+            </div>
+            
+            <!-- Columna 3 -->
+            <div class="registro-column">
+               
+                
+                <hr>
+                
+                <h4>Saldos del Mes</h4>
+                
+                <div>
                     <label for="SaldoTS">Saldo:</label>
                     <input type="number" id="SaldoTS" name="SaldoTS" placeholder="$" required step="any">
                 </div>
-                 <div>
+                <div>
                     <label for="SaldoPV">Saldo por Vencer:</label>
                     <input type="number" id="SaldoPV" name="SaldoPV" placeholder="$" required step="any">
                 </div>
@@ -155,36 +171,40 @@
                     <input type="number" id="Saldonoventa" name="Saldonoventa" placeholder="$" required step="any">
                 </div>
                 <div>
-                    <label for="Saldosecenta">Saldo a mas de 90 días:</label>
+                    <label for="Saldosecenta">Saldo a más de 90 días:</label>
                     <input type="number" id="Saldosecenta" name="Saldosecenta" placeholder="$" required step="any">
                 </div>
-                <hr>
-                 <div>
-                    <label for="ObservacionesSaldos">Observaciones de los Saldos:</label><br><br>
-                    <textarea id="ObservacionesSaldos" name="ObservacionesSaldos" rows="4" placeholder="Ej. La Facturación Disminuyó 5.25% al cierre del mes" required></textarea>
-                </div>
+                
                 <div>
-                    <hr>
-                    <label>Saldo del Cliente Alimentación Para el Bienestar (DICONSA)</label><br>
-                    <hr> 
+                    <label for="ObservacionesSaldos">Observaciones de los Saldos:</label>
+                    <textarea id="ObservacionesSaldos" name="ObservacionesSaldos" rows="3" placeholder="Ej. La Facturación Disminuyó 5.25% al cierre del mes" required></textarea>
+                </div>
+                
+                <hr>
+                
+                <h4>Saldo del Cliente Alimentación Para el Bienestar (DICONSA)</h4>
+                
+                <div>
                     <label for="TotalSaldo">Total del Saldo:</label>
                     <input type="text" id="TotalSaldo" name="TotalSaldo" placeholder="$" required step="any">
                 </div>
+                
                 <div>
-                    <label for="ObservacionesSaldomes">Observaciones del Saldo de la Alimentación Para el Bienestar:</label><br><br>
-                    <textarea id="ObservacionesSaldomes" name="ObservacionesSaldomes" rows="4" placeholder="Ej. Alimentación Para el Bienestar al cierre del Mes Presenta un Saldo Deudor de $344,250.00" required></textarea>
+                    <label for="ObservacionesSaldomes">Observaciones del Saldo de la Alimentación Para el Bienestar:</label>
+                    <textarea id="ObservacionesSaldomes" name="ObservacionesSaldomes" rows="3" placeholder="Ej. Alimentación Para el Bienestar al cierre del Mes Presenta un Saldo Deudor de $344,250.00" required></textarea>
                 </div>
-                
-                
-            </div>
-             </div>
-                <div class="form-buttons">
-                <input type="submit" name="g" value="Guardar" class="btn">
-                <input type="button" name="b" value="Limpiar" class="btn" onclick="limpiarCampos()">
             </div>
             
+        </div>
+        
+        <div class="form-buttons">
+            <input type="submit" name="g" value="Guardar" class="btn">
+            <input type="button" name="b" value="Limpiar" class="btn" onclick="limpiarCampos()">
+        </div>
+        
         </form>
     </section>
+    
     <a href="TipoFormulario.php" class="home-link">
         <img src="../imagenes/home.png" height="100" width="90">
     </a>

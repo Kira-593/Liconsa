@@ -3,6 +3,7 @@ include "Conexion.php";
 
 // Obtener los datos del formulario
 $Claveregis = $_POST["Claveregis"];
+$FechaAct = $_POST["FechaAct"];
 $Mes = $_POST["Mes"];
 $Periodo = $_POST["Periodo"];
 
@@ -28,12 +29,12 @@ $ObservacionesRes = $_POST["ObservacionesRes"];
 
 // Consulta para insertar los datos en la base de datos
 $query = "INSERT INTO ad_indicador (
-    Claveregis, Mes, Periodo,
+    Claveregis, FechaAct, Mes, Periodo,
     ExpAtend, ExpRecib, Cumplimiento, MetaEsperadaCCR, RangoAceptCCR, TendenciaDeseadaCCR,
     EncuSatisfa, EncEnvia, Satisfaccion, MetaEsperadaSC, RangoAceptSC, TendenciaDeseadaSC,
     Responsable, ObservacionesRes
 ) VALUES (
-    '$Claveregis', '$Mes', '$Periodo',
+    '$Claveregis', '$FechaAct', '$Mes', '$Periodo',
     '$ExpAtend', '$ExpRecib', '$Cumplimiento', '$MetaEsperadaCCR', '$RangoAceptCCR', '$TendenciaDeseadaCCR',
     '$EncuSatisfa', '$EncEnvia', '$Satisfaccion', '$MetaEsperadaSC', '$RangoAceptSC', '$TendenciaDeseadaSC',
     '$Responsable', '$ObservacionesRes'

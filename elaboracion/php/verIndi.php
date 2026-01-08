@@ -48,11 +48,10 @@ echo "
             <hr>
             
             <table class='info-tabla'>
-                <tr><td>ID del Registro:</td><td>{$row['id']}</td></tr>
                 <tr><td>Clave de Registro:</td><td>{$row['Claveregis']}</td></tr>
+                <tr><td>Fecha de Actualización:</td><td>" . date('d/m/Y', strtotime($row['FechaAct'])) . "</td></tr>
                 <tr><td>Fecha de Elaboración:</td><td>{$mes_formateado}</td></tr>
                 <tr><td>Periodo:</td><td>{$periodo_formateado}</td></tr>
-                <tr><td>Fecha de Registro:</td><td>" . (!empty($row['fecha_registro']) ? date('d/m/Y H:i:s', strtotime($row['fecha_registro'])) : 'No disponible') . "</td></tr>
             </table>
             
             <div class='seccion-titulo'>📊 Cumplimiento al Programa de Distribución Mensual de Leche del Programa de Abasto Social</div>

@@ -85,31 +85,43 @@ session_start();
             <input type="hidden" value="<?= $row['id'] ?? '' ?>" name="id"> 
        
             <div class="registro-container">
+                
+                <!-- Columna 1 -->
                 <div class="registro-column">
-
                     <div>
                         <label for="Claveregis">Clave de Registro:</label>
                         <input type="text" id="Claveregis" name="Claveregis" 
                                value="<?= $row['Claveregis'] ?? '' ?>" 
                                <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?> 
                                placeholder="Ingrese la Clave" required>
+                    </div>
 
+                    <div>
+                        <label for="FechaAct">Fecha de Actualización:</label>
+                        <input type="date" id="FechaAct" name="FechaAct" 
+                               value="<?= $row['FechaAct'] ?? '' ?>" 
+                               <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?> required>
+                    </div>
+
+                    <div>
                         <label for="Mes">Fecha de Elaboración:</label>
                         <input type="date" id="Mes" name="Mes" 
                                value="<?= $row['Mes'] ?? '' ?>" 
                                <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?> required>
+                    </div>
 
+                    <div>
                         <label for="Periodo">Periodo:</label>
                         <input type="date" id="Periodo" name="Periodo" 
                                value="<?= $row['Periodo'] ?? '' ?>" 
                                <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?> required>
                     </div>
 
+                    <hr>
+                    
+                    <h4>Cumplimientos de la Capacitación</h4>
+                    
                     <div>
-                        <hr>
-                        <label>Cumplimientos de la Capacitación</label><br>
-                        <hr>
-
                         <label for="CapaImpar">Capacitaciones Impartidas:</label>
                         <input type="number" id="CapaImpar" name="CapaImpar" 
                                value="<?= $row['CapaImpar'] ?? '' ?>" 
@@ -156,19 +168,20 @@ session_start();
                                <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
                                placeholder="Ej. cumplir con la capacitación programada" required>
                     </div>
-
+                </div>
+                
+                <!-- Columna 2 -->
+                <div class="registro-column">
+                    <h4>Evaluación Técnica</h4>
+                    
                     <div>
-                        <hr>
-                        <label>Evaluación Técnica</label><br>
-                        <hr>
-
                         <label for="NuevosIP">Nuevos Ingresos al Puesto:</label>
                         <input type="number" id="NuevosIP" name="NuevosIP" 
                                value="<?= $row['NuevosIP'] ?? '' ?>" 
                                <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
                                placeholder="Ingrese la cantidad" required step="any">
                     </div>
-
+                    
                     <div>
                         <label for="NumEvaluaciones">Número de Evaluaciones:</label>
                         <input type="number" id="NumEvaluaciones" name="NumEvaluaciones" 
@@ -209,8 +222,11 @@ session_start();
                                placeholder="Ej. cumplir con la Evaluación Técnica" required>
                     </div>
 
+                    <hr>
+                    
+                    <h4>Responsable y Fuente</h4>
+                    
                     <div>
-                        <hr>
                         <label for="Responsable">Responsable:</label>
                         <input type="text" id="Responsable" name="Responsable" 
                                value="<?= $row['Responsable'] ?? '' ?>" 
@@ -219,82 +235,85 @@ session_start();
                     </div>
 
                     <div>
-                        <label for="Fuente">Fuente:</label><br><br>
+                        <label for="Fuente">Fuente:</label>
                         <textarea id="Fuente" name="Fuente" rows="4" 
                                   <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
                                   placeholder="Fuente" required><?= $row['Fuente'] ?? '' ?></textarea>
                     </div>
 
                     <!-- SECCIÓN DE FIRMA -->
-            <div class="firma-section mt-4 p-3 border rounded">
-                <h4>Firma Digital</h4>
+                    <div class="firma-section mt-4 p-3 border rounded">
+                        <h4>Firma Digital</h4>
 
-                <?php if ($row['permitir_firmar'] && !$formulario_firmado): ?>
-                    <div class="row mb-3">
-                        <div class="col-md-6">
-                            <label for="clave_firma">Clave de Firma:</label>
-                            <input type="password" id="clave_firma" name="clave_firma" class="form-control"
-                                placeholder="Ingrese su clave única de firma" <?= !$row['permitir_firmar'] ? 'readonly' : '' ?>>
-                            <small>Ingrese su clave única de firma para validar este formulario.</small>
-                        </div>
-                        <div class="col-md-6">
-                            <label for="confirmar_clave">Confirmar Clave:</label>
-                            <input type="password" id="confirmar_clave" name="confirmar_clave" class="form-control"
-                                placeholder="Confirme su clave de firma" <?= !$row['permitir_firmar'] ? 'readonly' : '' ?>>
-                        </div>
-                    </div>
+                        <?php if ($row['permitir_firmar'] && !$formulario_firmado): ?>
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label for="clave_firma">Clave de Firma:</label>
+                                    <input type="password" id="clave_firma" name="clave_firma" class="form-control"
+                                        placeholder="Ingrese su clave única de firma" <?= !$row['permitir_firmar'] ? 'readonly' : '' ?>>
+                                    <small>Ingrese su clave única de firma para validar este formulario.</small>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="confirmar_clave">Confirmar Clave:</label>
+                                    <input type="password" id="confirmar_clave" name="confirmar_clave" class="form-control"
+                                        placeholder="Confirme su clave de firma" <?= !$row['permitir_firmar'] ? 'readonly' : '' ?>>
+                                </div>
+                            </div>
 
-                    <div class="form-check mb-3">
-                        <label class="form-check-label" for="firmar_documento" style="display:inline-flex;align-items:center;gap:6px;cursor:pointer;">
-                            <input type="checkbox" id="firmar_documento" name="firmar_documento" class="form-check-input" <?= !$row['permitir_firmar'] ? 'disabled' : '' ?> required>
-                            Deseo firmar este documento digitalmente
-                        </label>
-                    </div>
-                <?php elseif ($formulario_firmado): ?>
-                    <div class="alert alert-success">
-                        <strong>✅ Documento Firmado</strong><br>
-                        Este formulario fue firmado por: <strong><?= $row['firma_usuario'] ?></strong><br>
-                        Fecha de firma: <strong><?= $row['fecha_firma'] ?></strong>
-                    </div>
-                <?php else: ?>
-                    <div class="alert alert-warning">
-                        <strong>⚠️ Firma no disponible</strong><br>
-                        No tienes permisos para firmar este documento o la firma no está habilitada.
-                    </div>
-                <?php endif; ?>
-            </div>
-
-             <div class="form-buttons">
-                <?php if (!$formulario_firmado): ?>
-                    <input type="submit" name="g" value="Guardar Cambios" class="btn btn-primary">
-                    <input type="button" value="Limpiar Campos" class="btn btn-secondary" onclick="limpiarCampos()"
-                           <?= ($solo_firma) ? 'disabled' : '' ?>>
-                <?php else: ?>
-                    <input type="submit" name="g" value="Guardar Cambios" class="btn btn-primary" 
-                           <?= $es_admin ? '' : 'disabled' ?>>
-                    <input type="button" value="Limpiar Campos" class="btn btn-secondary" onclick="limpiarCampos()"
-                           <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'disabled' : '' ?>>
-                    
-                    <?php if ($es_admin && $formulario_firmado): ?>
-                        <form method="POST" action="HacerIndiMa.php" style="display:inline;">
-                            <input type="hidden" name="id" value="<?= $row['id'] ?>">
-                            <input type="hidden" name="action" value="undo_signature">
-                            <input type="submit" value="Deshacer Firma" class="btn btn-warning"
-                                   onclick="return confirm('¿Estás seguro de que deseas deshacer la firma de este formulario?')">
-                        </form>
-                    <?php endif; ?>
-                    
-                        <?php if (!$es_admin): ?>
-                            <div class="alert alert-warning mt-3">
-                                Este formulario ya ha sido firmado y no puede ser modificado.
+                            <div class="form-check mb-3">
+                                <label class="form-check-label" for="firmar_documento" style="display:inline-flex;align-items:center;gap:6px;cursor:pointer;">
+                                    <input type="checkbox" id="firmar_documento" name="firmar_documento" class="form-check-input" <?= !$row['permitir_firmar'] ? 'disabled' : '' ?> required>
+                                    Deseo firmar este documento digitalmente
+                                </label>
+                            </div>
+                        <?php elseif ($formulario_firmado): ?>
+                            <div class="alert alert-success">
+                                <strong>✅ Documento Firmado</strong><br>
+                                Este formulario fue firmado por: <strong><?= $row['firma_usuario'] ?></strong><br>
+                                Fecha de firma: <strong><?= $row['fecha_firma'] ?></strong>
+                            </div>
+                        <?php else: ?>
+                            <div class="alert alert-warning">
+                                <strong>⚠️ Firma no disponible</strong><br>
+                                No tienes permisos para firmar este documento o la firma no está habilitada.
                             </div>
                         <?php endif; ?>
-                    <?php endif; ?>
-            </div>
+                    </div>
+
+                    <div class="form-buttons">
+                        <?php if (!$formulario_firmado): ?>
+                            <input type="submit" name="g" value="Guardar Cambios" class="btn">
+                            <input type="button" value="Limpiar Campos" class="btn" onclick="limpiarCampos()"
+                                   <?= ($solo_firma) ? 'disabled' : '' ?>>
+                        <?php else: ?>
+                            <input type="submit" name="g" value="Guardar Cambios" class="btn" 
+                                   <?= $es_admin ? '' : 'disabled' ?>>
+                            <input type="button" value="Limpiar Campos" class="btn" onclick="limpiarCampos()"
+                                   <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'disabled' : '' ?>>
+                            
+                            <?php if ($es_admin && $formulario_firmado): ?>
+                                <form method="POST" action="HacerIndiMa.php" style="display:inline;">
+                                    <input type="hidden" name="id" value="<?= $row['id'] ?>">
+                                    <input type="hidden" name="action" value="undo_signature">
+                                    <input type="submit" value="Deshacer Firma" class="btn"
+                                           onclick="return confirm('¿Estás seguro de que deseas deshacer la firma de este formulario?')">
+                                </form>
+                            <?php endif; ?>
+                            
+                            <?php if (!$es_admin): ?>
+                                <div class="alert alert-warning mt-3">
+                                    Este formulario ya ha sido firmado y no puede ser modificado.
+                                </div>
+                            <?php endif; ?>
+                        <?php endif; ?>
+                    </div>
+                </div>
+                
+            </div> <!-- cierre registro-container -->
         </form>
     </section>
 
-    <a href="./Indigestiones.php" class="home-link">
+    <a href="MenuIndiMa.php" class="home-link">
         <img src="../imagenes/home.png" height="100" width="90">
     </a>
 </main>

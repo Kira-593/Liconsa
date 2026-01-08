@@ -3,6 +3,7 @@ include "Conexion.php";
 
 // Obtener los datos del formulario
 $Claveregis = $_POST["Claveregis"];
+$FechaAct = $_POST["FechaAct"];
 $Mes = $_POST["Mes"];
 $Periodo = $_POST["Periodo"];
 
@@ -19,6 +20,17 @@ $HorasHombre = $_POST["HorasHombre"];
 $HorasParo = $_POST["HorasParo"];
 $HorasDisponibles = $_POST["HorasDisponibles"];
 $prc = $_POST["prc"];
+
+$HorasHombreEnv = $_POST["HorasHombreEnv"];
+$HorasParoEnv = $_POST["HorasParoEnv"];
+$HorasDisponiblesEnv = $_POST["HorasDisponiblesEnv"];
+$prcEnv = $_POST["prcEnv"];
+
+$HorasHombreReh = $_POST["HorasHombreReh"];
+$HorasParoReh = $_POST["HorasParoReh"];
+$HorasDisponiblesReh = $_POST["HorasDisponiblesReh"];
+$prcReh = $_POST["prcReh"];
+
 $MetaEsperadaDEP = $_POST["MetaEsperadaDEP"];
 $RangoAceptDEP = $_POST["RangoAceptDEP"];
 $TendenciaDeseadaDEP = $_POST["TendenciaDeseadaDEP"];
@@ -68,9 +80,11 @@ $Fuente = $_POST["Fuente"];
 
 // Consulta para insertar los datos en la base de datos
 $query = "INSERT INTO m_indicador (
-    Claveregis, Mes, Periodo,
+    Claveregis, FechaAct, Mes, Periodo,
     PresEje, GastoAutorizado, Diferiencia, MetaEsperadaGO, RangoAceptGO, TendenciaDeseadaGO,
-    HorasHombre, HorasParo, HorasDisponibles, prc, MetaEsperadaDEP, RangoAceptDEP, TendenciaDeseadaDEP,
+    HorasHombre, HorasParo, HorasDisponibles, prc, HorasHombreEnv, HorasParoEnv, HorasDisponiblesEnv, prcEnv,
+    HorasHombreReh, HorasParoReh, HorasDisponiblesReh, prcReh,
+    MetaEsperadaDEP, RangoAceptDEP, TendenciaDeseadaDEP,
     TPE, TP, PorcentTP, MetaEsperadaTP, RangoAceptTP, TendenciaDeseadaTP,
     TC, PorcentTC, MetaEsperadaTC, RangoAceptTC, TendenciaDeseadaTC,
     ConsumoTermico, LitrosLecheProducidatermica, ConsTT, MetaEsperadaCT, RangoAceptCT, TendenciaDeseadaCT,
@@ -78,9 +92,11 @@ $query = "INSERT INTO m_indicador (
     ConsumoElectrico, LitrosLecheProducidaElectrico, ConsTE, MetaEsperadaCE, RangoAceptCE, TendenciaDeseadaCE,
     Responsable, Fuente
 ) VALUES (
-    '$Claveregis', '$Mes', '$Periodo',
+    '$Claveregis', '$FechaAct', '$Mes', '$Periodo',
     '$PresEje', '$GastoAutorizado', '$Diferiencia', '$MetaEsperadaGO', '$RangoAceptGO', '$TendenciaDeseadaGO',
-    '$HorasHombre', '$HorasParo', '$HorasDisponibles', '$prc', '$MetaEsperadaDEP', '$RangoAceptDEP', '$TendenciaDeseadaDEP',
+    '$HorasHombre', '$HorasParo', '$HorasDisponibles', '$prc', '$HorasHombreEnv', '$HorasParoEnv', '$HorasDisponiblesEnv', '$prcEnv',
+    '$HorasHombreReh', '$HorasParoReh', '$HorasDisponiblesReh', '$prcReh',
+    '$MetaEsperadaDEP', '$RangoAceptDEP', '$TendenciaDeseadaDEP',
     '$TPE', '$TP', '$PorcentTP', '$MetaEsperadaTP', '$RangoAceptTP', '$TendenciaDeseadaTP',
     '$TC', '$PorcentTC', '$MetaEsperadaTC', '$RangoAceptTC', '$TendenciaDeseadaTC',
     '$ConsumoTermico', '$LitrosLecheProducidatermica', '$ConsTT', '$MetaEsperadaCT', '$RangoAceptCT', '$TendenciaDeseadaCT',

@@ -37,6 +37,7 @@ $ID = $_POST["id"] ?? '';
 
 // 2. Obtener los 44 campos de datos del formulario
 $Claveregis = $_POST["Claveregis"] ?? '';
+$FechaAct = $_POST["FechaAct"] ?? '';
 $Mes = $_POST["Mes"] ?? '';
 $Periodo = $_POST["Periodo"] ?? '';
 $NumBenefi = $_POST["NumBenefi"] ?? '';
@@ -116,7 +117,7 @@ if (isset($_POST['firmar_documento']) && $_POST['firmar_documento'] == 'on') {
 
 // Base de la consulta con los 44 campos de datos
 $sql_base = "UPDATE p_indicador SET 
-    Claveregis=?, Mes=?, Periodo=?, 
+    Claveregis=?, FechaAct=?, Mes=?, Periodo=?, 
     NumBenefi=?, MetaBeneficiarios=?, MetaReal=?, MetaEsperadaMB=?, RangoAceptMB=?, TendenciaDeseadaMB=?,
     LitrosVendidos=?, NumBenefiActivos=?, DiasVenta=?, FacRetLi=?, MetaEsperadaFRL=?, RangoAceptFRL=?, TendenciaDeseadaFRL=?,
     LitrosVendidosPol=?, NumBenefiActivosPol=?, DiasVentaPol=?, FacRetPol=?, MetaEsperadaFRP=?, RangoAceptFRP=?, TendenciaDeseadaFRP=?,
@@ -131,12 +132,12 @@ if ($firma_realizada) {
     // 44 datos + 2 firma + 1 ID = 47 variables.
     // Usamos str_repeat para generar 'ssss...' de forma segura.
     // 46 strings + 1 int (id)
-    $tipos = str_repeat("s", 46) . "i"; 
+    $tipos = str_repeat("s", 47) . "i"; 
 } else {
     // Si no hay firma, solo agregamos el WHERE
     $query = $sql_base . " WHERE id=?";
     // 44 datos + 1 ID = 45 variables.
-    $tipos = str_repeat("s", 44) . "i";
+    $tipos = str_repeat("s", 45) . "i";
 }
 
 $stmt = mysqli_prepare($link, $query);
@@ -149,7 +150,7 @@ if (!$stmt) {
 
 // Array base con los 44 datos
 $params = [
-    $Claveregis, $Mes, $Periodo,
+    $Claveregis, $FechaAct, $Mes, $Periodo,
     $NumBenefi, $MetaBeneficiarios, $MetaReal, $MetaEsperadaMB, $RangoAceptMB, $TendenciaDeseadaMB,
     $LitrosVendidos, $NumBenefiActivos, $DiasVenta, $FacRetLi, $MetaEsperadaFRL, $RangoAceptFRL, $TendenciaDeseadaFRL,
     $LitrosVendidosPol, $NumBenefiActivosPol, $DiasVentaPol, $FacRetPol, $MetaEsperadaFRP, $RangoAceptFRP, $TendenciaDeseadaFRP,

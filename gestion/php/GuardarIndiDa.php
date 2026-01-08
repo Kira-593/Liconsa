@@ -3,6 +3,7 @@ include "Conexion.php";
 
 // Obtener los datos del formulario
 $Claveregis = $_POST["Claveregis"];
+$FechaAct = $_POST["FechaAct"];
 $Mes = $_POST["Mes"];
 $Periodo = $_POST["Periodo"];
 
@@ -42,14 +43,14 @@ $ObservacionesRes = $_POST["ObservacionesRes"];
 
 // Consulta para insertar los datos en la base de datos
 $query = "INSERT INTO g_indicador_da (
-    Claveregis, Mes, Periodo,
+    Claveregis, FechaAct, Mes, Periodo,
     NoSatis, NoPuntos, DndSat, MetaEsperadaRIO, RangoAceptRIO, TendenciaDeseadaRIO,
     NoSatisUnif, NoPuntosUnif, DndSatUnif, MetaEsperadaUTE, RangoAceptUTE, TendenciaDeseadaUTE,
     CantAcci, DiasLaborados, Frecuencia, MetaEsperadaAIR, RangoAceptAIR, TendenciaDeseadaAIR,
     CantActCondInseg, MetaEsperadaACI, RangoAceptACI, TendenciaDeseadaACI,
     Responsable, ObservacionesRes
 ) VALUES (
-    '$Claveregis', '$Mes', '$Periodo',
+    '$Claveregis', '$FechaAct', '$Mes', '$Periodo',
     '$NoSatis', '$NoPuntos', '$DndSat', '$MetaEsperadaRIO', '$RangoAceptRIO', '$TendenciaDeseadaRIO',
     '$NoSatisUnif', '$NoPuntosUnif', '$DndSatUnif', '$MetaEsperadaUTE', '$RangoAceptUTE', '$TendenciaDeseadaUTE',
     '$CantAcci', '$DiasLaborados', '$Frecuencia', '$MetaEsperadaAIR', '$RangoAceptAIR', '$TendenciaDeseadaAIR',

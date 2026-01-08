@@ -39,6 +39,7 @@ $ID = $_POST["id"] ?? '';
 
 // Datos básicos
 $Claveregis = $_POST["Claveregis"] ?? '';
+$FechaAct = $_POST["FechaAct"] ?? '';
 $Mes = $_POST["Mes"] ?? '';
 $Periodo = $_POST["Periodo"] ?? '';
 
@@ -140,6 +141,7 @@ if (isset($_POST['firmar_documento']) && $_POST['firmar_documento'] == 'on') {
             // Consulta preparada CON firma
             $query = "UPDATE d_indicador SET 
                         Claveregis = ?, 
+                        FechaAct = ?, 
                         Mes = ?, 
                         Periodo = ?,
                         CumplRealProgDia = ?, 
@@ -202,6 +204,7 @@ if (isset($_POST['firmar_documento']) && $_POST['firmar_documento'] == 'on') {
     // Consulta preparada SIN firma
     $query = "UPDATE d_indicador SET 
                 Claveregis = ?, 
+                FechaAct = ?, 
                 Mes = ?, 
                 Periodo = ?,
                 CumplRealProgDia = ?, 
@@ -252,8 +255,8 @@ if (!$stmt) {
 
 if ($firma_realizada) {
     // Con firma: 38 parámetros + 2 de firma + ID = 41 en total
-    mysqli_stmt_bind_param($stmt, "ssssssssssssssssssssssssssssssssssssss",
-        $Claveregis, $Mes, $Periodo,
+    mysqli_stmt_bind_param($stmt, "sssssssssssssssssssssssssssssssssssssss",
+        $Claveregis, $FechaAct, $Mes, $Periodo,
         $CumplRealProgDia, $ProgDiarioDespacho, $PCDP, $MetaEsperadaMB, $RangoAceptMB, $TendenciaDeseadaMB,
         $Ventatot, $DotEntre, $CumplimientoVentas, $MetaEsperadaCVP, $RangoAceptCVP, $TendenciaDeseadaCVP,
         $MermasEnva, $DotEnva, $CantidadEnvRotos, $MetaEsperadaCER, $RangoAceptCER, $TendenciaDeseadaCER,
@@ -265,8 +268,8 @@ if ($firma_realizada) {
     );
 } else {
     // Sin firma: 38 parámetros + ID = 39 en total
-    mysqli_stmt_bind_param($stmt, "ssssssssssssssssssssssssssssssssssss",
-        $Claveregis, $Mes, $Periodo,
+    mysqli_stmt_bind_param($stmt, "sssssssssssssssssssssssssssssssssssss",
+        $Claveregis, $FechaAct, $Mes, $Periodo,
         $CumplRealProgDia, $ProgDiarioDespacho, $PCDP, $MetaEsperadaMB, $RangoAceptMB, $TendenciaDeseadaMB,
         $Ventatot, $DotEntre, $CumplimientoVentas, $MetaEsperadaCVP, $RangoAceptCVP, $TendenciaDeseadaCVP,
         $MermasEnva, $DotEnva, $CantidadEnvRotos, $MetaEsperadaCER, $RangoAceptCER, $TendenciaDeseadaCER,

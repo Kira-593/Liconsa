@@ -33,7 +33,6 @@ if (!empty($_SESSION['correo'])) {
 	<link rel="stylesheet" href="../css/IndiAlmacen.css">
     <img src="../imagenes/AgriculturaLogo.png" class="logo-superior" alt="Logo Agricultura">
 	<img src="../imagenes/sgc.png" class="logo-sgc" alt="Logo SGC">	
-    
 </head>
 <body>
 <main class="container">
@@ -44,75 +43,96 @@ if (!empty($_SESSION['correo'])) {
     <section class="registro">
         <form method="post" action="GuardarIndi.php">
         <div class="registro-container">
+            
+            <!-- Columna 1 -->
             <div class="registro-column">
                 <div>
-                    <div>
                     <label for="Claveregis">Clave de Registro:</label>
-                    <input type="text" id="Claveregis" name="Claveregis" value="TX-MSGC-500-01-R01" required step="any">
-                    </div>
+                    <input type="text" id="Claveregis" name="Claveregis" value="TX-MSGC-500-01-R01" required>
+                </div>
+                
+                <div>
+                    <label for="FechaAct">Fecha de Actualización:</label>
+                    <input type="date" id="FechaAct" name="FechaAct" value="2025-10-01" required>
+                </div>
+                
+                <div>
                     <label for="Mes">Fecha de Elaboración:</label>
-                    <input type="date" id="Mes" name="Mes" value="2025-10-01" required>
+                    <input type="date" id="Mes" name="Mes" min="<?php echo date('Y-m-d'); ?>" required>
+                </div>
+                
+                <div>
                     <label for="Periodo">Periodo:</label>
                     <input type="date" id="Periodo" name="Periodo" required>
-                    </div>
+                </div>
+                
+                <hr>
+                
                 <div>
-                    <hr>
-                    <label>Satisfacción de Nuestros Clientes</label><br>
-                    <hr>
+                    <h4>Satisfacción de Nuestros Clientes</h4>
+                </div>
+                
+                <div>
                     <label for="SumEn">Sumatoria de la calificación de Encuesta de Satisfacción de Nuestros clientes:</label>
                     <input type="number" id="SumEn" name="SumEn" placeholder="Ingrese la cantidad" required step="any">
                 </div>
+                
                 <div>
                     <label for="NumEncuestas">Numero de Encuestas:</label>
                     <input type="number" id="NumEncuestas" name="NumEncuestas" placeholder="Ingrese la meta" required step="any">
                 </div>
+            </div>
+            
+            <!-- Columna 2 -->
+            <div class="registro-column">
                 <div>
-                    <label for="PuntosSatisfaccion">Puntos de satisfaccion:</label>
+                    <label for="PuntosSatisfaccion">Puntos de satisfacción:</label>
                     <input type="number" id="PuntosSatisfaccion" name="PuntosSatisfaccion" placeholder="Los Puntos son:" required step="any">
                 </div>
-                 <div>
+                
+                <div>
                     <label for="MetaEsperadaMB">Meta Esperada:</label>
-                    <input type="text" id="MetaEsperadaMB" name="MetaEsperadaMB" placeholder="La meta esperada es:" required step="any">
+                    <input type="text" id="MetaEsperadaMB" name="MetaEsperadaMB" placeholder="La meta esperada es:" required>
                 </div>
-                 <div>
+                
+                <div>
                     <label for="RangoAceptMB">Rango de Aceptación:</label>
-                    <input type="text" id="RangoAceptMB" name="RangoAceptMB" placeholder="Ej. 90 a 100 Puntos" required step="any">
+                    <input type="text" id="RangoAceptMB" name="RangoAceptMB" placeholder="Ej. 90 a 100 Puntos" required>
                 </div>
-
+                
                 <div>
                     <label for="TendenciaDeseadaMB">Tendencia Deseada:</label>
-                    <input type="text" id="TendenciaDeseadaMB" name="TendenciaDeseadaMB" placeholder="Ej. 100 puntos , Meta Alcanzada" required step="any">
+                    <input type="text" id="TendenciaDeseadaMB" name="TendenciaDeseadaMB" placeholder="Ej. 100 puntos , Meta Alcanzada" required>
                 </div>
                 
+                <hr>
                 
                 <div>
-                <hr>
                     <label for="Responsable">Responsable:</label>
                     <input type="text" id="Responsable" name="Responsable" value="<?php echo htmlspecialchars($responsable_value); ?>" placeholder="Nombre del responsable" required>
                 </div>
-            
+                
                 <div>
-                    <label for="Fuente">Fuente:</label><br><br>
-                    <textarea id="Fuente" name="Fuente" rows="4" placeholder="Ej. La Facturación Disminuyó 5.25% al cierre del mes" required ></textarea>
+                    <label for="Fuente">Fuente:</label>
+                    <textarea id="Fuente" name="Fuente" rows="4" placeholder="Ej. La Facturación Disminuyó 5.25% al cierre del mes" required></textarea>
                 </div>
-                <hr>
-
-
-
-                    
-            <div class="form-buttons">
-                <input type="submit" name="g" value="Guardar">
-                <input type="reset" name="b" value="Limpiar">
             </div>
+            
+        </div>
+        
+        <div class="form-buttons">
+            <input type="submit" name="g" value="Guardar">
+            <input type="reset" name="b" value="Limpiar">
+        </div>
         </form>
     </section>
-    <a href="./AlmacenP.php" class="home-link">
+    
+    <a href="MenuIndi.php" class="home-link">
         <img src="../imagenes/home.png" height="100" width="90">
     </a>
 </main>
 
 <script>
-    // Convertir automáticamente a mayúsculas en el campo "Clave de Registro"
     (function() {
         function enableUppercase(id) {
             var el = document.getElementById(id);
@@ -121,7 +141,6 @@ if (!empty($_SESSION['correo'])) {
                 var start = this.selectionStart;
                 var end = this.selectionEnd;
                 this.value = this.value.toUpperCase();
-                // intentar restaurar la posición del cursor
                 if (typeof this.setSelectionRange === 'function') {
                     this.setSelectionRange(start, end);
                 }
@@ -131,9 +150,7 @@ if (!empty($_SESSION['correo'])) {
         enableUppercase('Claveregis');
         enableUppercase('Responsable');
     })();
-
 </script>
-
 
 </body>
 </html>

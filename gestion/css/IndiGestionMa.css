@@ -1,3 +1,5 @@
+/* IndiGestionMa.css - Para 2 columnas */
+
 body {
    background: radial-gradient(circle, rgb(255, 254, 254), #eae4e4, rgb(241, 234, 234)); 
     font-family: NotoSans;
@@ -14,19 +16,21 @@ body {
 .container {
     background-color: rgba(0, 0, 0, 0.8);
     border-radius: 15px;
-    padding: 10px;
-    width: 50%;
+    padding: 30px; /* Aumentado para mejor espacio */
+    width: 90%; /* Más ancho para 2 columnas */
     box-shadow: 0 0 15px rgba(255, 255, 255, 0.3);
-    max-width: 500px; /* Ajusta según el diseño deseado */
-    margin: 1400px auto 15px auto;
+    max-width: 1000px; /* Más ancho para 2 columnas */
+    margin: 750px auto 15px auto; /* Margen superior ajustado */
 }
 
+/* MODIFICACIÓN: 2 columnas */
 .registro-container {
     display: flex;
-    justify-content:center; /* Separa las columnas */
+    justify-content: space-between; /* Separa las 2 columnas */
     gap: 2rem; /* Ajusta el espacio entre columnas */
     width: 100%;
 }
+
 .registro-column {
     width: 48%; /* Cada columna ocupa el 48% del ancho */
     display: flex;
@@ -46,6 +50,11 @@ h1 {
     margin-bottom: 20px;
 }
 
+h4 {
+    margin: 15px 0 10px 0;
+    color: white; /* Color blanco para los subtítulos */
+}
+
 textarea {
     width: 100%;
     padding: 8px;
@@ -53,13 +62,14 @@ textarea {
     border: 1px solid brown;
     background-color: #333;
     color: white;
+    resize: vertical;
+    min-height: 80px;
 }
 
 select,
 input[type="number"],
 input[type="text"],
-input[type="date"],
-input[type="text-area"] {
+input[type="date"] {
     width: 100%;
     padding: 8px;
     border-radius: 5px;
@@ -114,4 +124,18 @@ input[type="reset"]:hover {
     width: 30%; /* Ajusta el tamaño según tu preferencia */
     height: auto;
     z-index: 10;
+}
+
+hr {
+    margin: 15px 0;
+    border: 0;
+    height: 1px;
+    background-color: rgba(255, 255, 255, 0.2);
+}
+
+label {
+    display: block;
+    text-align: left;
+    margin-bottom: 5px;
+    font-size: 0.9em;
 }

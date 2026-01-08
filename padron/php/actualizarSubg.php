@@ -17,7 +17,7 @@ session_start();
 <body>
 <div class="container">
     
-    <h2>Modificar Indicadores Mensuales</h2>
+    <h2>Modificar Indicadores Mensuales</h2>        
     
    <?php
     include "Conexion.php";

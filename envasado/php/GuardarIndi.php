@@ -3,6 +3,7 @@ include "Conexion.php";
 
 // Obtener los datos del formulario
 $Claveregis = $_POST["Claveregis"];
+$FechaAct = $_POST["FechaAct"];
 $Mes = $_POST["Mes"];
 $Periodo = $_POST["Periodo"];
 $RepAbasto = $_POST["RepAbasto"];
@@ -16,11 +17,11 @@ $ObservacionesRes = $_POST["ObservacionesRes"];
 
 // Consulta para insertar los datos en la base de datos
 $query = "INSERT INTO envasado_indicador (
-    Claveregis, Mes, Periodo, RepAbasto, RepFrisia, 
+    Claveregis, FechaAct, Mes, Periodo, RepAbasto, RepFrisia, 
     MetaEsperadaMB, RangoAcept, TendenciaDeseadaMB, 
     Responsable, ObservacionesRes
 ) VALUES (
-    '$Claveregis', '$Mes', '$Periodo', '$RepAbasto', '$RepFrisia',
+    '$Claveregis', '$FechaAct', '$Mes', '$Periodo', '$RepAbasto', '$RepFrisia',
     '$MetaEsperadaMB', '$RangoAcept', '$TendenciaDeseadaMB',
     '$Responsable', '$ObservacionesRes'
 )";

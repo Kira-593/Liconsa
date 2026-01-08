@@ -14,7 +14,6 @@ session_start();
     <script src="../js/limpiar.js"></script>
     <img src="../imagenes/AgriculturaLogo.png" class="logo-superior" alt="Logo Agricultura">
     <img src="../imagenes/sgc.png" class="logo-sgc" alt="Logo SGC">
-    
 </head>
 <body>
 <main class="container">
@@ -22,12 +21,10 @@ session_start();
     <h1>Indicadores</h1>
     <h4>Actualizar Envasado</h4>
 
-     <?php
+    <?php
     include "Conexion.php";
     
-    // Verificar si el usuario es administrador
     $es_admin = isset($_SESSION['departamento']) && $_SESSION['departamento'] === 'ADMIN';
-    
     $ID = $_GET["id"] ?? $_GET["sc"] ?? die("<div class='alert alert-danger'>Error: ID de registro no proporcionado.</div>");
     $query = "SELECT * FROM envasado_indicador WHERE id='$ID'"; 
     $res = mysqli_query($link, $query);
@@ -37,12 +34,9 @@ session_start();
     }
     
     $row = mysqli_fetch_array($res);
-
-    // Verificar permisos
     $solo_firma = $row['permitir_firmar'] && !$row['permitir_modificar'];
     $formulario_firmado = !empty($row['firma_usuario']);
     
-    // Si solo está permitido firmar y el formulario ya está firmado, y NO es admin: bloquear
     if ($solo_firma && $formulario_firmado && !$es_admin) {
         echo "<script>
             alert('Este formulario ya ha sido firmado y no puede ser modificado.');
@@ -51,7 +45,6 @@ session_start();
         exit();
     }
 
-    // Si no tiene permisos de modificación ni firma, y NO es admin
     if (!$row['permitir_modificar'] && !$row['permitir_firmar'] && !$es_admin) {
         echo "<script>
             alert('No tienes permisos para modificar o firmar este formulario. Contacta al administrador.');
@@ -60,7 +53,6 @@ session_start();
         exit();
     }
 
-    // Mostrar alerta si es admin accediendo a un registro firmado
     if ($es_admin && $formulario_firmado) {
         echo "<div class='alert alert-warning alert-section'>
             <strong>🔓 Acceso de Administrador</strong><br>
@@ -68,7 +60,6 @@ session_start();
         </div>";
     }
 
-    // Mostrar estado de firma si ya está firmado
     if ($formulario_firmado): ?>
         <div class="alert alert-info alert-section">
             <strong>✅ Formulario Firmado</strong><br>
@@ -78,14 +69,12 @@ session_start();
     <?php endif; ?>
     
     <section class="registro">
-        <!-- El formulario envía los datos al script HacerEnvasado.php -->
         <form action="HacerIndi.php" method="POST" id="formulario">
-            <!-- Campo oculto para pasar el ID del registro a actualizar -->
-            <input type="hidden" value="<?= $row['id'] ?? '' ?>" name="id"> 
-        
+            <input type="hidden" value="<?= $row['id'] ?? '' ?>" name="id">
+            
             <div class="registro-container">
+                <!-- Columna 1 -->
                 <div class="registro-column">
-                    
                     <div>
                         <label for="Claveregis">Clave de Registro:</label>
                         <input type="text" id="Claveregis" name="Claveregis" 
@@ -93,13 +82,25 @@ session_start();
                                placeholder="Ingrese la Clave" 
                                <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
                                required>
-
+                    </div>
+                    
+                    <div>
+                        <label for="FechaAct">Fecha de Actualización:</label>
+                        <input type="date" id="FechaAct" name="FechaAct" 
+                               value="<?= $row['FechaAct'] ?? '' ?>" 
+                               <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
+                               required>
+                    </div>
+                    
+                    <div>
                         <label for="Mes">Fecha de Elaboración:</label>
                         <input type="date" id="Mes" name="Mes" 
                                value="<?= $row['Mes'] ?? '' ?>" 
                                <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
                                required>
-                        
+                    </div>
+                    
+                    <div>
                         <label for="Periodo">Periodo:</label>
                         <input type="date" id="Periodo" name="Periodo" 
                                value="<?= $row['Periodo'] ?? '' ?>" 
@@ -107,12 +108,16 @@ session_start();
                                required>
                     </div>
                     
-                    <!-- Calidad de leche Reconstruida (VOLUMEN) Abasto y Frisia -->
+                    <div class="seccion-titulo">
+                        <hr>
+                        <label class="titulo-seccion">Calidad de leche Reconstruida (VOLUMEN) Abasto y Frisia</label>
+                        <hr>
+                    </div>
+                </div>
+                
+                <!-- Columna 2 -->
+                <div class="registro-column">
                     <div>
-                        <hr>
-                        <label>Calidad de leche Reconstruida (VOLUMEN) Abasto y Frisia</label><br>
-                        <hr>
-
                         <label for="RepAbasto">Reporte Mensual de Control de Calidad de Leche Pasteurizada ABASTO:</label>
                         <input type="number" id="RepAbasto" name="RepAbasto" 
                                value="<?= $row['RepAbasto'] ?? '' ?>" 
@@ -120,7 +125,7 @@ session_start();
                                <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
                                required step="any">
                     </div>
-
+                    
                     <div>
                         <label for="RepFrisia">Reporte Mensual de Control de Calidad de Leche Pasteurizada FRISIA:</label>
                         <input type="number" id="RepFrisia" name="RepFrisia" 
@@ -129,7 +134,7 @@ session_start();
                                <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
                                required step="any">
                     </div>
-
+                    
                     <div>
                         <label for="MetaEsperadaMB">Meta Esperada:</label>
                         <textarea id="MetaEsperadaMB" name="MetaEsperadaMB" 
@@ -137,7 +142,7 @@ session_start();
                                   <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
                                   required><?= $row['MetaEsperadaMB'] ?? '' ?></textarea>
                     </div>
-
+                    
                     <div>
                         <label for="RangoAcept">Rango de Aceptación:</label>
                         <textarea id="RangoAcept" name="RangoAcept" 
@@ -145,7 +150,7 @@ session_start();
                                   <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
                                   required><?= $row['RangoAcept'] ?? '' ?></textarea>
                     </div>
-
+                    
                     <div>
                         <label for="TendenciaDeseadaMB">Tendencia Deseada:</label>
                         <input type="text" id="TendenciaDeseadaMB" name="TendenciaDeseadaMB" 
@@ -154,30 +159,36 @@ session_start();
                                <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
                                required>
                     </div>
-
-                    <div>
-                        <hr>
-                        <label for="Responsable">Responsable:</label>
-                        <input type="text" id="Responsable" name="Responsable" 
-                               value="<?= $row['Responsable'] ?? '' ?>" 
-                               placeholder="Nombre del responsable" 
-                               <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
-                               required>
-                    </div>
-
-                    <div>
-                        <label for="ObservacionesRes">Fuente:</label><br><br>
-                        <textarea id="ObservacionesRes" name="ObservacionesRes" rows="4" 
-                                  placeholder="Reporte mensual de produccion, reporte de leche pasteurizada de control de calidad." 
-                                  <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
-                                  required><?= $row['ObservacionesRes'] ?? '' ?></textarea>
+                    
+                    <div class="espacio-adicional">
+                        <!-- Espacio para campos adicionales si es necesario -->
                     </div>
                 </div>
             </div>
             
-            <!-- SECCIÓN DE FIRMA -->
-            <div class="firma-section mt-4 p-3 border rounded">
-                <h4>Firma Digital</h4>
+            <!-- Campos Responsable y Fuente fuera de las columnas -->
+            <div style="margin-top: 20px;">
+                <div>
+                    <label for="Responsable">Responsable:</label>
+                    <input type="text" id="Responsable" name="Responsable" 
+                           value="<?= $row['Responsable'] ?? '' ?>" 
+                           placeholder="Nombre del responsable" 
+                           <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
+                           required>
+                </div>
+                
+                <div>
+                    <label for="ObservacionesRes">Fuente:</label>
+                    <textarea id="ObservacionesRes" name="ObservacionesRes" rows="4" 
+                              placeholder="Reporte mensual de produccion, reporte de leche pasteurizada de control de calidad." 
+                              <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
+                              required><?= $row['ObservacionesRes'] ?? '' ?></textarea>
+                </div>
+            </div>
+            
+            <!-- SECCIÓN DE FIRMA CENTRADA -->
+            <div class="firma-section mt-4 p-3 border rounded" style="max-width: 800px; margin: 30px auto 20px auto;">
+                <h4 style="text-align: center;">Firma Digital</h4>
                 
                 <?php if ($row['permitir_firmar'] && !$formulario_firmado): ?>
                     <div class="row mb-3">
@@ -194,7 +205,7 @@ session_start();
                         </div>
                     </div>
                     
-                    <div class="form-check mb-3">
+                    <div class="form-check mb-3" style="text-align: center;">
                         <label class="form-check-label" for="firmar_documento" style="display:inline-flex;align-items:center;gap:6px;cursor:pointer;">
                             <input type="checkbox" id="firmar_documento" name="firmar_documento" class="form-check-input" required>
                             Deseo firmar este documento digitalmente
@@ -213,33 +224,33 @@ session_start();
                     </div>
                 <?php endif; ?>
             </div>
-            
+
             <div class="form-buttons">
                 <?php if (!$formulario_firmado): ?>
-                    <input type="submit" name="g" value="Guardar Cambios" class="btn btn-primary">
-                    <input type="button" value="Limpiar Campos" class="btn btn-secondary" onclick="limpiarCampos()"
+                    <input type="submit" name="g" value="Guardar Cambios" class="btn">
+                    <input type="button" value="Limpiar Campos" class="btn" onclick="limpiarCampos()"
                            <?= ($solo_firma) ? 'disabled' : '' ?>>
                 <?php else: ?>
-                    <input type="submit" name="g" value="Guardar Cambios" class="btn btn-primary" 
+                    <input type="submit" name="g" value="Guardar Cambios" class="btn" 
                            <?= $es_admin ? '' : 'disabled' ?>>
-                    <input type="button" value="Limpiar Campos" class="btn btn-secondary" onclick="limpiarCampos()"
+                    <input type="button" value="Limpiar Campos" class="btn" onclick="limpiarCampos()"
                            <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'disabled' : '' ?>>
                     
                     <?php if ($es_admin && $formulario_firmado): ?>
                         <form method="POST" action="HacerIndi.php" style="display:inline;">
                             <input type="hidden" name="id" value="<?= $row['id'] ?>">
                             <input type="hidden" name="action" value="undo_signature">
-                            <input type="submit" value="Deshacer Firma" class="btn btn-warning"
+                            <input type="submit" value="Deshacer Firma" class="btn"
                                    onclick="return confirm('¿Estás seguro de que deseas deshacer la firma de este formulario?')">
                         </form>
                     <?php endif; ?>
                     
-                        <?php if (!$es_admin): ?>
-                            <div class="alert alert-warning mt-3">
-                                Este formulario ya ha sido firmado y no puede ser modificado.
-                            </div>
-                        <?php endif; ?>
+                    <?php if (!$es_admin): ?>
+                        <div class="alert alert-warning mt-3">
+                            Este formulario ya ha sido firmado y no puede ser modificado.
+                        </div>
                     <?php endif; ?>
+                <?php endif; ?>
             </div>
         </form>
     </section>
@@ -250,7 +261,6 @@ session_start();
 </main>
 
 <script>
-    // Convertir automáticamente a mayúsculas en los campos relevantes
     (function() {
         function enableUppercase(id) {
             var el = document.getElementById(id);
@@ -259,7 +269,6 @@ session_start();
                 var start = this.selectionStart;
                 var end = this.selectionEnd;
                 this.value = this.value.toUpperCase();
-                // intentar restaurar la posición del cursor
                 if (typeof this.setSelectionRange === 'function') {
                     this.setSelectionRange(start, end);
                 }

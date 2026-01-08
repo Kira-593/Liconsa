@@ -19,32 +19,45 @@
     <section class="registro">
         <form method="post" action="GuardarRutas.php">
         <div class="registro-container">
+            
+            <!-- Columna 1 -->
             <div class="registro-column">
-
                 <div>
                     <label for="Mes">Mes:</label>
                     <input type="date" id="Mes" name="Mes" required>
                 </div>
+                
+                <div class="seccion-transporte">
+                    <hr>
+                    <label class="titulo-seccion">Transporte Propio</label>
+                    <hr>
+                </div>
+                
                 <div>
-                    <hr>
-                    <label>Transporte Propio</label><br>
-                    <hr>
                     <label for="LitrosTRuno">Litros Desplazados de R1:</label>
                     <input type="number" id="LitrosTRuno" name="LitrosTRuno" placeholder="Ej. 185,220" required step="any">
                 </div>
+                
                 <div>
                     <label for="PorcentajeTRuno">Porcentaje que Representa R1:</label>
                     <input type="number" id="PorcentajeTRuno" name="PorcentajeTRuno" placeholder="Ej. 27%" required step="any">
                 </div>
+                
                 <div>
                     <label for="LitrosTRdos">Litros Desplazados de R2:</label>
                     <input type="number" id="LitrosTRdos" name="LitrosTRdos" placeholder="Ej. 184,680" required step="any">
                 </div>
+                
+               
+            </div>
+            
+            <!-- Columna 2 -->
+            <div class="registro-column">
                 <div>
                     <label for="PorcentajeTRdos">Porcentaje que Representa R2:</label>
                     <input type="number" id="PorcentajeTRdos" name="PorcentajeTRdos" placeholder="Ej. 26%" required step="any">
                 </div>
-                <div>
+                 <div>
                     <label for="LitrosTRtres">Litros Desplazados de R3:</label>
                     <input type="number" id="LitrosTRtres" name="LitrosTRtres" placeholder="Ej. 202,300" required step="any">
                 </div>
@@ -52,21 +65,30 @@
                     <label for="PorcentajeTRtres">Porcentaje que Representa R3:</label>
                     <input type="number" id="PorcentajeTRtres" name="PorcentajeTRtres" placeholder="Ej. 29%" required step="any">
                 </div>
+                
                 <div>
                     <label for="LitrosTRcuatro">Litros Desplazados de R4:</label>
                     <input type="number" id="LitrosTRcuatro" name="LitrosTRcuatro" placeholder="Ej. 126,000" required step="any">
                 </div>
+                
                 <div>
                     <label for="PorcentajeTRcuatro">Porcentaje que Representa R4:</label>
                     <input type="number" id="PorcentajeTRcuatro" name="PorcentajeTRcuatro" placeholder="Ej. 18%" required step="any">
                 </div>
-
+                
+                <!-- Espacio para campos adicionales si es necesario -->
+                <div class="espacio-adicional">
+                    <!-- Aquí puedes agregar más campos si lo necesitas -->
+                </div>
+                
             </div>
-             </div>
-                <div class="form-buttons">
-                <input type="submit" name="g" value="Guardar">
-                <input type="reset" name="b" value="Limpiar">
-            </div>
+            
+        </div>
+        
+        <div class="form-buttons">
+            <input type="submit" name="g" value="Guardar">
+            <input type="reset" name="b" value="Limpiar">
+        </div>
 
         </form>
     </section>

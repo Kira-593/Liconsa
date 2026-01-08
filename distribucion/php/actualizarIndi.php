@@ -23,7 +23,7 @@ session_start();
     <h1>Indicadores</h1>
     <h4>Actualizar Distribución</h4>
 
-      <?php
+    <?php
     include "Conexion.php";
     
     // Verificar si el usuario es administrador
@@ -85,36 +85,45 @@ session_start();
             <input type="hidden" value="<?= $row['id'] ?? '' ?>" name="id">
         
             <div class="registro-container">
+                <!-- Columna 1 -->
                 <div class="registro-column">
+                    <div class="mb-3">
+                        <label for="Claveregis">Clave de Registro:</label>
+                        <input type="text" id="Claveregis" name="Claveregis" 
+                               value="<?= $row['Claveregis'] ?? '' ?>" 
+                               placeholder="Ingrese la Clave" 
+                               <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
+                               required>
+                    </div>
                     
-                    <div>
-                        <div>
-                            <label for="Claveregis">Clave de Registro:</label>
-                            <input type="text" id="Claveregis" name="Claveregis" 
-                                   value="<?= $row['Claveregis'] ?? '' ?>" 
-                                   placeholder="Ingrese la Clave" 
-                                   <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
-                                   required>
-                        </div>
-
+                    <div class="mb-3">
+                        <label for="FechaAct">Fecha de Actualización:</label>
+                        <input type="date" id="FechaAct" name="FechaAct" 
+                               value="<?= $row['FechaAct'] ?? '' ?>" 
+                               <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
+                               required>
+                    </div>
+                    
+                    <div class="mb-3">
                         <label for="Mes">Fecha de Elaboración:</label>
                         <input type="date" id="Mes" name="Mes" 
                                value="<?= $row['Mes'] ?? '' ?>" 
                                <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
                                required>
-
+                    </div>
+                    
+                    <div class="mb-3">
                         <label for="Periodo">Periodo:</label>
                         <input type="date" id="Periodo" name="Periodo" 
                                value="<?= $row['Periodo'] ?? '' ?>" 
                                <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
                                required>
                     </div>
-
-                    <div>
-                        <hr>
-                        <label>Cumplimiento con el Despacho Programado de Leche Liquida P.A.S Tlaxcala</label><br>
-                        <hr>
-
+                    
+                    <hr>
+                    
+                    <h4>Cumplimiento con el Despacho Programado de Leche Liquida P.A.S Tlaxcala</h4>
+                    <div class="mb-3">
                         <label for="CumplRealProgDia">Cumplimiento Real al Programa Diaria de Despacho:</label>
                         <input type="number" id="CumplRealProgDia" name="CumplRealProgDia" 
                                value="<?= $row['CumplRealProgDia'] ?? '' ?>" 
@@ -122,8 +131,8 @@ session_start();
                                <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
                                required step="any">
                     </div>
-
-                    <div>
+                    
+                    <div class="mb-3">
                         <label for="ProgDiarioDespacho">Programa Diario de Despacho:</label>
                         <input type="number" id="ProgDiarioDespacho" name="ProgDiarioDespacho" 
                                value="<?= $row['ProgDiarioDespacho'] ?? '' ?>" 
@@ -131,8 +140,8 @@ session_start();
                                <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
                                required step="any">
                     </div>
-
-                    <div>
+                    
+                    <div class="mb-3">
                         <label for="PCDP">Porcentaje del cumplimiento Con el Despacho Programado:</label>
                         <input type="number" id="PCDP" name="PCDP" 
                                value="<?= $row['PCDP'] ?? '' ?>" 
@@ -140,8 +149,8 @@ session_start();
                                <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
                                required step="any">
                     </div>
-
-                    <div>
+                    
+                    <div class="mb-3">
                         <label for="MetaEsperada">Meta Esperada:</label>
                         <input type="text" id="MetaEsperadaMB" name="MetaEsperadaMB" 
                                value="<?= $row['MetaEsperadaMB'] ?? '' ?>" 
@@ -149,8 +158,8 @@ session_start();
                                <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
                                required>
                     </div>
-
-                    <div>
+                    
+                    <div class="mb-3">
                         <label for="RangoAcept">Rango de Aceptación:</label>
                         <input type="text" id="RangoAceptMB" name="RangoAceptMB" 
                                value="<?= $row['RangoAceptMB'] ?? '' ?>" 
@@ -158,8 +167,8 @@ session_start();
                                <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
                                required>
                     </div>
-
-                    <div>
+                    
+                    <div class="mb-3">
                         <label for="TendenciaDeseada">Tendencia Deseada:</label>
                         <input type="text" id="TendenciaDeseadaMB" name="TendenciaDeseadaMB" 
                                value="<?= $row['TendenciaDeseadaMB'] ?? '' ?>" 
@@ -167,12 +176,12 @@ session_start();
                                <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
                                required>
                     </div>
-
-                    <div>
-                        <hr>
-                        <label>Cumplimiento de Ventas Programadas</label><br>
-                        <hr>
-
+                </div>
+                
+                <!-- Columna 2 -->
+                <div class="registro-column">
+                    <h4>Cumplimiento de Ventas Programadas</h4>
+                    <div class="mb-3">
                         <label for="Ventatot">Venta Total:</label>
                         <input type="number" id="Ventatot" name="Ventatot" 
                                value="<?= $row['Ventatot'] ?? '' ?>" 
@@ -180,8 +189,8 @@ session_start();
                                <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
                                required step="any">
                     </div>
-
-                    <div>
+                    
+                    <div class="mb-3">
                         <label for="DotEntre">Dotación Entregada:</label>
                         <input type="number" id="DotEntre" name="DotEntre" 
                                value="<?= $row['DotEntre'] ?? '' ?>" 
@@ -189,8 +198,8 @@ session_start();
                                <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
                                required step="any">
                     </div>
-
-                    <div>
+                    
+                    <div class="mb-3">
                         <label for="CumplimientoVentas">Cumplimiento de Ventas Programadas:</label>
                         <input type="number" id="CumplimientoVentas" name="CumplimientoVentas" 
                                value="<?= $row['CumplimientoVentas'] ?? '' ?>" 
@@ -198,8 +207,8 @@ session_start();
                                <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
                                required step="any">
                     </div>
-
-                    <div>
+                    
+                    <div class="mb-3">
                         <label for="MetaEsperadaCVP">Meta Esperada:</label>
                         <input type="text" id="MetaEsperadaCVP" name="MetaEsperadaCVP" 
                                value="<?= $row['MetaEsperadaCVP'] ?? '' ?>" 
@@ -207,8 +216,8 @@ session_start();
                                <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
                                required>
                     </div>
-
-                    <div>
+                    
+                    <div class="mb-3">
                         <label for="RangoAceptCVP">Rango de Aceptación:</label>
                         <input type="text" id="RangoAceptCVP" name="RangoAceptCVP" 
                                value="<?= $row['RangoAceptCVP'] ?? '' ?>" 
@@ -216,8 +225,8 @@ session_start();
                                <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
                                required>
                     </div>
-
-                    <div>
+                    
+                    <div class="mb-3">
                         <label for="TendenciaDeseadaCVP">Tendencia Deseada:</label>
                         <input type="text" id="TendenciaDeseadaCVP" name="TendenciaDeseadaCVP" 
                                value="<?= $row['TendenciaDeseadaCVP'] ?? '' ?>" 
@@ -225,12 +234,11 @@ session_start();
                                <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
                                required>
                     </div>
-
-                    <div>
-                        <hr>
-                        <label>Control de Envases Rotos...</label><br>
-                        <hr>
-
+                    
+                    <hr>
+                    
+                    <h4>Control de Envases Rotos</h4>
+                    <div class="mb-3">
                         <label for="MermasEnva">Mermas:</label>
                         <input type="number" id="MermasEnva" name="MermasEnva" 
                                value="<?= $row['MermasEnva'] ?? '' ?>" 
@@ -238,8 +246,8 @@ session_start();
                                <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
                                required step="any">
                     </div>
-
-                    <div>
+                    
+                    <div class="mb-3">
                         <label for="DotEnva">Dotación:</label>
                         <input type="number" id="DotEnva" name="DotEnva" 
                                value="<?= $row['DotEnva'] ?? '' ?>" 
@@ -247,8 +255,8 @@ session_start();
                                <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
                                required step="any">
                     </div>
-
-                    <div>
+                    
+                    <div class="mb-3">
                         <label for="CantidadEnvRotos">Cantidad de Envases Rotos:</label>
                         <input type="number" id="CantidadEnvRotos" name="CantidadEnvRotos" 
                                value="<?= $row['CantidadEnvRotos'] ?? '' ?>" 
@@ -256,8 +264,11 @@ session_start();
                                <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
                                required step="any">
                     </div>
-
-                    <div>
+                </div>
+                
+                <!-- Columna 3 -->
+                <div class="registro-column">
+                    <div class="mb-3">
                         <label for="MetaEsperadaCER">Meta Esperada:</label>
                         <input type="text" id="MetaEsperadaCER" name="MetaEsperadaCER" 
                                value="<?= $row['MetaEsperadaCER'] ?? '' ?>" 
@@ -265,8 +276,8 @@ session_start();
                                <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
                                required>
                     </div>
-
-                    <div>
+                    
+                    <div class="mb-3">
                         <label for="RangoAceptCER">Rango de Aceptación:</label>
                         <input type="text" id="RangoAceptCER" name="RangoAceptCER" 
                                value="<?= $row['RangoAceptCER'] ?? '' ?>" 
@@ -274,8 +285,8 @@ session_start();
                                <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
                                required>
                     </div>
-
-                    <div>
+                    
+                    <div class="mb-3">
                         <label for="TendenciaDeseadaCER">Tendencia Deseada:</label>
                         <input type="text" id="TendenciaDeseadaCER" name="TendenciaDeseadaCER" 
                                value="<?= $row['TendenciaDeseadaCER'] ?? '' ?>" 
@@ -283,12 +294,11 @@ session_start();
                                <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
                                required>
                     </div>
-
-                    <div>
-                        <hr>
-                        <label>Devoluciones del P.A.S. Tlaxcala</label><br>
-                        <hr>
-
+                    
+                    <hr>
+                    
+                    <h3>Devoluciones del P.A.S. Tlaxcala</h3>
+                    <div class="mb-3">
                         <label for="Devoluciones">Devoluciones:</label>
                         <input type="number" id="Devoluciones" name="Devoluciones" 
                                value="<?= $row['Devoluciones'] ?? '' ?>" 
@@ -296,8 +306,8 @@ session_start();
                                <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
                                required step="any">
                     </div>
-
-                    <div>
+                    
+                    <div class="mb-3">
                         <label for="DotDev">Dotación:</label>
                         <input type="number" id="DotDev" name="DotDev" 
                                value="<?= $row['DotDev'] ?? '' ?>" 
@@ -305,8 +315,8 @@ session_start();
                                <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
                                required step="any">
                     </div>
-
-                    <div>
+                    
+                    <div class="mb-3">
                         <label for="DevolucionesDPAS">Devoluciones Del P.A.S. Tlaxcala:</label>
                         <input type="number" id="DevolucionesDPAS" name="DevolucionesDPAS" 
                                value="<?= $row['DevolucionesDPAS'] ?? '' ?>" 
@@ -314,8 +324,8 @@ session_start();
                                <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
                                required step="any">
                     </div>
-
-                    <div>
+                    
+                    <div class="mb-3">
                         <label for="MetaEsperadaDPAS">Meta Esperada:</label>
                         <input type="text" id="MetaEsperadaDPAS" name="MetaEsperadaDPAS" 
                                value="<?= $row['MetaEsperadaDPAS'] ?? '' ?>" 
@@ -323,8 +333,8 @@ session_start();
                                <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
                                required>
                     </div>
-
-                    <div>
+                    
+                    <div class="mb-3">
                         <label for="RangoAceptDPAS">Rango de Aceptación:</label>
                         <input type="text" id="RangoAceptDPAS" name="RangoAceptDPAS" 
                                value="<?= $row['RangoAceptDPAS'] ?? '' ?>" 
@@ -332,8 +342,8 @@ session_start();
                                <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
                                required>
                     </div>
-
-                    <div>
+                    
+                    <div class="mb-3">
                         <label for="TendenciaDeseadaDPAS">Tendencia Deseada:</label>
                         <input type="text" id="TendenciaDeseadaDPAS" name="TendenciaDeseadaDPAS" 
                                value="<?= $row['TendenciaDeseadaDPAS'] ?? '' ?>" 
@@ -341,12 +351,12 @@ session_start();
                                <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
                                required>
                     </div>
-
-                    <div>
-                        <hr>
-                        <label>Gastos de Distribución</label><br>
-                        <hr>
-
+                </div>
+                
+                <!-- Columna 4 -->
+                <div class="registro-column">
+                    <h4>Gastos de Distribución</h4>
+                    <div class="mb-3">
                         <label for="GastosTD">Gastos Totales de Distribución:</label>
                         <input type="number" id="GastosTD" name="GastosTD" 
                                value="<?= $row['GastosTD'] ?? '' ?>" 
@@ -354,8 +364,8 @@ session_start();
                                <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
                                required step="any">
                     </div>
-
-                    <div>
+                    
+                    <div class="mb-3">
                         <label for="LitrosDistribucion">Litros Distribución:</label>
                         <input type="number" id="LitrosDistribucion" name="LitrosDistribucion" 
                                value="<?= $row['LitrosDistribucion'] ?? '' ?>" 
@@ -363,8 +373,8 @@ session_start();
                                <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
                                required step="any">
                     </div>
-
-                    <div>
+                    
+                    <div class="mb-3">
                         <label for="GastosDistribucion">Gastos de distribución:</label>
                         <input type="number" id="GastosDistribucion" name="GastosDistribucion" 
                                value="<?= $row['GastosDistribucion'] ?? '' ?>" 
@@ -372,8 +382,8 @@ session_start();
                                <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
                                required step="any">
                     </div>
-
-                    <div>
+                    
+                    <div class="mb-3">
                         <label for="MetaEsperadaGD">Meta Esperada:</label>
                         <input type="text" id="MetaEsperadaGD" name="MetaEsperadaGD" 
                                value="<?= $row['MetaEsperadaGD'] ?? '' ?>" 
@@ -381,8 +391,8 @@ session_start();
                                <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
                                required>
                     </div>
-
-                    <div>
+                    
+                    <div class="mb-3">
                         <label for="RangoAceptGD">Rango de Aceptación:</label>
                         <input type="text" id="RangoAceptGD" name="RangoAceptGD" 
                                value="<?= $row['RangoAceptGD'] ?? '' ?>" 
@@ -390,8 +400,8 @@ session_start();
                                <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
                                required>
                     </div>
-
-                    <div>
+                    
+                    <div class="mb-3">
                         <label for="TendenciaDeseadaGD">Tendencia Deseada:</label>
                         <input type="text" id="TendenciaDeseadaGD" name="TendenciaDeseadaGD" 
                                value="<?= $row['TendenciaDeseadaGD'] ?? '' ?>" 
@@ -399,9 +409,11 @@ session_start();
                                <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
                                required>
                     </div>
-
-                    <div>
-                        <hr>
+                    
+                    <hr>
+                    
+                    <h3>Responsable y Observaciones</h3>
+                    <div class="mb-3">
                         <label for="Responsable">Responsable:</label>
                         <input type="text" id="Responsable" name="Responsable" 
                                value="<?= $row['Responsable'] ?? '' ?>" 
@@ -409,11 +421,11 @@ session_start();
                                <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
                                required>
                     </div>
-
-                    <div>
-                        <label for="Observ">Observaciones:</label><br><br>
+                    
+                    <div class="mb-3">
+                        <label for="Observ">Observaciones:</label>
                         <textarea id="Observ" name="Observ" rows="4" 
-                                  placeholder="Ej.  En el punto uno, tuvimos un incremento del despacho por 14000 litros" 
+                                  placeholder="Ej. En el punto uno, tuvimos un incremento del despacho por 14000 litros" 
                                   <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
                                   required><?= $row['Observ'] ?? '' ?></textarea>
                     </div>
@@ -461,11 +473,11 @@ session_start();
             
             <div class="form-buttons">
                 <?php if (!$formulario_firmado): ?>
-                    <input type="submit" name="g" value="Guardar Cambios" class="btn btn-primary">
-                    <input type="button" value="Limpiar Campos" class="btn btn-secondary" onclick="limpiarCampos()"
+                    <input type="submit" name="g" value="Guardar Cambios" class="btn">
+                    <input type="button" value="Limpiar Campos" class="btn" onclick="limpiarCampos()"
                            <?= ($solo_firma) ? 'disabled' : '' ?>>
                 <?php else: ?>
-                    <input type="submit" name="g" value="Guardar Cambios" class="btn btn-primary" 
+                    <input type="submit" name="g" value="Guardar Cambios" class="btn" 
                            <?= $es_admin ? '' : 'disabled' ?>>
                     <input type="button" value="Limpiar Campos" class="btn btn-secondary" onclick="limpiarCampos()"
                            <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'disabled' : '' ?>>
@@ -474,17 +486,17 @@ session_start();
                         <form method="POST" action="HacerIndi.php" style="display:inline;">
                             <input type="hidden" name="id" value="<?= $row['id'] ?>">
                             <input type="hidden" name="action" value="undo_signature">
-                            <input type="submit" value="Deshacer Firma" class="btn btn-warning"
+                            <input type="submit" value="Deshacer Firma" class="btn"
                                    onclick="return confirm('¿Estás seguro de que deseas deshacer la firma de este formulario?')">
                         </form>
                     <?php endif; ?>
                     
-                        <?php if (!$es_admin): ?>
-                            <div class="alert alert-warning mt-3">
-                                Este formulario ya ha sido firmado y no puede ser modificado.
-                            </div>
-                        <?php endif; ?>
+                    <?php if (!$es_admin): ?>
+                        <div class="alert alert-warning mt-3">
+                            Este formulario ya ha sido firmado y no puede ser modificado.
+                        </div>
                     <?php endif; ?>
+                <?php endif; ?>
             </div>
         </form>
     </section>

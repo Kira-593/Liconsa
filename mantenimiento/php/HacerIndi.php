@@ -38,6 +38,7 @@ $ID = $_POST["id"] ?? ''; // ID es la clave para el UPDATE
 
 // Datos básicos
 $Claveregis = $_POST["Claveregis"] ?? '';
+$FechaAct = $_POST["FechaAct"] ?? '';
 $Mes = $_POST["Mes"] ?? '';
 $Periodo = $_POST["Periodo"] ?? '';
 
@@ -54,6 +55,14 @@ $HorasHombre = $_POST["HorasHombre"] ?? '';
 $HorasParo = $_POST["HorasParo"] ?? '';
 $HorasDisponibles = $_POST["HorasDisponibles"] ?? '';
 $prc = $_POST["prc"] ?? '';
+$HorasHombreEnv = $_POST["HorasHombreEnv"] ?? '';
+$HorasParoEnv = $_POST["HorasParoEnv"] ?? '';
+$HorasDisponiblesEnv = $_POST["HorasDisponiblesEnv"] ?? '';
+$prcEnv = $_POST["prcEnv"] ?? '';
+$HorasHombreReh = $_POST["HorasHombreReh"] ?? '';
+$HorasParoReh = $_POST["HorasParoReh"] ?? '';
+$HorasDisponiblesReh = $_POST["HorasDisponiblesReh"] ?? '';
+$prcReh = $_POST["prcReh"] ?? '';
 $MetaEsperadaDEP = $_POST["MetaEsperadaDEP"] ?? '';
 $RangoAceptDEP = $_POST["RangoAceptDEP"] ?? '';
 $TendenciaDeseadaDEP = $_POST["TendenciaDeseadaDEP"] ?? '';
@@ -179,6 +188,7 @@ if ($firma_realizada) {
     // Consulta preparada CON firma
     $query = "UPDATE m_indicador SET 
                 Claveregis = ?, 
+                FechaAct = ?, 
                 Mes = ?, 
                 Periodo = ?,
                 PresEje = ?, 
@@ -190,7 +200,15 @@ if ($firma_realizada) {
                 HorasHombre = ?, 
                 HorasParo = ?, 
                 HorasDisponibles = ?, 
-                prc = ?, 
+                prc = ?,
+                HorasHombreEnv = ?,
+                HorasParoEnv = ?,
+                HorasDisponiblesEnv = ?,
+                prcEnv = ?,
+                HorasHombreReh = ?, 
+                HorasParoReh = ?, 
+                HorasDisponiblesReh = ?, 
+                prcReh = ?,
                 MetaEsperadaDEP = ?, 
                 RangoAceptDEP = ?, 
                 TendenciaDeseadaDEP = ?,
@@ -232,6 +250,7 @@ if ($firma_realizada) {
     // Consulta preparada SIN firma
     $query = "UPDATE m_indicador SET 
                 Claveregis = ?, 
+                FechaAct = ?,
                 Mes = ?, 
                 Periodo = ?,
                 PresEje = ?, 
@@ -244,6 +263,14 @@ if ($firma_realizada) {
                 HorasParo = ?, 
                 HorasDisponibles = ?, 
                 prc = ?, 
+                HorasHombreEnv = ?,
+                HorasParoEnv = ?,
+                HorasDisponiblesEnv = ?,
+                prcEnv = ?,
+                HorasHombreReh = ?, 
+                HorasParoReh = ?, 
+                HorasDisponiblesReh = ?, 
+                prcReh = ?,
                 MetaEsperadaDEP = ?, 
                 RangoAceptDEP = ?, 
                 TendenciaDeseadaDEP = ?,
@@ -294,10 +321,11 @@ if (!$stmt) {
 
 if ($firma_realizada) {
     // Con firma: 49 parámetros + 2 de firma + ID = 52 en total
-    mysqli_stmt_bind_param($stmt, "ssssssssssssssssssssssssssssssssssssssssssssssssss",
-        $Claveregis, $Mes, $Periodo,
+    mysqli_stmt_bind_param($stmt, "sssssssssssssssssssssssssssssssssssssssssssssssssssssssssss",
+        $Claveregis, $FechaAct, $Mes, $Periodo,
         $PresEje, $GastoAutorizado, $Diferiencia, $MetaEsperadaGO, $RangoAceptGO, $TendenciaDeseadaGO,
-        $HorasHombre, $HorasParo, $HorasDisponibles, $prc, $MetaEsperadaDEP, $RangoAceptDEP, $TendenciaDeseadaDEP,
+        $HorasHombre, $HorasParo, $HorasDisponibles, $prc, $HorasHombreEnv, $HorasParoEnv, $HorasDisponiblesEnv, $prcEnv,$HorasHombreReh, $HorasParoReh, $HorasDisponiblesReh, $prcReh,
+        $MetaEsperadaDEP, $RangoAceptDEP, $TendenciaDeseadaDEP,
         $TPE, $TP, $PorcentTP, $MetaEsperadaTP, $RangoAceptTP, $TendenciaDeseadaTP,
         $TC, $PorcentTC, $MetaEsperadaTC, $RangoAceptTC, $TendenciaDeseadaTC,
         $ConsumoTermico, $LitrosLecheProducidatermica, $ConsTT, $MetaEsperadaCT, $RangoAceptCT, $TendenciaDeseadaCT,
@@ -309,10 +337,11 @@ if ($firma_realizada) {
     );
 } else {
     // Sin firma: 49 parámetros + ID = 50 en total
-    mysqli_stmt_bind_param($stmt, "ssssssssssssssssssssssssssssssssssssssssssssssss",
-        $Claveregis, $Mes, $Periodo,
+    mysqli_stmt_bind_param($stmt, "sssssssssssssssssssssssssssssssssssssssssssssssssssssssss",
+        $Claveregis, $FechaAct, $Mes, $Periodo,
         $PresEje, $GastoAutorizado, $Diferiencia, $MetaEsperadaGO, $RangoAceptGO, $TendenciaDeseadaGO,
-        $HorasHombre, $HorasParo, $HorasDisponibles, $prc, $MetaEsperadaDEP, $RangoAceptDEP, $TendenciaDeseadaDEP,
+        $HorasHombre, $HorasParo, $HorasDisponibles, $prc, $HorasHombreEnv, $HorasParoEnv, $HorasDisponiblesEnv, $prcEnv,$HorasHombreReh, $HorasParoReh, $HorasDisponiblesReh, $prcReh,
+        $MetaEsperadaDEP, $RangoAceptDEP, $TendenciaDeseadaDEP,
         $TPE, $TP, $PorcentTP, $MetaEsperadaTP, $RangoAceptTP, $TendenciaDeseadaTP,
         $TC, $PorcentTC, $MetaEsperadaTC, $RangoAceptTC, $TendenciaDeseadaTC,
         $ConsumoTermico, $LitrosLecheProducidatermica, $ConsTT, $MetaEsperadaCT, $RangoAceptCT, $TendenciaDeseadaCT,

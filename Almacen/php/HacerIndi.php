@@ -37,6 +37,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
 // 1. Obtener los datos del formulario de Indicadores de Almacén
 $ID = $_POST["id"] ?? ''; // ID es la clave para el UPDATE
 $Claveregis = $_POST["Claveregis"] ?? '';
+$FechaAct = $_POST["FechaAct"] ?? '';
 $Mes = $_POST["Mes"] ?? '';
 $Periodo = $_POST["Periodo"] ?? '';
 $SumEn = $_POST["SumEn"] ?? '';
@@ -102,6 +103,7 @@ if (isset($_POST['firmar_documento']) && $_POST['firmar_documento'] == 'on') {
             // Consulta preparada CON firma
             $query = "UPDATE a_indicador SET 
                         Claveregis = ?, 
+                        FechaAct = ?,
                         Mes = ?, 
                         Periodo = ?, 
                         SumEn = ?, 
@@ -140,6 +142,7 @@ if (isset($_POST['firmar_documento']) && $_POST['firmar_documento'] == 'on') {
     // Consulta preparada SIN firma
     $query = "UPDATE a_indicador SET 
                 Claveregis = ?, 
+                FechaAct = ?,
                 Mes = ?, 
                 Periodo = ?, 
                 SumEn = ?, 
@@ -166,8 +169,9 @@ if (!$stmt) {
 
 if ($firma_realizada) {
     // Vincular los parámetros para la consulta CON firma
-    mysqli_stmt_bind_param($stmt, "sssiiisssssssi",
+    mysqli_stmt_bind_param($stmt, "sssiiissssssssi",
         $Claveregis, 
+        $FechaAct,
         $Mes, 
         $Periodo,
         $SumEn, 
@@ -184,8 +188,9 @@ if ($firma_realizada) {
     );
 } else {
     // Vincular los parámetros para la consulta SIN firma
-    mysqli_stmt_bind_param($stmt, "sssiiisssssi",
+    mysqli_stmt_bind_param($stmt, "ssssiiisssssi",
         $Claveregis, 
+        $FechaAct,
         $Mes, 
         $Periodo,
         $SumEn, 

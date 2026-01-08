@@ -1,10 +1,12 @@
+/* actualizarSubG.css - MODIFICADO para coincidir con FormSubG.css */
+
 body {
-   background: radial-gradient(circle, rgb(255, 254, 254), #eae4e4, rgb(241, 234, 234)); 
+    background: radial-gradient(circle, rgb(255, 254, 254), #eae4e4, rgb(241, 234, 234)); 
     font-family: NotoSans;
-    color: #fcfcfc;
+    color: #333;
     text-align: center;
     margin: 0;
-    height: 280vh; /* Asegura que el body ocupe toda la altura de la ventana */
+    min-height: 100vh;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -14,67 +16,94 @@ body {
 .container {
     background-color: rgba(0, 0, 0, 0.8);
     border-radius: 15px;
-    padding: 10px;
-    width: 50%;
+    padding: 20px; /* Cambiado de 10px a 20px */
+    width: 95%; /* Cambiado de 50% a 95% */
+    max-width: 1400px; /* Añadido para coincidir */
     box-shadow: 0 0 15px rgba(255, 255, 255, 0.3);
-    max-width: 500px; /* Ajusta según el diseño deseado */
-    margin: 2550px auto 20px auto; /* Espacio superior aumentado */
+    margin: 100px auto 20px auto; /* Cambiado de 2550px a 100px */
 }
 
 .registro-container {
     display: flex;
-    justify-content:center; /* Separa las columnas */
-    gap: 2rem; /* Ajusta el espacio entre columnas */
+    justify-content: space-between; /* Cambiado de center a space-between */
+    gap: 1.5rem; /* Ajustado para 3 columnas */
     width: 100%;
+    flex-wrap: wrap; /* Añadido para responsividad */
 }
+
 .registro-column {
-    width: 48%; /* Cada columna ocupa el 48% del ancho */
+    flex: 1; /* Cambiado de width: 48% a flex: 1 */
+    min-width: 300px; /* Añadido para responsividad */
     display: flex;
     flex-direction: column;
-    gap: 1rem; /* Espaciado entre campos dentro de cada columna */
+    gap: 0.8rem; /* Reducido ligeramente */
+    background-color: rgba(50, 50, 50, 0.3); /* Añadido para coincidir */
+    border-radius: 10px; /* Añadido para coincidir */
+    padding: 15px; /* Añadido para coincidir */
 }
 
 .form-buttons {
     margin-top: 20px;
     text-align: center;
+    width: 100%;
 }
 
 /* Encabezado */
 h1 {
-    color: beige;
+    color: rgb(255, 255, 255); /* Cambiado de beige a blanco */
     font-size: 1.8em;
     margin-bottom: 20px;
+}
+
+h3, h4, h5, h6 {
+    color: #ffffff;
+    margin-bottom: 15px;
+    text-align: center;
 }
 
 select,
 input[type="number"],
 input[type="text"],
-input[type="date"] {
+input[type="date"],
+input[type="password"] {
     width: 100%;
     padding: 8px;
     border-radius: 5px;
     border: 1px solid brown;
     background-color: #333;
     color: white;
+    margin-bottom: 5px; /* Añadido */
+}
+
+label {
+    color: #fcfcfc;
+    font-weight: bold;
+    display: block;
+    margin-bottom: 5px;
+    text-align: left;
 }
 
 /* Botones de formulario */
 input[type="submit"],
+input[type="reset"],
 input[type="button"] {
-    padding: 10px 20px;
-    font-size: 1em;
+    padding: 10px 30px; /* Cambiado de 20px a 30px */
+    font-size: 1.1em; /* Aumentado ligeramente */
     cursor: pointer;
     background-color: gray;
     color: white;
     border: none;
     border-radius: 5px;
     transition: 0.3s;
+    margin: 5px; /* Añadido */
 }
 
 input[type="submit"]:hover{
     background-color: #ccff66;
     color: #000;
 }
+
+input[type="reset"]:hover,
 input[type="button"]:hover {
     background-color: brown;
     color: #000;
@@ -90,21 +119,63 @@ input[type="button"]:hover {
     position: absolute;
     top: 30px;
     left: 20px;
-    width: 30%; /* Ajusta el tamaño según tu preferencia */
+    width: 30%;
     height: auto;
     z-index: 10;
 }
 
 .logo-sgc {
     position: absolute;
-    top: -175px; /* Más arriba que 0px */
+    top: -175px;
     right: 20px;
-    width: 30%; /* Ajusta el tamaño según tu preferencia */
+    width: 30%;
     height: auto;
     z-index: 10;
 }
 
-/* Estilos para inputs deshabilitados */
+/* Estilos específicos para actualización */
+.alert {
+    border-radius: 5px;
+    padding: 10px;
+    margin: 10px 0;
+    text-align: left;
+}
+
+.alert-info {
+    background-color: rgba(13, 110, 253, 0.2);
+    border: 1px solid rgba(13, 110, 253, 0.5);
+}
+
+.alert-warning {
+    background-color: rgba(255, 193, 7, 0.2);
+    border: 1px solid rgba(255, 193, 7, 0.5);
+}
+
+.alert-danger {
+    background-color: rgba(220, 53, 69, 0.2);
+    border: 1px solid rgba(220, 53, 69, 0.5);
+}
+
+.alert-success {
+    background-color: rgba(25, 135, 84, 0.2);
+    border: 1px solid rgba(25, 135, 84, 0.5);
+}
+
+.firma-section {
+    background-color: rgba(255, 255, 255, 0.1);
+    padding: 15px;
+    border-radius: 5px;
+    margin-top: 20px;
+    text-align: left;
+    width: 100%; /* Asegura que ocupe todo el ancho */
+}
+
+.firma-section h4 {
+    color: #ffffff;
+    margin-bottom: 15px;
+    text-align: center;
+}
+
 input[readonly],
 input[disabled],
 select[disabled] {
@@ -114,7 +185,6 @@ select[disabled] {
     cursor: not-allowed !important;
 }
 
-/* Asegurar que el select tenga los mismos estilos base que los inputs */
 select {
     width: 100%;
     padding: 8px;
@@ -125,8 +195,67 @@ select {
     cursor: pointer;
 }
 
-/* Estilo para las opciones del select */
 select option {
     background-color: #333;
     color: white;
+}
+
+/* Estilos para checkboxes */
+.form-check {
+    margin-top: 10px;
+    text-align: left;
+}
+
+.form-check-input {
+    margin-right: 8px;
+}
+
+.form-check-label {
+    color: #fcfcfc;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+}
+
+/* Media Queries para responsividad */
+@media (max-width: 1024px) {
+    .registro-column {
+        min-width: 250px;
+    }
+}
+
+@media (max-width: 768px) {
+    .container {
+        width: 98%;
+        padding: 15px;
+        margin-top: 150px; /* Ajustado para móviles */
+    }
+    
+    .registro-container {
+        flex-direction: column;
+    }
+    
+    .registro-column {
+        width: 100%;
+        min-width: auto;
+    }
+    
+    .logo-superior,
+    .logo-sgc {
+        width: 40%;
+    }
+    
+    .logo-sgc {
+        top: -120px; /* Ajustado para móviles */
+    }
+}
+
+@media (min-width: 1400px) {
+    .container {
+        max-width: 1600px;
+    }
+    
+    .registro-column {
+        min-width: 350px;
+    }
 }

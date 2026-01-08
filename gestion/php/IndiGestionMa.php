@@ -34,7 +34,7 @@ if (!empty($_SESSION['correo'])) {
 </head>
 
 <body>
-    <!-- MOVER LOGOS FUERA DEL HEAD -->
+    <!-- LOGOS -->
     <img src="../imagenes/AgriculturaLogo.png" class="logo-superior" alt="Logo Agricultura">
     <img src="../imagenes/sgc.png" class="logo-sgc" alt="Logo SGC">
 
@@ -46,24 +46,34 @@ if (!empty($_SESSION['correo'])) {
     <section class="registro">
         <form method="post" action="GuardarIndiMa.php">
         <div class="registro-container">
+            
+            <!-- Columna 1 -->
             <div class="registro-column">
-
                 <div>
                     <label for="Claveregis">Clave de Registro:</label>
                     <input type="text" id="Claveregis" name="Claveregis" value="TX-MSGC-500-01-R01" placeholder="Ingrese la Clave" required>
+                </div>
 
+                <div>
+                    <label for="FechaAct">Fecha de Actualización:</label>
+                    <input type="date" id="FechaAct" name="FechaAct" value="2025-10-01" required>
+                </div>
+
+                <div>
                     <label for="Mes">Fecha de Elaboración:</label>
-                    <input type="date" id="Mes" name="Mes" value="2025-10-01" required>
+                    <input type="date" id="Mes" name="Mes" min="<?php echo date('Y-m-d'); ?>" required>
+                </div>
 
+                <div>
                     <label for="Periodo">Periodo:</label>
                     <input type="date" id="Periodo" name="Periodo" required>
                 </div>
 
+                <hr>
+                
+                <h4>Cumplimientos de la Capacitación</h4>
+                
                 <div>
-                    <hr>
-                    <label>Cumplimientos de la Capacitación</label><br>
-                    <hr>
-
                     <label for="CapaImpar">Capacitaciones Impartidas:</label>
                     <input type="number" id="CapaImpar" name="CapaImpar" placeholder="Ingrese la cantidad" required step="any">
                 </div>
@@ -92,16 +102,20 @@ if (!empty($_SESSION['correo'])) {
                     <label for="TendenciaDeseadaCC">Tendencia Deseada:</label>
                     <input type="text" id="TendenciaDeseadaCC" name="TendenciaDeseadaCC" placeholder="Ej. cumplir con la capacitación programada" required>
                 </div>
-
+                
+                <hr>
+                
+                
+            </div>
+            
+            <!-- Columna 2 -->
+            <div class="registro-column">
+                <h4>Evaluación Técnica</h4>
+                
                 <div>
-                    <hr>
-                    <label>Evaluación Técnica</label><br>
-                    <hr>
-
                     <label for="NuevosIP">Nuevos Ingresos al Puesto:</label>
                     <input type="number" id="NuevosIP" name="NuevosIP" placeholder="Ingrese la cantidad" required step="any">
                 </div>
-
                 <div>
                     <label for="NumEvaluaciones">Número de Evaluaciones:</label>
                     <input type="number" id="NumEvaluaciones" name="NumEvaluaciones" placeholder="Ingrese la meta" required step="any">
@@ -127,25 +141,26 @@ if (!empty($_SESSION['correo'])) {
                     <input type="text" id="TendenciaDeseadaET" name="TendenciaDeseadaET" placeholder="Ej. cumplir con la Evaluación Técnica" required>
                 </div>
 
+                <hr>
+                
+                <h4>Responsable y Fuente</h4>
+                
                 <div>
-                    <hr>
                     <label for="Responsable">Responsable:</label>
                     <input type="text" id="Responsable" name="Responsable" placeholder="Nombre del responsable" required value="<?php echo htmlspecialchars($responsable_value); ?>">
                 </div>
 
                 <div>
-                    <label for="Fuente">Fuente:</label><br><br>
+                    <label for="Fuente">Fuente:</label>
                     <textarea id="Fuente" name="Fuente" rows="4" placeholder="Fuente" required></textarea>
                 </div>
-
-                <hr>
 
                 <div class="form-buttons">
                     <input type="submit" name="g" value="Guardar">
                     <input type="reset" name="b" value="Limpiar">
                 </div>
-
-            </div> <!-- cierre registro-column -->
+            </div>
+            
         </div> <!-- cierre registro-container -->
         </form>
     </section>

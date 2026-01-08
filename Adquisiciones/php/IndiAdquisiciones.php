@@ -46,108 +46,96 @@ if (!empty($_SESSION['correo'])) {
     
     <section class="registro">
         <form method="post" action="GuardarIndi.php">
-        <div class="registro-container">
-        <div class="registro-column">
+            <div class="registro-container">
+                
+                <!-- COLUMNA 1 -->
+                <div class="registro-column">
+                    <!-- Información General -->
+                    <div class="info-section">
+                        <label for="Claveregis">Clave de Registro:</label>
+                        <input type="text" id="Claveregis" name="Claveregis" value="TX-MSGC-500-01-R01" placeholder="Ingrese la Clave" required>
+                        
+                        <label for="FechaAct">Fecha de Actualización:</label>
+                        <input type="date" id="FechaAct" name="FechaAct" value="2025-10-01" required>
+                        
+                        <label for="Mes">Fecha de Elaboración:</label>
+                        <input type="date" id="Mes" name="Mes" min="<?php echo date('Y-m-d'); ?>" required>
+                        
+                        <label for="Periodo">Periodo:</label>
+                        <input type="date" id="Periodo" name="Periodo" required>
+                    </div>
 
-                <div>
-                    <label for="Claveregis">Clave de Registro:</label>
-                    <input type="text" id="Claveregis" name="Claveregis" value="TX-MSGC-500-01-R01" placeholder="Ingrese la Clave" required>
+                    <!-- Cumplimiento de las Compras Realizadas -->
+                    <div class="indicador-section">
+                        <hr>
+                        <label class="section-title">Cumplimiento de las Compras Realizadas</label>
+                        <hr>
+
+                        <label for="ExpAtend">Expedientes Completos Atendidos:</label>
+                        <input type="number" id="ExpAtend" name="ExpAtend" placeholder="Ingrese la cantidad" required step="any">
                     
-                    <label for="Mes">Fecha de Elaboración:</label>
-                    <input type="date" id="Mes" name="Mes" value="2025-10-01" required>
-
-                    <label for="Periodo">Periodo:</label>
-                    <input type="date" id="Periodo" name="Periodo" required>
+                        <label for="ExpRecib">Expedientes Completos Recibidos:</label>
+                        <input type="number" id="ExpRecib" name="ExpRecib" placeholder="Ingrese la meta" required step="any">
+                    
+                        <label for="Cumplimiento">Cumplimiento:</label>
+                        <input type="number" id="Cumplimiento" name="Cumplimiento" placeholder="Cumplimiento:" required step="any">
+                    
+                        <label for="MetaEsperadaCCR">Meta Esperada:</label>
+                        <input type="text" id="MetaEsperadaCCR" name="MetaEsperadaCCR" placeholder="La meta esperada es:" required>
+                    
+                        <label for="RangoAceptCCR">Rango de Aceptación:</label>
+                        <input type="text" id="RangoAceptCCR" name="RangoAceptCCR" placeholder="Ej. 90% a 100%" required>
+                    
+                        <label for="TendenciaDeseadaCCR">Tendencia Deseada:</label>
+                        <input type="text" id="TendenciaDeseadaCCR" name="TendenciaDeseadaCCR" placeholder="Ej. 100% , Meta Alcanzada" required>
+                    </div>
                 </div>
+                
+                <!-- COLUMNA 2 -->
+                <div class="registro-column">
+                    <!-- Satisfacción del Cliente -->
+                    <div class="indicador-section">
+                        <hr>
+                        <label class="section-title">Satisfacción del Cliente</label>
+                        <hr>
 
-                <div>
-                    <hr>
-                    <label>Cumplimiento de las Compras Realizadas</label><br>
-                    <hr>
+                        <label for="EncuSatisfa">Encuestas Satisfactorias:</label>
+                        <input type="number" id="EncuSatisfa" name="EncuSatisfa" placeholder="Ingrese la cantidad" required step="any">
+                    
+                        <label for="EncEnvia">Número de Encuestas Enviadas en el Semestre:</label>
+                        <input type="number" id="EncEnvia" name="EncEnvia" placeholder="Ingrese la meta" required step="any">
+                    
+                        <label for="Satisfaccion">Satisfacción:</label>
+                        <input type="number" id="Satisfaccion" name="Satisfaccion" placeholder="Satisfacción:" required step="any">
+                    
+                        <label for="MetaEsperadaSC">Meta Esperada:</label>
+                        <input type="text" id="MetaEsperadaSC" name="MetaEsperadaSC" placeholder="La meta esperada es:" required>
+                    
+                        <label for="RangoAceptSC">Rango de Aceptación:</label>
+                        <input type="text" id="RangoAceptSC" name="RangoAceptSC" placeholder="Ej. 90% a 100%" required>
+                    
+                        <label for="TendenciaDeseadaSC">Tendencia Deseada:</label>
+                        <input type="text" id="TendenciaDeseadaSC" name="TendenciaDeseadaSC" placeholder="Ej. 100% , Meta Alcanzada" required>
+                    </div>
 
-                    <label for="ExpAtend">Expedientes Completos Atendidos:</label>
-                    <input type="number" id="ExpAtend" name="ExpAtend" placeholder="Ingrese la cantidad" required step="any">
+                    <!-- Responsable y Fuente -->
+                    <div class="responsable-section">
+                        <hr>
+                        <label for="Responsable">Responsable:</label>
+                        <input type="text" id="Responsable" name="Responsable" placeholder="Nombre del responsable" required value="<?php echo htmlspecialchars($responsable_value); ?>">
+                    
+                        <label for="ObservacionesRes">Fuente:</label>
+                        <textarea id="ObservacionesRes" name="ObservacionesRes" rows="4" placeholder="Fuente" required></textarea>
+                    </div>
+
+                    <!-- Botones -->
+                    <div class="form-buttons">
+                        <input type="submit" name="g" value="Guardar" class="btn">
+                        <input type="reset" name="b" value="Limpiar" class="btn">
+                    </div>
                 </div>
-
-                <div>
-                    <label for="ExpRecib">Expedientes Completos Recibidos:</label>
-                    <input type="number" id="ExpRecib" name="ExpRecib" placeholder="Ingrese la meta" required step="any">
-                </div>
-
-                <div>
-                    <label for="Cumplimiento">Cumplimiento:</label>
-                    <input type="number" id="Cumplimiento" name="Cumplimiento" placeholder="Cumplimiento:" required step="any">
-                </div>
-
-                <div>
-                    <label for="MetaEsperadaCCR">Meta Esperada:</label>
-                    <input type="text" id="MetaEsperadaCCR" name="MetaEsperadaCCR" placeholder="La meta esperada es:" required>
-                </div>
-
-                <div>
-                    <label for="RangoAceptCCR">Rango de Aceptación:</label>
-                    <input type="text" id="RangoAceptCCR" name="RangoAceptCCR" placeholder="Ej. 90% a 100%" required>
-                </div>
-
-                <div>
-                    <label for="TendenciaDeseadaCCR">Tendencia Deseada:</label>
-                    <input type="text" id="TendenciaDeseadaCCR" name="TendenciaDeseadaCCR" placeholder="Ej. 100% , Meta Alcanzada" required>
-                </div>
-
-                <div>
-                    <hr>
-                    <label>Satisfacción del Cliente</label><br>
-                    <hr>
-
-                    <label for="EncuSatisfa">Encuestas Satisfactorias:</label>
-                    <input type="number" id="EncuSatisfa" name="EncuSatisfa" placeholder="Ingrese la cantidad" required step="any">
-                </div>
-
-                <div>
-                    <label for="EncEnvia">Número de Encuestas Enviadas en el Semestre:</label>
-                    <input type="number" id="EncEnvia" name="EncEnvia" placeholder="Ingrese la meta" required step="any">
-                </div>
-
-                <div>
-                    <label for="Satisfaccion">Satisfacción:</label>
-                    <input type="number" id="Satisfaccion" name="Satisfaccion" placeholder="Satisfacción:" required step="any">
-                </div>
-
-                <div>
-                    <label for="MetaEsperadaSC">Meta Esperada:</label>
-                    <input type="text" id="MetaEsperadaSC" name="MetaEsperadaSC" placeholder="La meta esperada es:" required>
-                </div>
-
-                <div>
-                    <label for="RangoAceptSC">Rango de Aceptación:</label>
-                    <input type="text" id="RangoAceptSC" name="RangoAceptSC" placeholder="Ej. 90% a 100%" required>
-                </div>
-
-                <div>
-                    <label for="TendenciaDeseadaSC">Tendencia Deseada:</label>
-                    <input type="text" id="TendenciaDeseadaSC" name="TendenciaDeseadaSC" placeholder="Ej. 100% , Meta Alcanzada" required>
-                </div>
-
-                <div>
-                    <hr>
-                    <label for="Responsable">Responsable:</label>
-                    <input type="text" id="Responsable" name="Responsable" placeholder="Nombre del responsable" required value="<?php echo htmlspecialchars($responsable_value); ?>">
-                </div>
-
-                <div>
-                    <label for="ObservacionesRes">Fuente:</label><br><br>
-                    <textarea id="ObservacionesRes" name="ObservacionesRes" rows="4" placeholder="Fuente" required></textarea>
-                </div>
-
-                <hr>
-
-                <div class="form-buttons">
-                    <input type="submit" name="g" value="Guardar" class="btn">
-                    <input type="reset" name="b" value="Limpiar" class="btn">
-                </div>
-
-            </div> <!-- cierre faltante -->
-            </div>
+                
+            </div> <!-- cierre de registro-container -->
         </form>
     </section>
 

@@ -23,6 +23,8 @@ $clase_firmar = $row['permitir_firmar'] ? 'btn btn-warning' : 'btn btn-success';
 
 // Formatear fechas para mejor visualización
 $mes_formateado = date('d/m/Y', strtotime($row['Mes']));
+$fecha_formateado = date('d/m/Y', strtotime($row['FechaAct']));
+
 $periodo_formateado = date('d/m/Y', strtotime($row['Periodo']));
 
 echo "
@@ -47,8 +49,8 @@ echo "
             <hr>
             
             <table class='info-tabla'>
-                <tr><td>ID del Registro:</td><td>{$row['id']}</td></tr>
                 <tr><td>Clave de Registro:</td><td>{$row['Claveregis']}</td></tr>
+                <tr><td>Fecha de Actualización:</td><td>{$fecha_formateado}</td></tr>
                 <tr><td>Fecha de Elaboración:</td><td>{$mes_formateado}</td></tr>
                 <tr><td>Periodo:</td><td>{$periodo_formateado}</td></tr>
                 <tr><td>Fecha de Registro:</td><td>" . (!empty($row['fecha_registro']) ? date('d/m/Y H:i:s', strtotime($row['fecha_registro'])) : 'No disponible') . "</td></tr>

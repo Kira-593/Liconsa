@@ -3,6 +3,7 @@ include "Conexion.php";
 
 // Obtener los datos del formulario
 $Claveregis = $_POST["Claveregis"];
+$FechaAct = $_POST["FechaAct"];
 $Mes = $_POST["Mes"];
 $Periodo = $_POST["Periodo"];
 
@@ -21,12 +22,12 @@ $Fuente = $_POST["Fuente"];
 
 // Consulta para insertar los datos en la base de datos
 $query = "INSERT INTO I_indicador (
-    Claveregis, Mes, Periodo,
+    Claveregis, FechaAct, Mes, Periodo,
     SolicitudesAtendidas, NumSolicitudes, PorSolicitudesAtendidas, EventualidadesMes,
     MetaEsperadaMB, RangoAceptMB, TendenciaDeseadaMB,
     Responsable, Fuente
 ) VALUES (
-    '$Claveregis', '$Mes', '$Periodo',
+    '$Claveregis', '$FechaAct', '$Mes', '$Periodo',
     '$SolicitudesAtendidas', '$NumSolicitudes', '$PorSolicitudesAtendidas', '$EventualidadesMes',
     '$MetaEsperadaMB', '$RangoAceptMB', '$TendenciaDeseadaMB',
     '$Responsable', '$Fuente'

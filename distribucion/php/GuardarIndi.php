@@ -3,6 +3,7 @@ include "Conexion.php";
 
 // Obtener los datos del formulario
 $Claveregis = $_POST["Claveregis"];
+$FechaAct = $_POST["FechaAct"];
 $Mes = $_POST["Mes"];
 $Periodo = $_POST["Periodo"];
 
@@ -53,7 +54,7 @@ $Observ = $_POST["Observ"];
 
 // Consulta para insertar los datos en la base de datos
 $query = "INSERT INTO d_indicador (
-    Claveregis, Mes, Periodo, 
+    Claveregis, FechaAct, Mes, Periodo, 
     CumplRealProgDia, ProgDiarioDespacho, PCDP, MetaEsperadaMB, RangoAceptMB, TendenciaDeseadaMB,
     Ventatot, DotEntre, CumplimientoVentas, MetaEsperadaCVP, RangoAceptCVP, TendenciaDeseadaCVP,
     MermasEnva, DotEnva, CantidadEnvRotos, MetaEsperadaCER, RangoAceptCER, TendenciaDeseadaCER,
@@ -61,7 +62,7 @@ $query = "INSERT INTO d_indicador (
     GastosTD, LitrosDistribucion, GastosDistribucion, MetaEsperadaGD, RangoAceptGD, TendenciaDeseadaGD,
     Responsable, Observ
 ) VALUES (
-    '$Claveregis', '$Mes', '$Periodo',
+    '$Claveregis', '$FechaAct', '$Mes', '$Periodo',
     '$CumplRealProgDia', '$ProgDiarioDespacho', '$PCDP', '$MetaEsperadaMB', '$RangoAceptMB', '$TendenciaDeseadaMB',
     '$Ventatot', '$DotEntre', '$CumplimientoVentas', '$MetaEsperadaCVP', '$RangoAceptCVP', '$TendenciaDeseadaCVP',
     '$MermasEnva', '$DotEnva', '$CantidadEnvRotos', '$MetaEsperadaCER', '$RangoAceptCER', '$TendenciaDeseadaCER',

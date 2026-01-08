@@ -18,7 +18,7 @@ body {
     width: 50%;
     box-shadow: 0 0 15px rgba(255, 255, 255, 0.3);
     max-width: 500px; /* Ajusta según el diseño deseado */
-    margin: 870px auto 15px auto;
+    margin: 270px auto 15px auto;
 }
 
 .registro-container {
@@ -80,6 +80,11 @@ input[type="button"] {
     border: none;
     border-radius: 5px;
     transition: 0.3s;
+}
+
+input[type="reset"]:hover{
+    background-color: brown;
+    color: #000;
 }
 
 input[type="submit"]:hover{

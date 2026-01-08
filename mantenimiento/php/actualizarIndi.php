@@ -91,24 +91,34 @@
         <input type="hidden" value="<?= $row['id'] ?? '' ?>" name="id"> 
 
         <div class="registro-container">
+            <!-- Columna 1 -->
             <div class="registro-column">
-                
                 <!-- Datos Generales -->
-                <div>
-                    <div>
+                <div class="mb-3">
                     <label for="Claveregis">Clave de Registro:</label>
                     <input type="text" id="Claveregis" name="Claveregis" 
                            value="<?= $row['Claveregis'] ?? '' ?>" 
                            <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
                            placeholder="Ingrese la Clave" required>
-                    </div>
-                    
+                </div>
+                
+                <div class="mb-3">
+                    <label for="FechaAct">Fecha de Actualización:</label>
+                    <input type="date" id="FechaAct" name="FechaAct" 
+                           value="<?= $row['FechaAct'] ?? '' ?>" 
+                           <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
+                           required>
+                </div>
+                
+                <div class="mb-3">
                     <label for="Mes">Fecha de Elaboración:</label>
                     <input type="date" id="Mes" name="Mes" 
                            value="<?= $row['Mes'] ?? '' ?>" 
                            <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
                            required>
-                    
+                </div>
+                
+                <div class="mb-3">
                     <label for="Periodo">Periodo:</label>
                     <input type="date" id="Periodo" name="Periodo" 
                            value="<?= $row['Periodo'] ?? '' ?>" 
@@ -116,326 +126,471 @@
                            required>
                 </div>
                 
-                <!-- Gastos de Operación -->
-                <div>
-                    <hr>
-                    <label>Gatos de Operación</label><br>
-                    <hr>
-                    
+                <hr>
+                
+                <h4>Gatos de Operación</h4>
+                
+                <div class="mb-3">
                     <label for="PresEje">Presupuesto Ejercido:</label>
                     <input type="number" id="PresEje" name="PresEje" 
                            value="<?= $row['PresEje'] ?? '' ?>" 
                            <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
                            placeholder="Ingrese la cantidad" required step="any">
-                    
-                    <label>Menor ó Igual Al</label>
+                </div>
                 
+                <div class="mb-3">
+                    <label>Menor ó Igual Al</label>
+                </div>
+                
+                <div class="mb-3">
                     <label for="GastoAutorizado">Gasto Autorizado:</label>
                     <input type="number" id="GastoAutorizado" name="GastoAutorizado" 
                            value="<?= $row['GastoAutorizado'] ?? '' ?>" 
                            <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
                            placeholder="Ingrese la meta" required step="any">
-                    
+                </div>
+                
+                <div class="mb-3">
                     <label for="Diferiencia">Diferencia:</label>
                     <input type="number" id="Diferiencia" name="Diferiencia" 
                            value="<?= $row['Diferiencia'] ?? '' ?>" 
                            <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
                            placeholder="Los Puntos son:" required step="any">
-                    
+                </div>
+                
+                <div class="mb-3">
                     <label for="MetaEsperadaGO">Meta Esperada:</label>
                     <input type="text" id="MetaEsperadaGO" name="MetaEsperadaGO" 
                            value="<?= $row['MetaEsperadaGO'] ?? '' ?>" 
                            <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
                            placeholder="La meta esperada es:" required>
-                    
+                </div>
+                
+                <div class="mb-3">
                     <label for="RangoAceptGO">Rango de Aceptación:</label>
                     <input type="text" id="RangoAceptGO" name="RangoAceptGO" 
                            value="<?= $row['RangoAceptGO'] ?? '' ?>" 
                            <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
                            placeholder="Ej. Max el gasto autorizado" required>
-                    
+                </div>
+
+                <div class="mb-3">
                     <label for="TendenciaDeseadaGO">Tendencia Deseada:</label>
                     <input type="text" id="TendenciaDeseadaGO" name="TendenciaDeseadaGO" 
                            value="<?= $row['TendenciaDeseadaGO'] ?? '' ?>" 
                            <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
                            placeholder="Ej. No Rebasar el Gasto Autorizado" required>
                 </div>
-
-                <!-- Disponibilidad de Equipo Para la Producción, Envasado y ReHidratado -->
-                <div>
-                    <hr>
-                    <label>Disponibilidad de Equipo Para la Producción, Envasado y ReHidratado</label><br>
-                    <hr>
-                    
-                    <label for="HorasHombre"> Total de Horas Hombre Disponible:</label>
+                
+                <hr>
+                
+                <h4>Disponibilidad de Equipo Para Producción (Pasteurizado)</h4>
+                
+                <div class="mb-3">
+                    <label for="HorasHombre">Total de Horas Hombre Disponible:</label>
                     <input type="number" id="HorasHombre" name="HorasHombre" 
                            value="<?= $row['HorasHombre'] ?? '' ?>" 
                            <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
                            placeholder="Ingrese la cantidad" required step="any">
-                    
+                </div>
+                
+                <div class="mb-3">
                     <label for="HorasParo">Horas de paro:</label>
                     <input type="number" id="HorasParo" name="HorasParo" 
                            value="<?= $row['HorasParo'] ?? '' ?>" 
                            <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
                            placeholder="Ingrese la meta" required step="any">
-                    
+                </div>
+                
+                <div class="mb-3">
                     <label for="HorasDisponibles">Total de Horas Disponibles:</label>
                     <input type="number" id="HorasDisponibles" name="HorasDisponibles" 
                            value="<?= $row['HorasDisponibles'] ?? '' ?>" 
                            <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
                            placeholder="Ingrese la meta" required step="any">
-                    
+                </div>
+                
+                <div class="mb-3">
                     <label for="prc">Porcentaje de Disponibilidad del Equipo:</label>
                     <input type="number" id="prc" name="prc" 
                            value="<?= $row['prc'] ?? '' ?>" 
                            <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
                            placeholder="%" required step="any">
-                    
+                </div>
+                
+                <hr>
+                
+                <h4>Disponibilidad de Equipo Para Producción (Envasado)</h4>
+                
+                <div class="mb-3">
+                    <label for="HorasHombreEnv">Total de Horas Hombre Disponible:</label>
+                    <input type="number" id="HorasHombreEnv" name="HorasHombreEnv" 
+                           value="<?= $row['HorasHombreEnv'] ?? '' ?>" 
+                           <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
+                           placeholder="Ingrese la cantidad" required step="any">
+                </div>
+                
+                <div class="mb-3">
+                    <label for="HorasParoEnv">Horas de paro:</label>
+                    <input type="number" id="HorasParoEnv" name="HorasParoEnv" 
+                           value="<?= $row['HorasParoEnv'] ?? '' ?>" 
+                           <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
+                           placeholder="Ingrese la meta" required step="any">
+                </div>
+                
+                <div class="mb-3">
+                    <label for="HorasDisponiblesEnv">Total de Horas Disponibles:</label>
+                    <input type="number" id="HorasDisponiblesEnv" name="HorasDisponiblesEnv" 
+                           value="<?= $row['HorasDisponiblesEnv'] ?? '' ?>" 
+                           <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
+                           placeholder="Ingrese la meta" required step="any">
+                </div>
+                
+                <div class="mb-3">
+                    <label for="prcEnv">Porcentaje de Disponibilidad del Equipo:</label>
+                    <input type="number" id="prcEnv" name="prcEnv" 
+                           value="<?= $row['prcEnv'] ?? '' ?>" 
+                           <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
+                           placeholder="%" required step="any">
+                </div>
+            </div>
+            
+            <!-- Columna 2 -->
+            <div class="registro-column">
+                <hr>
+                
+                <h4>Disponibilidad de Equipo Para Producción (Rehidratado)</h4>
+                
+                <div class="mb-3">
+                    <label for="HorasHombreReh">Total de Horas Hombre Disponible:</label>
+                    <input type="number" id="HorasHombreReh" name="HorasHombreReh" 
+                           value="<?= $row['HorasHombreReh'] ?? '' ?>" 
+                           <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
+                           placeholder="Ingrese la cantidad" required step="any">
+                </div>
+                
+                <div class="mb-3">
+                    <label for="HorasParoReh">Horas de paro:</label>
+                    <input type="number" id="HorasParoReh" name="HorasParoReh" 
+                           value="<?= $row['HorasParoReh'] ?? '' ?>" 
+                           <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
+                           placeholder="Ingrese la meta" required step="any">
+                </div>
+                
+                <div class="mb-3">
+                    <label for="HorasDisponiblesReh">Total de Horas Disponibles:</label>
+                    <input type="number" id="HorasDisponiblesReh" name="HorasDisponiblesReh" 
+                           value="<?= $row['HorasDisponiblesReh'] ?? '' ?>" 
+                           <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
+                           placeholder="Ingrese la meta" required step="any">
+                </div>
+                
+                <div class="mb-3">
+                    <label for="prcReh">Porcentaje de Disponibilidad del Equipo:</label>
+                    <input type="number" id="prcReh" name="prcReh" 
+                           value="<?= $row['prcReh'] ?? '' ?>" 
+                           <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
+                           placeholder="%" required step="any">
+                </div>
+                
+                <div class="mb-3">
                     <label for="MetaEsperadaDEP">Meta Esperada:</label>
                     <input type="text" id="MetaEsperadaDEP" name="MetaEsperadaDEP" 
                            value="<?= $row['MetaEsperadaDEP'] ?? '' ?>" 
                            <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
                            placeholder="La meta esperada es:" required>
-                    
+                </div>
+                
+                <div class="mb-3">
                     <label for="RangoAceptDEP">Rango de Aceptación:</label>
                     <input type="text" id="RangoAceptDEP" name="RangoAceptDEP" 
                            value="<?= $row['RangoAceptDEP'] ?? '' ?>" 
                            <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
                            placeholder="Ej. 99.50-100%" required>
-                    
+                </div>
+
+                <div class="mb-3">
                     <label for="TendenciaDeseadaDEP">Tendencia Deseada:</label>
                     <input type="text" id="TendenciaDeseadaDEP" name="TendenciaDeseadaDEP" 
                            value="<?= $row['TendenciaDeseadaDEP'] ?? '' ?>" 
                            <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
                            placeholder="Ej. 100%" required>
                 </div>
-
-                <!-- Trabajos Preventivos -->
-                <div>
-                    <hr>
-                    <label>Trabajos Preventivos</label><br>
-                    <hr>
-                    
+                
+                <hr>
+                
+                <h4>Trabajos Preventivos</h4>
+                
+                <div class="mb-3">
                     <label for="TPE">Trabajos Programados Ejecutados:</label>
                     <input type="number" id="TPE" name="TPE" 
                            value="<?= $row['TPE'] ?? '' ?>" 
                            <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
                            placeholder="Ingrese la cantidad" required step="any">
-                    
+                </div>
+                
+                <div class="mb-3">
                     <label for="TP">Trabajos Programados:</label>
                     <input type="number" id="TP" name="TP" 
                            value="<?= $row['TP'] ?? '' ?>" 
                            <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
                            placeholder="Ingrese la meta" required step="any">
-                    
-                    <label for="PorcentTP">Porcentaje de Trabajos  Preventivos:</label>
+                </div>
+                
+                <div class="mb-3">
+                    <label for="PorcentTP">Porcentaje de Trabajos Preventivos:</label>
                     <input type="number" id="PorcentTP" name="PorcentTP" 
                            value="<?= $row['PorcentTP'] ?? '' ?>" 
                            <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
                            placeholder="%" required step="any">
-                    
+                </div>
+
+                <div class="mb-3">
                     <label for="MetaEsperadaTP">Meta Esperada:</label>
                     <input type="text" id="MetaEsperadaTP" name="MetaEsperadaTP" 
                            value="<?= $row['MetaEsperadaTP'] ?? '' ?>" 
                            <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
                            placeholder="La meta esperada es:" required>
-                    
+                </div>
+                
+                <div class="mb-3">
                     <label for="RangoAceptTP">Rango de Aceptación:</label>
                     <input type="text" id="RangoAceptTP" name="RangoAceptTP" 
                            value="<?= $row['RangoAceptTP'] ?? '' ?>" 
                            <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
                            placeholder="Ej. 99.50-100%" required>
-                    
+                </div>
+
+                <div class="mb-3">
                     <label for="TendenciaDeseadaTP">Tendencia Deseada:</label>
                     <input type="text" id="TendenciaDeseadaTP" name="TendenciaDeseadaTP" 
                            value="<?= $row['TendenciaDeseadaTP'] ?? '' ?>" 
                            <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
                            placeholder="Ej. 100%" required>
                 </div>
-
-                <!-- Trabajos Correctivos -->
-                <div>
-                    <hr>
-                    <label>Trabajos Correctivos</label><br>
-                    <hr>
-                    
+                
+                <hr>
+                
+                <h4>Trabajos Correctivos</h4>
+                
+                <div class="mb-3">
                     <label for="TC">Trabajos correctivos realizados:</label>
                     <input type="number" id="TC" name="TC" 
                            value="<?= $row['TC'] ?? '' ?>" 
                            <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
                            placeholder="Ingrese la cantidad" required step="any">
-                    
-                    <label for="PorcentTC">Porcentaje de Trabajos  Correctivos:</label>
+                </div>
+                
+                <div class="mb-3">
+                    <label for="PorcentTC">Porcentaje de Trabajos Correctivos:</label>
                     <input type="number" id="PorcentTC" name="PorcentTC" 
                            value="<?= $row['PorcentTC'] ?? '' ?>" 
                            <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
                            placeholder="%" required step="any">
-                    
+                </div>
+
+                <div class="mb-3">
                     <label for="MetaEsperadaTC">Meta Esperada:</label>
                     <input type="text" id="MetaEsperadaTC" name="MetaEsperadaTC" 
                            value="<?= $row['MetaEsperadaTC'] ?? '' ?>" 
                            <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
                            placeholder="La meta esperada es:" required>
-                    
+                </div>
+                
+                <div class="mb-3">
                     <label for="RangoAceptTC">Rango de Aceptación:</label>
                     <input type="text" id="RangoAceptTC" name="RangoAceptTC" 
                            value="<?= $row['RangoAceptTC'] ?? '' ?>" 
                            <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
                            placeholder="Ej. 0 - 0.15%" required>
-                    
+                </div>
+
+                <div class="mb-3">
                     <label for="TendenciaDeseadaTC">Tendencia Deseada:</label>
                     <input type="text" id="TendenciaDeseadaTC" name="TendenciaDeseadaTC" 
                            value="<?= $row['TendenciaDeseadaTC'] ?? '' ?>" 
                            <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
                            placeholder="Ej. 0%" required>
                 </div>
-
-                <!-- Consumo Térmico -->
-                <div>
-                    <hr>
-                    <label>Consumo Térmico</label><br>
-                    <hr>
-                    
+            </div>
+            
+            <!-- Columna 3 -->
+            <div class="registro-column">
+                <hr>
+                
+                <h4>Consumo Térmico</h4>
+                
+                <div class="mb-3">
                     <label for="ConsumoTermico">Consumo Térmico (litros):</label>
                     <input type="number" id="ConsumoTermico" name="ConsumoTermico" 
                            value="<?= $row['ConsumoTermico'] ?? '' ?>" 
                            <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
                            placeholder="Ingrese la cantidad en Litros" required step="any">
-                    
+                </div>
+                
+                <div class="mb-3">
                     <label for="LitrosLecheProducidatermica">Litros de Leche Producida:</label>
                     <input type="number" id="LitrosLecheProducidatermica" name="LitrosLecheProducidatermica" 
                            value="<?= $row['LitrosLecheProducidatermica'] ?? '' ?>" 
                            <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
                            placeholder="Ingrese la cantidad en Litros" required step="any">
-                    
+                </div>
+                
+                <div class="mb-3">
                     <label for="ConsTT">Consumo Total Térmico:</label>
                     <input type="number" id="ConsTT" name="ConsTT" 
                            value="<?= $row['ConsTT'] ?? '' ?>" 
                            <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
                            placeholder="Ingrese la cantidad en Litros" required step="any">
-                    
+                </div>
+
+                <div class="mb-3">
                     <label for="MetaEsperadaCT">Meta Esperada:</label>
                     <input type="text" id="MetaEsperadaCT" name="MetaEsperadaCT" 
                            value="<?= $row['MetaEsperadaCT'] ?? '' ?>" 
                            <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
                            placeholder="1.8500 litros de agua / Litro de leche" required>
-                    
+                </div>
+                
+                <div class="mb-3">
                     <label for="RangoAceptCT">Rango de Aceptación:</label>
                     <input type="text" id="RangoAceptCT" name="RangoAceptCT" 
                            value="<?= $row['RangoAceptCT'] ?? '' ?>" 
                            <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
                            placeholder="Ej. Maximo 1.85" required>
-                    
+                </div>
+
+                <div class="mb-3">
                     <label for="TendenciaDeseadaCT">Tendencia Deseada:</label>
                     <input type="text" id="TendenciaDeseadaCT" name="TendenciaDeseadaCT" 
                            value="<?= $row['TendenciaDeseadaCT'] ?? '' ?>" 
                            <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
                            placeholder="Ej. Max 1.85" required>
                 </div>
-
-                <!-- Consumo de Agua -->
-                <div>
-                    <hr>
-                    <label>Consumo de Agua</label><br>
-                    <hr>
-                    
+                
+                <hr>
+                
+                <h4>Consumo de Agua</h4>
+                
+                <div class="mb-3">
                     <label for="ConsumoAgua">Consumo de Agua (litros):</label>
                     <input type="number" id="ConsumoAgua" name="ConsumoAgua" 
                            value="<?= $row['ConsumoAgua'] ?? '' ?>" 
                            <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
                            placeholder="Ingrese la cantidad en Litros" required step="any">
-                    
+                </div>
+                
+                <div class="mb-3">
                     <label for="LitrosLecheProducida">Litros de Leche Producida:</label>
                     <input type="number" id="LitrosLecheProducida" name="LitrosLecheProducida" 
                            value="<?= $row['LitrosLecheProducida'] ?? '' ?>" 
                            <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
                            placeholder="Ingrese la cantidad en Litros" required step="any">
-                    
+                </div>
+                
+                <div class="mb-3">
                     <label for="ConsTA">Consumo Total de Agua:</label>
                     <input type="number" id="ConsTA" name="ConsTA" 
                            value="<?= $row['ConsTA'] ?? '' ?>" 
                            <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
                            placeholder="Ingrese la cantidad en Litros" required step="any">
-                    
+                </div>
+
+                <div class="mb-3">
                     <label for="MetaEsperadaCA">Meta Esperada:</label>
                     <input type="text" id="MetaEsperadaCA" name="MetaEsperadaCA" 
                            value="<?= $row['MetaEsperadaCA'] ?? '' ?>" 
                            <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
                            placeholder="1.8500 litros de agua / Litro de leche" required>
-                    
+                </div>
+                
+                <div class="mb-3">
                     <label for="RangoAceptCA">Rango de Aceptación:</label>
                     <input type="text" id="RangoAceptCA" name="RangoAceptCA" 
                            value="<?= $row['RangoAceptCA'] ?? '' ?>" 
                            <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
                            placeholder="Ej. Maximo 1.85" required>
-                    
+                </div>
+                
+                <div class="mb-3">
                     <label for="TendenciaDeseadaCA">Tendencia Deseada:</label>
                     <input type="text" id="TendenciaDeseadaCA" name="TendenciaDeseadaCA" 
                            value="<?= $row['TendenciaDeseadaCA'] ?? '' ?>" 
                            <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
                            placeholder="Ej. Max 1.85" required>
                 </div>
-
-                <!-- Consumo Eléctrico -->
-                <div>
-                    <hr>
-                    <label>Consumo Eléctrico</label><br>
-                    <hr>
-                    
+                
+                <hr>
+                
+                <h4>Consumo Eléctrico</h4>
+                
+                <div class="mb-3">
                     <label for="ConsumoElectrico">Consumo Eléctrico (kWh):</label>
                     <input type="number" id="ConsumoElectrico" name="ConsumoElectrico" 
                            value="<?= $row['ConsumoElectrico'] ?? '' ?>" 
                            <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
                            placeholder="Ingrese la cantidad en kWh" required step="any">
-                    
+                </div>
+                
+                <div class="mb-3">
                     <label for="LitrosLecheProducidaElectrico">Litros de Leche Producida:</label>
                     <input type="number" id="LitrosLecheProducidaElectrico" name="LitrosLecheProducidaElectrico" 
                            value="<?= $row['LitrosLecheProducidaElectrico'] ?? '' ?>" 
                            <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
-                           <?= ($solo_firma || $formulario_firmado) ? 'readonly' : '' ?>
                            placeholder="Ingrese la cantidad en Litros" required step="any">
-                    
+                </div>
+                
+                <div class="mb-3">
                     <label for="ConsTE">Consumo Total Eléctrico:</label>
                     <input type="number" id="ConsTE" name="ConsTE" 
                            value="<?= $row['ConsTE'] ?? '' ?>" 
                            <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
                            placeholder="Ingrese la cantidad en kWh" required step="any">
-                    
+                </div>
+
+                <div class="mb-3">
                     <label for="MetaEsperadaCE">Meta Esperada:</label>
                     <input type="text" id="MetaEsperadaCE" name="MetaEsperadaCE" 
                            value="<?= $row['MetaEsperadaCE'] ?? '' ?>" 
                            <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
                            placeholder="1.8500 kWh / Litro de leche" required>
-                    
+                </div>
+                
+                <div class="mb-3">
                     <label for="RangoAceptCE">Rango de Aceptación:</label>
                     <input type="text" id="RangoAceptCE" name="RangoAceptCE" 
                            value="<?= $row['RangoAceptCE'] ?? '' ?>" 
                            <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
                            placeholder="Ej. Maximo 1.85" required>
-                    
+                </div>
+
+                <div class="mb-3">
                     <label for="TendenciaDeseadaCE">Tendencia Deseada:</label>
                     <input type="text" id="TendenciaDeseadaCE" name="TendenciaDeseadaCE" 
                            value="<?= $row['TendenciaDeseadaCE'] ?? '' ?>" 
                            <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
                            placeholder="Ej. Max 1.85" required>
                 </div>
-
-                <!-- Responsable y Fuente -->
-                <div>
-                    <hr>
+                
+                <hr>
+                
+                <h4>Responsable y Fuente</h4>
+                
+                <div class="mb-3">
                     <label for="Responsable">Responsable:</label>
                     <input type="text" id="Responsable" name="Responsable" 
                            value="<?= $row['Responsable'] ?? '' ?>" 
                            <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
                            placeholder="Nombre del responsable" required>
-                
-                    <label for="Fuente">Fuente:</label><br><br>
+                </div>
+            
+                <div class="mb-3">
+                    <label for="Fuente">Fuente:</label>
                     <textarea id="Fuente" name="Fuente" rows="4" 
                               <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
                               placeholder="Fuente" required><?= $row['Fuente'] ?? '' ?></textarea>
                 </div>
-                <hr>
-            </div> 
+            </div>
         </div> <!-- Fin de registro-container -->
             
             <!-- SECCIÓN DE FIRMA -->
@@ -497,12 +652,12 @@
                         </form>
                     <?php endif; ?>
                     
-                        <?php if (!$es_admin): ?>
-                            <div class="alert alert-warning mt-3">
-                                Este formulario ya ha sido firmado y no puede ser modificado.
-                            </div>
-                        <?php endif; ?>
+                    <?php if (!$es_admin): ?>
+                        <div class="alert alert-warning mt-3">
+                            Este formulario ya ha sido firmado y no puede ser modificado.
+                        </div>
                     <?php endif; ?>
+                <?php endif; ?>
             </div>
     </form>
     </section>

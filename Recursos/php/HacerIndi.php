@@ -37,6 +37,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
 // 1. Obtener los datos del formulario de Recursos Financieros
 $ID = $_POST["id"] ?? ''; // ID es la clave para el UPDATE
 $Claveregis = $_POST["Claveregis"] ?? '';
+$FechaAct = $_POST["FechaAct"] ?? '';
 $Mes = $_POST["Mes"] ?? '';
 $Periodo = $_POST["Periodo"] ?? '';
 
@@ -130,6 +131,7 @@ if ($firma_realizada) {
     // Si se firmó, incluir los campos de firma en la consulta
     $query = "UPDATE r_indicador SET
                 Claveregis = '$Claveregis',
+                FechaAct = '$FechaAct',
                 Mes = '$Mes',
                 Periodo = '$Periodo',
                 ExpedinAut = '$ExpedinAut',
@@ -147,6 +149,7 @@ if ($firma_realizada) {
     // Si no se firma, solo se actualizan los demás campos
     $query = "UPDATE r_indicador SET
                 Claveregis = '$Claveregis',
+                FechaAct = '$FechaAct',
                 Mes = '$Mes',
                 Periodo = '$Periodo',
                 ExpedinAut = '$ExpedinAut',

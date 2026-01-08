@@ -1,9 +1,11 @@
 <?php
 include "Conexion.php";
 
-$query = "SELECT * FROM p_indicador";
+$id = $_GET["sc"] ?? '';
+$query = "SELECT * FROM p_indicador where id= '$id'";
 $res = mysqli_query($link, $query);
 $fila = mysqli_fetch_assoc($res);
+
 // Configuración inicial
 error_reporting(0);
 ini_set('display_errors', 0);
@@ -50,16 +52,56 @@ try {
         'showWatermarkText' => false,
         'autoScriptToLang' => false,
         'autoLangToFont' => false,
+        'fontDir' =>  array_merge (
+            [
+                __DIR__ . '../Patria', // Directorio donde están las fuentes
+            ],
+            (new \Mpdf\Config\ConfigVariables())->getDefaults()['fontDir']
+        ),
     ]);
+
+    $fontPath = __DIR__ . '../Patria';
+
+    // Verificar si existen archivos Patria
+    $patriaFiles = [
+        'Patria_Regular.otf',
+        'Patria_Bold.otf',
+        'Patria_Regular.otf',
+    ];
     
+    $patriaFound = false;
+    foreach ($patriaFiles as $file) {
+        if (file_exists($fontPath . $file)) {
+            $patriaFound = true;
+            // Extraer el nombre base sin extensión
+            $baseName = pathinfo($file, PATHINFO_FILENAME);
+            
+            // Determinar si es regular o bold
+            if (stripos($baseName, 'bold') !== false) {
+                $mpdf->AddFont('Patria', 'B', $file);
+            } else {
+                $mpdf->AddFont('Patria', '', $file);
+            }
+        }
+    }
     // ====================================================
     // 2. CSS ESTILOS
     // ====================================================
     $css = '<style>
-        body { 
+    
+       body { 
             font-family: Arial, sans-serif; 
             margin: 0; 
             padding: 0; 
+        }
+        
+        .font-patria {
+            font-family: ' . ($patriaFound ? '"Patria", ' : '') . 'DejaVuSerif, Arial, sans-serif;
+            font-weight: bold;
+        }
+        
+        .font-patria-regular {
+            font-family: ' . ($patriaFound ? '"Patria", ' : '') . 'DejaVuSerif, Arial, sans-serif;
         }
         
         table { 
@@ -106,17 +148,50 @@ try {
     </style>';
     
     // ====================================================
-    // 3. CONTENIDO HTML - TODO EN TABLA
+    // 3. VERIFICAR SI HAY FIRMA
+    // ====================================================
+    // Verificar si el usuario ha firmado (firma_usuario no es null ni vacío)
+    $mostrarFirma = false;
+    $rutaFirma = '';
+    
+    if (isset($fila['firma_usuario']) && !empty($fila['firma_usuario']) && trim($fila['firma_usuario']) !== '') {
+        // El usuario ha firmado (hay un correo en la columna)
+        $rutaFirmaRelativa = '../Imagenes/firmas/Padron.JPG';
+        $rutaFirmaAbsoluta = __DIR__ . '/../Imagenes/firmas/Padron.JPG';
+        
+        // Verificar si el archivo existe
+        if (file_exists($rutaFirmaAbsoluta)) {
+            $mostrarFirma = true;
+            $rutaFirma = $rutaFirmaRelativa;
+        } else {
+            // También verificar otras posibles extensiones o nombres
+            $extensiones = ['.JPG', '.jpg', '.JPEG', '.jpeg', '.PNG', '.png'];
+            $nombresPosibles = ['Padron', 'padron', 'PADRON', 'firma', 'Firma'];
+            
+            foreach ($nombresPosibles as $nombre) {
+                foreach ($extensiones as $ext) {
+                    $rutaComprobacion = __DIR__ . '/../Imagenes/firmas/' . $nombre . $ext;
+                    if (file_exists($rutaComprobacion)) {
+                        $mostrarFirma = true;
+                        $rutaFirma = '../Imagenes/firmas/' . $nombre . $ext;
+                        break 2;
+                    }
+                }
+            }
+        }
+    }
+    
+    // ====================================================
+    // 4. CONTENIDO HTML - TODO EN TABLA
     // ====================================================
     $html = '
     <table>
         <!-- ENCABEZADO EN UNA FILA -->
         <tr>
             <td colspan="2" class="text-center font-9 text-bold">
-                Agricultura<br>
-                <span class="font-8" style="font-weight:normal;">Secretaría de Agricultura y Desarrollo Rural</span>
+                <img src="../Imagenes/LogoIndi.png" width="150px" height="80px">
             </td>
-            <td colspan="3" class="text-center font-11 text-bold">
+            <td colspan="3" class="text-center font-9 font-patria-regular">
                 LECHE PARA EL BIENESTAR<br>
                 <span class="font-8" style="font-weight:normal;">GERENCIA ESTATAL TLAXCALA</span><br>
                 <span class="font-11 text-bold">INDICADORES</span>
@@ -162,7 +237,7 @@ try {
             <span class="text-bold">Fecha de Elaboración: '.date("d/m/Y", strtotime($fila["Mes"])).'</span>
             </td>
             <td colspan="3" class="font-7" style="border-bottom: none; border-left: none; border-top: none;">
-            <span class="text-bold">Periodo: '.date("d/m/Y", strtotime($fila["Periodo"])).'</span>
+            <span class="text-bold">Periodo: '.date("m/Y", strtotime($fila["Periodo"])).'</span>
             </td>
         </tr>
         
@@ -180,7 +255,7 @@ try {
             <th colspan="1" class="header-cell" style="width:33%;">Construcción del Indicador (Indicar Unidades)</th>
             <th rowspan="1" class="header-cell" style="width:5%;">Meta</th>
             <th rowspan="1" class="header-cell" style="width:11%;">Rango de<br>Aceptación</th>
-            <th rowspan="1" class="header-cell" style="width:17%;">Tendencia<br>Deseada</th>
+            <th rowspan="1" class="header-cell" style="width:17%;">Tendencia Deseada</th>
         </tr>
         
         <!-- FILA 1 -->
@@ -227,7 +302,7 @@ try {
                 <br>
             </td>
             <td class="text-center font-7">'.$fila["MetaEsperadaFRP"].'</td>
-            <td class="text-center font-6-5">0.230 a 0.665</td>
+            <td class="text-center font-6-5">'.$fila["RangoAceptFRP"].'</td>
             <td class="text-center font-6">'.$fila["TendenciaDeseadaFRP"].'</td>
         </tr>
         
@@ -269,7 +344,7 @@ try {
             <td class="text-center font-6-5">Encuesta de<br>Satisfacción al<br>Cliente</td>
             <td class="font-6">
                 Total de encuestas * Maximo de puntos / Total de puntos del total de encuestas<br><br>
-                '.$fila["TotalEncues"].'  × '.$fila["MaxPuntos"].' / '.$fila["TPTE"].' = '.$fila["PorcentajeEncuestas"].'<br><br>
+                '.$fila["TotalEncues"].'  × '.$fila["MaxPuntos"].' / '.$fila["TPTE"].' = <b>'.$fila["PorcentajeEncuestas"].'</b><br><br>
                
             </td>
             <td class="text-center font-7">'.$fila["MetaEsperadaES"].'</td>
@@ -280,12 +355,19 @@ try {
         <tr class="no-border">
         </tr>
         <tr>
-            <td colspan="3" class="no-border text-center font-8" style="padding-top:15px;">
-               <br><br><br><br><br><br> _________________<br>
-                <span class="text-bold">Elaboró</span><br>
+            <td colspan="3" class="no-border text-center font-8" style="padding-top:15px;">';
+            
+// Mostrar firma si el usuario ha firmado
+if ($mostrarFirma) {
+    $html .= '<img src="' . $rutaFirma . '" style="max-width: 150px; max-height: 80px; margin-bottom: 10px;"><br>_________________<br>';
+} else {
+    $html .= '<br><br><br><br><br><br> _________________<br>';
+}
+
+$html .= '<span class="text-bold">Elaboró</span><br>
                 <span class="text-bold">'.$fila["Responsable"].'</span>
             </td>
-            <td colspan="3" class="no-border text-center font-8" style="padding-top:15px;">
+            <td colspan="2.5" class="no-border text-center font-8" style="padding-top:15px;">
                <br><br><br><br><br><br> _________________<br>
                 <span class="text-bold">Revisó</span><br>
                 <span class="text-bold">Antonio Rangel López</span>
@@ -294,7 +376,7 @@ try {
     </table>';
     
     // ====================================================
-    // 4. GENERAR PDF
+    // 5. GENERAR PDF
     // ====================================================
     cleanBuffers();
     

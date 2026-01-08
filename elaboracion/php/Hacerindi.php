@@ -39,6 +39,7 @@ $ID = $_POST["id"] ?? '';
 
 // Datos básicos
 $Claveregis = $_POST["Claveregis"] ?? '';
+$FechaAct = $_POST["FechaAct"] ?? '';
 $Mes = $_POST["Mes"] ?? '';
 $Periodo = $_POST["Periodo"] ?? '';
 
@@ -148,6 +149,7 @@ if (isset($_POST['firmar_documento']) && $_POST['firmar_documento'] == 'on') {
             // Consulta preparada CON firma
             $query = "UPDATE e_indicador SET 
                         Claveregis = ?, 
+                        FechaAct = ?,
                         Mes = ?, 
                         Periodo = ?,
                         DBPAS = ?, 
@@ -214,6 +216,7 @@ if (isset($_POST['firmar_documento']) && $_POST['firmar_documento'] == 'on') {
     // Consulta preparada SIN firma
     $query = "UPDATE e_indicador SET 
                 Claveregis = ?, 
+                FechaAct = ?,
                 Mes = ?, 
                 Periodo = ?,
                 DBPAS = ?, 
@@ -273,8 +276,8 @@ echo "<!-- Número de parámetros esperados: $param_count -->";
 if ($firma_realizada) {
     // CORRECCIÓN: Contamos 41 parámetros + ID = 42 en total
     // La cadena de tipos debe tener 42 caracteres
-    mysqli_stmt_bind_param($stmt, "ssssssssssssssssssssssssssssssssssssssssss",
-        $Claveregis, $Mes, $Periodo,
+    mysqli_stmt_bind_param($stmt, "sssssssssssssssssssssssssssssssssssssssssss",
+        $Claveregis, $FechaAct, $Mes, $Periodo,
         $DBPAS, $PDOACP, $LRAPMDOL, $PC, $MetaEsperadaDMLPS, $RangoAceptDMLPS, $TendenciaDeseadaDMLPS,
         $CDLPAS, $MetaEsperadaEPNC, $RangoAceptEPNC, $TendenciaDeseadaEPNC,
         $DespaReal, $DespaProg, $LechePrograma, $PorcentajeProduccion, $PPL, $MetaEsperadaCPSP, $RangoAceptCPSP, $TendenciaDeseadaCPSP,
@@ -289,8 +292,8 @@ if ($firma_realizada) {
 } else {
     // CORRECCIÓN: Contamos 39 parámetros + ID = 40 en total
     // La cadena de tipos debe tener 40 caracteres
-    mysqli_stmt_bind_param($stmt, "ssssssssssssssssssssssssssssssssssssssss",
-        $Claveregis, $Mes, $Periodo,
+    mysqli_stmt_bind_param($stmt, "sssssssssssssssssssssssssssssssssssssssss",
+        $Claveregis, $FechaAct, $Mes, $Periodo,
         $DBPAS, $PDOACP, $LRAPMDOL, $PC, $MetaEsperadaDMLPS, $RangoAceptDMLPS, $TendenciaDeseadaDMLPS,
         $CDLPAS, $MetaEsperadaEPNC, $RangoAceptEPNC, $TendenciaDeseadaEPNC,
         $DespaReal, $DespaProg, $LechePrograma, $PorcentajeProduccion, $PPL, $MetaEsperadaCPSP, $RangoAceptCPSP, $TendenciaDeseadaCPSP,

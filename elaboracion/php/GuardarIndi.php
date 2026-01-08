@@ -3,6 +3,7 @@ include "Conexion.php";
 
 // Obtener los datos del formulario
 $Claveregis = $_POST["Claveregis"];
+$FechaAct = $_POST["FechaAct"];
 $Mes = $_POST["Mes"];
 $Periodo = $_POST["Periodo"];
 
@@ -60,7 +61,7 @@ $Fuente = $_POST["Fuente"];
 
 // Consulta para insertar los datos en la base de datos
 $query = "INSERT INTO e_indicador (
-    Claveregis, Mes, Periodo,
+    Claveregis, FechaAct, Mes, Periodo,
     DBPAS, PDOACP, LRAPMDOL, PC, MetaEsperadaDMLPS, RangoAceptDMLPS, TendenciaDeseadaDMLPS,
     CDLPAS, MetaEsperadaEPNC, RangoAceptEPNC, TendenciaDeseadaEPNC,
     DespaReal, DespaProg, LechePrograma, PorcentajeProduccion, PPL, MetaEsperadaCPSP, RangoAceptCPSP, TendenciaDeseadaCPSP,
@@ -69,7 +70,7 @@ $query = "INSERT INTO e_indicador (
     PCCL, MetaEsperadaCLI, RangoAceptCLI, TendenciaDeseadaCLI,
     Responsable, Fuente
 ) VALUES (
-    '$Claveregis', '$Mes', '$Periodo',
+    '$Claveregis', '$FechaAct', '$Mes', '$Periodo',
     '$DBPAS', '$PDOACP', '$LRAPMDOL', '$PC', '$MetaEsperadaDMLPS', '$RangoAceptDMLPS', '$TendenciaDeseadaDMLPS',
     '$CDLPAS', '$MetaEsperadaEPNC', '$RangoAceptEPNC', '$TendenciaDeseadaEPNC',
     '$DespaReal', '$DespaProg', '$LechePrograma', '$PorcentajeProduccion', '$PPL', '$MetaEsperadaCPSP', '$RangoAceptCPSP', '$TendenciaDeseadaCPSP',

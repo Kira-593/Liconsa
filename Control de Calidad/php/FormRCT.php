@@ -18,8 +18,9 @@
     <section class="registro">
         <form method="post" action="GuardarRCT.php">
         <div class="registro-container">
+            
+            <!-- Columna 1 -->
             <div class="registro-column">
-
                 <div>
                     <label for="Provedor">Provedor:</label>
                     <input type="text" id="Provedor" name="Provedor" placeholder="Ej. Nombre, locacion, periodo" required>
@@ -55,11 +56,15 @@
                     <input type="number" step="0.1" id="Grasa" name="Grasa" placeholder="Ej. 38.3" required>
                 </div>
 
-                <div>
+              
+            </div>
+            
+            <!-- Columna 2 -->
+            <div class="registro-column">
+                  <div>
                     <label for="SNG">S.N.G. (g/L):</label>
                     <input type="number" step="0.1" id="SNG" name="SNG" placeholder="Ej. 90.1" required>
                 </div>
-
                 <div>
                     <label for="Proteina">Proteína (g/L):</label>
                     <input type="number" step="0.1" id="Proteina" name="Proteina" placeholder="Ej. 32.8" required>
@@ -89,14 +94,15 @@
                     <label for="Reductasa">Reductasa (min):</label>
                     <input type="number" id="Reductasa" name="Reductasa" placeholder="Ej. 340" required>
                 </div>
-
-                <div class="form-buttons">
-                    <input type="submit" name="g" value="Guardar">
-                    <input type="reset" name="b" value="Limpiar">
-                </div>
-
             </div>
+            
         </div>
+        
+        <div class="form-buttons">
+            <input type="submit" name="g" value="Guardar">
+            <input type="reset" name="b" value="Limpiar">
+        </div>
+
         </form>
     </section>
 

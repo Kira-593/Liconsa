@@ -20,7 +20,7 @@ session_start();
 <main class="container">
 
     <h1>Actualizar Indicadores</h1>
-    <h4>Administrador del Padron de Beneficiarios</h4>
+    <h4>Administrador del Padrón de Beneficiarios</h4>
     
     <?php
     include "Conexion.php";
@@ -82,28 +82,35 @@ session_start();
             <input type="hidden" name="id" value="<?= $row['id'] ?? '' ?>">
             
             <div class="registro-container">
+                
+                <!-- Columna 1 -->
                 <div class="registro-column">
                     <div>
-                        <div>
-                            <label for="Claveregis">Clave de Registro:</label>
-                            <input type="text" id="Claveregis" name="Claveregis" 
-                                   value="<?= $row['Claveregis'] ?? '' ?>" 
-                                   placeholder="Ingrese la Clave" 
-                                   <?= (($solo_firma || $formulario_firmado) && !$es_admin) ? 'readonly' : '' ?>
-                                   required>
-                        </div>
+                        <label for="Claveregis">Clave de Registro:</label>
+                        <input type="text" id="Claveregis" name="Claveregis" 
+                               value="<?= $row['Claveregis'] ?? '' ?>" 
+                               placeholder="Ingrese la Clave" 
+                               <?= (($solo_firma || $formulario_firmado) && !$es_admin) ? 'readonly' : '' ?>
+                               required>
+                    </div>
+                    
+                    <div>
                         <label for="FechaAct">Fecha de Actualización:</label>
                         <input type="date" id="FechaAct" name="FechaAct" 
                                value="<?= $row['FechaAct'] ?? '' ?>" 
                                <?= (($solo_firma || $formulario_firmado) && !$es_admin) ? 'readonly' : '' ?>
                                required>
-                               
+                    </div>
+                    
+                    <div>
                         <label for="Mes">Fecha de Elaboración:</label>
                         <input type="date" id="Mes" name="Mes" 
                                value="<?= $row['Mes'] ?? '' ?>" 
                                <?= (($solo_firma || $formulario_firmado) && !$es_admin) ? 'readonly' : '' ?>
                                required>
-                        
+                    </div>
+                    
+                    <div>
                         <label for="Periodo">Periodo:</label>
                         <input type="date" id="Periodo" name="Periodo" 
                                value="<?= $row['Periodo'] ?? '' ?>" 
@@ -111,18 +118,19 @@ session_start();
                                required>
                     </div>
                     
+                    <hr>
+                    
+                    <h4>Meta de Beneficiarios</h4>
                     
                     <div>
-                        <hr>
-                        <label>Meta de Beneficiarios</label><br>
-                        <hr>
-                        <label for="NumBenefi">Numero de Beneficiarios:</label>
+                        <label for="NumBenefi">Número de Beneficiarios:</label>
                         <input type="number" id="NumBenefi" name="NumBenefi" 
                                value="<?= $row['NumBenefi'] ?? '' ?>" 
                                placeholder="Ingrese la cantidad" 
                                <?= (($solo_firma || $formulario_firmado) && !$es_admin) ? 'readonly' : '' ?>
                                required>
                     </div>
+                    
                     <div>
                         <label for="MetaBeneficiarios">Meta de Beneficiarios:</label>
                         <input type="number" id="MetaBeneficiarios" name="MetaBeneficiarios" 
@@ -131,6 +139,7 @@ session_start();
                                <?= (($solo_firma || $formulario_firmado) && !$es_admin) ? 'readonly' : '' ?>
                                required>
                     </div>
+                    
                     <div>
                         <label for="MetaReal">Meta Alcanzada:</label>
                         <input type="number" id="MetaReal" name="MetaReal" 
@@ -139,6 +148,7 @@ session_start();
                                <?= (($solo_firma || $formulario_firmado) && !$es_admin) ? 'readonly' : '' ?>
                                required>
                     </div>
+                    
                     <div>
                         <label for="MetaEsperadaMB">Meta Esperada:</label>
                         <input type="text" id="MetaEsperadaMB" name="MetaEsperadaMB" 
@@ -147,6 +157,7 @@ session_start();
                                <?= (($solo_firma || $formulario_firmado) && !$es_admin) ? 'readonly' : '' ?>
                                required>
                     </div>
+                    
                     <div>
                         <label for="RangoAceptMB">Rango de Aceptación:</label>
                         <input type="text" id="RangoAceptMB" name="RangoAceptMB" 
@@ -155,6 +166,7 @@ session_start();
                                <?= (($solo_firma || $formulario_firmado) && !$es_admin) ? 'readonly' : '' ?>
                                required>
                     </div>
+                    
                     <div>
                         <label for="TendenciaDeseadaMB">Tendencia Deseada:</label>
                         <input type="text" id="TendenciaDeseadaMB" name="TendenciaDeseadaMB" 
@@ -164,11 +176,11 @@ session_start();
                                required>
                     </div>
                     
+                    <hr>
+                    
+                    <h4>Factor de Retiro Global Líquida</h4>
                     
                     <div>
-                        <hr>
-                        <label>Factor de retiro Global Liquida</label><br>
-                        <hr>
                         <label for="LitrosVendidos">Litros vendidos:</label>
                         <input type="number" id="LitrosVendidos" name="LitrosVendidos" 
                                value="<?= $row['LitrosVendidos'] ?? '' ?>" 
@@ -176,6 +188,7 @@ session_start();
                                <?= (($solo_firma || $formulario_firmado) && !$es_admin) ? 'readonly' : '' ?>
                                required>
                     </div>
+                    
                     <div>
                         <label for="NumBenefiActivos">Número de Beneficiarios Activos:</label>
                         <input type="number" id="NumBenefiActivos" name="NumBenefiActivos" 
@@ -184,22 +197,25 @@ session_start();
                                <?= (($solo_firma || $formulario_firmado) && !$es_admin) ? 'readonly' : '' ?>
                                required>
                     </div>
+                    
                     <div>
-                        <label for="DiasVenta">Dias de Venta:</label>
+                        <label for="DiasVenta">Días de Venta:</label>
                         <input type="number" id="DiasVenta" name="DiasVenta" 
                                value="<?= $row['DiasVenta'] ?? '' ?>" 
                                placeholder="Ingrese la cantidad" 
                                <?= (($solo_firma || $formulario_firmado) && !$es_admin) ? 'readonly' : '' ?>
                                required>
                     </div>
+                    
                     <div>
-                        <label for="FacRetLi">Factor de retiro Global Liquida:</label>
+                        <label for="FacRetLi">Factor de retiro Global Líquida:</label>
                         <input type="number" id="FacRetLi" name="FacRetLi" 
                                value="<?= $row['FacRetLi'] ?? '' ?>" 
                                placeholder="Ingrese la cantidad" 
                                <?= (($solo_firma || $formulario_firmado) && !$es_admin) ? 'readonly' : '' ?>
                                required step="any">
                     </div>
+                    
                     <div>
                         <label for="MetaEsperadaFRL">Meta Esperada:</label>
                         <input type="text" id="MetaEsperadaFRL" name="MetaEsperadaFRL" 
@@ -208,6 +224,7 @@ session_start();
                                <?= (($solo_firma || $formulario_firmado) && !$es_admin) ? 'readonly' : '' ?>
                                required>
                     </div>
+                    
                     <div>
                         <label for="RangoAceptFRL">Rango de Aceptación:</label>
                         <input type="text" id="RangoAceptFRL" name="RangoAceptFRL" 
@@ -216,6 +233,7 @@ session_start();
                                <?= (($solo_firma || $formulario_firmado) && !$es_admin) ? 'readonly' : '' ?>
                                required>
                     </div>
+                    
                     <div>
                         <label for="TendenciaDeseadaFRL">Tendencia Deseada:</label>
                         <input type="text" id="TendenciaDeseadaFRL" name="TendenciaDeseadaFRL" 
@@ -224,12 +242,15 @@ session_start();
                                <?= (($solo_firma || $formulario_firmado) && !$es_admin) ? 'readonly' : '' ?>
                                required>
                     </div>
+                </div>
+                
+                <!-- Columna 2 -->
+                <div class="registro-column">
+                    <hr>
                     
+                    <h4>Factor de Retiro Global Polvo</h4>
                     
                     <div>
-                        <hr>
-                        <label>Factor de retiro Global polvo</label><br>
-                        <hr>
                         <label for="LitrosVendidosPol">Litros vendidos:</label>
                         <input type="number" id="LitrosVendidosPol" name="LitrosVendidosPol" 
                                value="<?= $row['LitrosVendidosPol'] ?? '' ?>" 
@@ -237,6 +258,7 @@ session_start();
                                <?= (($solo_firma || $formulario_firmado) && !$es_admin) ? 'readonly' : '' ?>
                                required>
                     </div>
+                    
                     <div>
                         <label for="NumBenefiActivosPol">Número de Beneficiarios Activos:</label>
                         <input type="number" id="NumBenefiActivosPol" name="NumBenefiActivosPol" 
@@ -245,14 +267,16 @@ session_start();
                                <?= (($solo_firma || $formulario_firmado) && !$es_admin) ? 'readonly' : '' ?>
                                required>
                     </div>
+                    
                     <div>
-                        <label for="DiasVentaPol">Dias de Venta:</label>
+                        <label for="DiasVentaPol">Días de Venta:</label>
                         <input type="number" id="DiasVentaPol" name="DiasVentaPol" 
                                value="<?= $row['DiasVentaPol'] ?? '' ?>" 
                                placeholder="Ingrese la cantidad" 
                                <?= (($solo_firma || $formulario_firmado) && !$es_admin) ? 'readonly' : '' ?>
                                required>
                     </div>
+                    
                     <div>
                         <label for="FacRetPol">Factor de retiro Global Polvo:</label>
                         <input type="number" id="FacRetPol" name="FacRetPol" 
@@ -261,6 +285,7 @@ session_start();
                                <?= (($solo_firma || $formulario_firmado) && !$es_admin) ? 'readonly' : '' ?>
                                required step="any">
                     </div>
+                    
                     <div>
                         <label for="MetaEsperadaFRP">Meta Esperada:</label>
                         <input type="text" id="MetaEsperadaFRP" name="MetaEsperadaFRP" 
@@ -269,6 +294,7 @@ session_start();
                                <?= (($solo_firma || $formulario_firmado) && !$es_admin) ? 'readonly' : '' ?>
                                required>
                     </div>
+                    
                     <div>
                         <label for="RangoAceptFRP">Rango de Aceptación:</label>
                         <input type="text" id="RangoAceptFRP" name="RangoAceptFRP" 
@@ -277,6 +303,7 @@ session_start();
                                <?= (($solo_firma || $formulario_firmado) && !$es_admin) ? 'readonly' : '' ?>
                                required>
                     </div>
+                    
                     <div>
                         <label for="TendenciaDeseadaFRP">Tendencia Deseada:</label>
                         <input type="text" id="TendenciaDeseadaFRP" name="TendenciaDeseadaFRP" 
@@ -286,11 +313,11 @@ session_start();
                                required>
                     </div>
                     
+                    <hr>
+                    
+                    <h4>Tarjetas no Entregadas</h4>
                     
                     <div>
-                        <hr>
-                        <label>Tarjetas no Entregadas</label><br>
-                        <hr>
                         <label for="TNE">Número de Tarjetas no Entregadas:</label>
                         <input type="number" id="TNE" name="TNE" 
                                value="<?= $row['TNE'] ?? '' ?>" 
@@ -298,22 +325,25 @@ session_start();
                                <?= (($solo_firma || $formulario_firmado) && !$es_admin) ? 'readonly' : '' ?>
                                required>
                     </div>
+                    
                     <div>
-                        <label for="FamiliasInscritas">Número de Familias Inscritas en el Padron:</label>
+                        <label for="FamiliasInscritas">Número de Familias Inscritas en el Padrón:</label>
                         <input type="number" id="FamiliasInscritas" name="FamiliasInscritas" 
                                value="<?= $row['FamiliasInscritas'] ?? '' ?>" 
                                placeholder="Ingrese la cantidad" 
                                <?= (($solo_firma || $formulario_firmado) && !$es_admin) ? 'readonly' : '' ?>
                                required>
                     </div>
+                    
                     <div>
-                        <label for="PorcentajeTNE"> Porcentaje de Tarjetas no Entregadas:</label>
+                        <label for="PorcentajeTNE">Porcentaje de Tarjetas no Entregadas:</label>
                         <input type="number" id="PorcentajeTNE" name="PorcentajeTNE" 
                                value="<?= $row['PorcentajeTNE'] ?? '' ?>" 
                                placeholder="Ingrese la cantidad" 
                                <?= (($solo_firma || $formulario_firmado) && !$es_admin) ? 'readonly' : '' ?>
                                required step="any">
                     </div>
+                    
                     <div>
                         <label for="MetaEsperadaTNE">Meta Esperada:</label>
                         <input type="text" id="MetaEsperadaTNE" name="MetaEsperadaTNE" 
@@ -322,6 +352,7 @@ session_start();
                                <?= (($solo_firma || $formulario_firmado) && !$es_admin) ? 'readonly' : '' ?>
                                required>
                     </div>
+                    
                     <div>
                         <label for="RangoAceptTNE">Rango de Aceptación:</label>
                         <input type="text" id="RangoAceptTNE" name="RangoAceptTNE" 
@@ -330,6 +361,7 @@ session_start();
                                <?= (($solo_firma || $formulario_firmado) && !$es_admin) ? 'readonly' : '' ?>
                                required>
                     </div>
+                    
                     <div>
                         <label for="TendenciaDeseadaTNE">Tendencia Deseada:</label>
                         <input type="text" id="TendenciaDeseadaTNE" name="TendenciaDeseadaTNE" 
@@ -338,12 +370,15 @@ session_start();
                                <?= (($solo_firma || $formulario_firmado) && !$es_admin) ? 'readonly' : '' ?>
                                required>
                     </div>
+                </div>
+                
+                <!-- Columna 3 -->
+                <div class="registro-column">
+                    <hr>
                     
+                    <h4>Atención a Quejas</h4>
                     
                     <div>
-                        <hr>
-                        <label>Atencion a Quejas</label><br>
-                        <hr>
                         <label for="QuejasRecibidas">Quejas Recibidas:</label>
                         <input type="number" id="QuejasRecibidas" name="QuejasRecibidas" 
                                value="<?= $row['QuejasRecibidas'] ?? '' ?>" 
@@ -351,6 +386,7 @@ session_start();
                                <?= (($solo_firma || $formulario_firmado) && !$es_admin) ? 'readonly' : '' ?>
                                required>
                     </div>
+                    
                     <div>
                         <label for="QuejasAtendidas">Quejas Atendidas:</label>
                         <input type="number" id="QuejasAtendidas" name="QuejasAtendidas" 
@@ -359,6 +395,7 @@ session_start();
                                <?= (($solo_firma || $formulario_firmado) && !$es_admin) ? 'readonly' : '' ?>
                                required>
                     </div>
+                    
                     <div>
                         <label for="PQNA">Porcentaje de Quejas Atendidas:</label>
                         <input type="number" id="PQNA" name="PQNA" 
@@ -367,6 +404,7 @@ session_start();
                                <?= (($solo_firma || $formulario_firmado) && !$es_admin) ? 'readonly' : '' ?>
                                required step="any">
                     </div>
+                    
                     <div>
                         <label for="MetaEsperadaAQ">Meta Esperada:</label>
                         <input type="text" id="MetaEsperadaAQ" name="MetaEsperadaAQ" 
@@ -375,6 +413,7 @@ session_start();
                                <?= (($solo_firma || $formulario_firmado) && !$es_admin) ? 'readonly' : '' ?>
                                required>
                     </div>
+                    
                     <div>
                         <label for="RangoAceptAQ">Rango de Aceptación:</label>
                         <input type="text" id="RangoAceptAQ" name="RangoAceptAQ" 
@@ -383,6 +422,7 @@ session_start();
                                <?= (($solo_firma || $formulario_firmado) && !$es_admin) ? 'readonly' : '' ?>
                                required>
                     </div>
+                    
                     <div>
                         <label for="TendenciaDeseadaAQ">Tendencia Deseada:</label>
                         <input type="text" id="TendenciaDeseadaAQ" name="TendenciaDeseadaAQ" 
@@ -392,11 +432,11 @@ session_start();
                                required>
                     </div>
                     
+                    <hr>
+                    
+                    <h4>Encuesta de Satisfacción al Cliente</h4>
                     
                     <div>
-                        <hr>
-                        <label>Encuesta de Satisfacción al Cliente</label><br>
-                        <hr>
                         <label for="TotalEncues">Total de Encuestas:</label>
                         <input type="number" id="TotalEncues" name="TotalEncues" 
                                value="<?= $row['TotalEncues'] ?? '' ?>" 
@@ -404,14 +444,16 @@ session_start();
                                <?= (($solo_firma || $formulario_firmado) && !$es_admin) ? 'readonly' : '' ?>
                                required>
                     </div>
+                    
                     <div>
-                        <label for="MaxPuntos">Maximo de puntos:</label>
+                        <label for="MaxPuntos">Máximo de puntos:</label>
                         <input type="number" id="MaxPuntos" name="MaxPuntos" 
                                value="<?= $row['MaxPuntos'] ?? '' ?>" 
                                placeholder="Ingrese la cantidad" 
                                <?= (($solo_firma || $formulario_firmado) && !$es_admin) ? 'readonly' : '' ?>
                                required>
                     </div>
+                    
                     <div>
                         <label for="TPTE">Total de puntos del Total de Encuestas:</label>
                         <input type="number" id="TPTE" name="TPTE" 
@@ -420,14 +462,16 @@ session_start();
                                <?= (($solo_firma || $formulario_firmado) && !$es_admin) ? 'readonly' : '' ?>
                                required>
                     </div>
+                    
                     <div>
-                        <label for="PorcentajeEncuestas"> Porcentaje de Encuestas de Satisfacción:</label>
+                        <label for="PorcentajeEncuestas">Porcentaje de Encuestas de Satisfacción:</label>
                         <input type="number" id="PorcentajeEncuestas" name="PorcentajeEncuestas" 
                                value="<?= $row['PorcentajeEncuestas'] ?? '' ?>" 
                                placeholder="Ingrese la cantidad" 
                                <?= (($solo_firma || $formulario_firmado) && !$es_admin) ? 'readonly' : '' ?>
                                required step="any">
                     </div>
+                    
                     <div>
                         <label for="MetaEsperadaES">Meta Esperada:</label>
                         <input type="text" id="MetaEsperadaES" name="MetaEsperadaES" 
@@ -436,6 +480,7 @@ session_start();
                                <?= (($solo_firma || $formulario_firmado) && !$es_admin) ? 'readonly' : '' ?>
                                required>
                     </div>
+                    
                     <div>
                         <label for="RangoAceptES">Rango de Aceptación:</label>
                         <input type="text" id="RangoAceptES" name="RangoAceptES" 
@@ -444,6 +489,7 @@ session_start();
                                <?= (($solo_firma || $formulario_firmado) && !$es_admin) ? 'readonly' : '' ?>
                                required>
                     </div>
+                    
                     <div>
                         <label for="TendenciaDeseadaES">Tendencia Deseada:</label>
                         <input type="text" id="TendenciaDeseadaES" name="TendenciaDeseadaES" 
@@ -453,9 +499,11 @@ session_start();
                                required>
                     </div>
                     
+                    <hr>
+                    
+                    <h4>Responsable y Fuente</h4>
                     
                     <div>
-                        <hr>
                         <label for="Responsable">Responsable:</label>
                         <input type="text" id="Responsable" name="Responsable" 
                                value="<?= $row['Responsable'] ?? '' ?>" 
@@ -463,83 +511,86 @@ session_start();
                                <?= (($solo_firma || $formulario_firmado) && !$es_admin) ? 'readonly' : '' ?>
                                required>
                     </div>
+                    
                     <div>
-                        <label for="Fuente">Fuente:</label><br><br>
+                        <label for="Fuente">Fuente:</label>
                         <textarea id="Fuente" name="Fuente" rows="4" 
                                   placeholder="Ej. La Facturación Disminuyó 5.25% al cierre del mes" 
                                   <?= (($solo_firma || $formulario_firmado) && !$es_admin) ? 'readonly' : '' ?>
                                   required><?= $row['Fuente'] ?? '' ?></textarea>
                     </div>
-                    <hr>
+                    </div>
+            </div>
+                    <!-- SECCIÓN DE FIRMA -->
+                    <div class="firma-section mt-4 p-3 border rounded">
+                        <h4>Firma Digital</h4>
+                        
+                        <?php if ($row['permitir_firmar'] && !$formulario_firmado): ?>
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label for="clave_firma">Clave de Firma:</label>
+                                    <input type="password" id="clave_firma" name="clave_firma" class="form-control" 
+                                           placeholder="Ingrese su clave única de firma">
+                                    <small>Ingrese su clave única de firma para validar este formulario.</small>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="confirmar_clave">Confirmar Clave:</label>
+                                    <input type="password" id="confirmar_clave" name="confirmar_clave" class="form-control" 
+                                           placeholder="Confirme su clave de firma">
+                                </div>
+                            </div>
+                            
+                            <div class="form-check mb-3">
+                                <label class="form-check-label" for="firmar_documento" style="display:inline-flex;align-items:center;gap:6px;cursor:pointer;">
+                                    <input type="checkbox" id="firmar_documento" name="firmar_documento" class="form-check-input" required>
+                                    Deseo firmar este documento digitalmente
+                                </label>
+                            </div>
+                        <?php elseif ($formulario_firmado): ?>
+                            <div class="alert alert-success">
+                                <strong>✅ Documento Firmado</strong><br>
+                                Este formulario fue firmado por: <strong><?= $row['firma_usuario'] ?></strong><br>
+                                Fecha de firma: <strong><?= $row['fecha_firma'] ?></strong>
+                            </div>
+                        <?php else: ?>
+                            <div class="alert alert-warning">
+                                <strong>⚠️ Firma no disponible</strong><br>
+                                No tienes permisos para firmar este documento o la firma no está habilitada.
+                            </div>
+                        <?php endif; ?>
+                    </div>
+                
+
+                    <!-- Botones -->
+                    <div class="form-buttons">
+                        <?php if (!$formulario_firmado): ?>
+                            <input type="submit" name="g" value="Guardar Cambios" class="btn btn-primary">
+                            <input type="button" value="Limpiar Campos" class="btn btn-secondary" onclick="limpiarCampos()"
+                                   <?= ($solo_firma) ? 'disabled' : '' ?>>
+                        <?php else: ?>
+                            <input type="submit" name="g" value="Guardar Cambios" class="btn btn-primary" 
+                                   <?= $es_admin ? '' : 'disabled' ?>>
+                            <input type="button" value="Limpiar Campos" class="btn btn-secondary" onclick="limpiarCampos()"
+                                   <?= ($solo_firma || !$es_admin) ? 'disabled' : '' ?>>
+                            
+                            <?php if ($es_admin && $formulario_firmado): ?>
+                                <form method="POST" action="HacerIndi.php" style="display:inline;">
+                                    <input type="hidden" name="id" value="<?= $row['id'] ?>">
+                                    <input type="hidden" name="action" value="undo_signature">
+                                    <input type="submit" value="Deshacer Firma" class="btn btn-warning"
+                                           onclick="return confirm('¿Estás seguro de que deseas deshacer la firma de este formulario?')">
+                                </form>
+                            <?php endif; ?>
+                            
+                            <?php if (!$es_admin): ?>
+                                <div class="alert alert-warning mt-3">
+                                    Este formulario ya ha sido firmado y no puede ser modificado.
+                                </div>
+                            <?php endif; ?>
+                        <?php endif; ?>
+                    </div>
                 </div>
             </div>
-
-            
-            <div class="firma-section mt-4 p-3 border rounded">
-                <h4>Firma Digital</h4>
-                
-                <?php if ($row['permitir_firmar'] && !$formulario_firmado): ?>
-                    <div class="row mb-3">
-                        <div class="col-md-6">
-                            <label for="clave_firma">Clave de Firma:</label>
-                            <input type="password" id="clave_firma" name="clave_firma" class="form-control" 
-                                   placeholder="Ingrese su clave única de firma">
-                            <small>Ingrese su clave única de firma para validar este formulario.</small>
-                        </div>
-                        <div class="col-md-6">
-                            <label for="confirmar_clave">Confirmar Clave:</label>
-                            <input type="password" id="confirmar_clave" name="confirmar_clave" class="form-control" 
-                                   placeholder="Confirme su clave de firma">
-                        </div>
-                    </div>
-                    
-                    <div class="form-check mb-3">
-                        <label class="form-check-label" for="firmar_documento" style="display:inline-flex;align-items:center;gap:6px;cursor:pointer;">
-                            <input type="checkbox" id="firmar_documento" name="firmar_documento" class="form-check-input" required>
-                            Deseo firmar este documento digitalmente
-                        </label>
-                    </div>
-                <?php elseif ($formulario_firmado): ?>
-                    <div class="alert alert-success">
-                        <strong>✅ Documento Firmado</strong><br>
-                        Este formulario fue firmado por: <strong><?= $row['firma_usuario'] ?></strong><br>
-                        Fecha de firma: <strong><?= $row['fecha_firma'] ?></strong>
-                    </div>
-                <?php else: ?>
-                    <div class="alert alert-warning">
-                        <strong>⚠️ Firma no disponible</strong><br>
-                        No tienes permisos para firmar este documento o la firma no está habilitada.
-                    </div>
-                <?php endif; ?>
-            </div>
-
-            <div class="form-buttons">
-                <?php if (!$formulario_firmado): ?>
-                    <input type="submit" name="g" value="Guardar Cambios" class="btn btn-primary">
-                    <input type="button" value="Limpiar Campos" class="btn btn-secondary" onclick="limpiarCampos()"
-                           <?= ($solo_firma) ? 'disabled' : '' ?>>
-                <?php else: ?>
-                    <input type="submit" name="g" value="Guardar Cambios" class="btn btn-primary" 
-                           <?= $es_admin ? '' : 'disabled' ?>>
-                    <input type="button" value="Limpiar Campos" class="btn btn-secondary" onclick="limpiarCampos()"
-                           <?= ($solo_firma || !$es_admin) ? 'disabled' : '' ?>>
-                    
-                    <?php if ($es_admin && $formulario_firmado): ?>
-                        <form method="POST" action="HacerIndi.php" style="display:inline;">
-                            <input type="hidden" name="id" value="<?= $row['id'] ?>">
-                            <input type="hidden" name="action" value="undo_signature">
-                            <input type="submit" value="Deshacer Firma" class="btn btn-warning"
-                                   onclick="return confirm('¿Estás seguro de que deseas deshacer la firma de este formulario?')">
-                        </form>
-                    <?php endif; ?>
-                    
-                    <?php if (!$es_admin): ?>
-                        <div class="alert alert-warning mt-3">
-                            Este formulario ya ha sido firmado y no puede ser modificado.
-                        </div>
-                    <?php endif; ?>
-                <?php endif; ?>
-            </input>
         </form>
     </section>
 

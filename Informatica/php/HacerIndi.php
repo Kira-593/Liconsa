@@ -39,6 +39,7 @@ $ID = $_POST["id"] ?? '';
 
 // 2. Obtener los datos del formulario
 $Claveregis = $_POST["Claveregis"] ?? '';
+$FechaAct = $_POST["FechaAct"] ?? '';
 $Mes = $_POST["Mes"] ?? '';
 $Periodo = $_POST["Periodo"] ?? '';
 $SolicitudesAtendidas = $_POST["SolicitudesAtendidas"] ?? '';
@@ -87,6 +88,7 @@ if ($firma_realizada) {
     // Si se firmó, incluir los campos de firma en la consulta
     $query = "UPDATE i_indicador SET
                 Claveregis = '$Claveregis',
+                FechaAct = '$FechaAct',
                 Mes = '$Mes',
                 Periodo = '$Periodo',
                 SolicitudesAtendidas = '$SolicitudesAtendidas',
@@ -105,6 +107,7 @@ if ($firma_realizada) {
     // Si no se firma, solo se actualizan los demás campos
     $query = "UPDATE i_indicador SET
                 Claveregis = '$Claveregis',
+                FechaAct = '$FechaAct',
                 Mes = '$Mes',
                 Periodo = '$Periodo',
                 SolicitudesAtendidas = '$SolicitudesAtendidas',

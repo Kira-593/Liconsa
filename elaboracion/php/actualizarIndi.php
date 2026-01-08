@@ -15,7 +15,6 @@ session_start();
     <script src="../js/limpiar.js"></script>
     <img src="../imagenes/AgriculturaLogo.png" class="logo-superior" alt="Logo Agricultura">
     <img src="../imagenes/sgc.png" class="logo-sgc" alt="Logo SGC">
-    
 </head>
 <body>
 <main class="container">
@@ -23,12 +22,10 @@ session_start();
     <h1>Actualizar Indicadores de Elaboración</h1>
     <h4>Elaboración</h4>
     
-     <?php
+    <?php
     include "Conexion.php";
     
-    // Verificar si el usuario es administrador
     $es_admin = isset($_SESSION['departamento']) && $_SESSION['departamento'] === 'ADMIN';
-    
     $ID = $_GET["id"] ?? $_GET["sc"] ?? die("<div class='alert alert-danger'>Error: ID de registro no proporcionado.</div>");
     $query = "SELECT * FROM e_indicador WHERE id='$ID'"; 
     $res = mysqli_query($link, $query);
@@ -38,12 +35,9 @@ session_start();
     }
     
     $row = mysqli_fetch_array($res);
-
-    // Verificar permisos
     $solo_firma = $row['permitir_firmar'] && !$row['permitir_modificar'];
     $formulario_firmado = !empty($row['firma_usuario']);
     
-    // Si solo está permitido firmar y el formulario ya está firmado, y NO es admin: bloquear
     if ($solo_firma && $formulario_firmado && !$es_admin) {
         echo "<script>
             alert('Este formulario ya ha sido firmado y no puede ser modificado.');
@@ -52,7 +46,6 @@ session_start();
         exit();
     }
 
-    // Si no tiene permisos de modificación ni firma, y NO es admin
     if (!$row['permitir_modificar'] && !$row['permitir_firmar'] && !$es_admin) {
         echo "<script>
             alert('No tienes permisos para modificar o firmar este formulario. Contacta al administrador.');
@@ -61,7 +54,6 @@ session_start();
         exit();
     }
 
-    // Mostrar alerta si es admin accediendo a un registro firmado
     if ($es_admin && $formulario_firmado) {
         echo "<div class='alert alert-warning alert-section'>
             <strong>🔓 Acceso de Administrador</strong><br>
@@ -69,7 +61,6 @@ session_start();
         </div>";
     }
 
-    // Mostrar estado de firma si ya está firmado
     if ($formulario_firmado): ?>
         <div class="alert alert-info alert-section">
             <strong>✅ Formulario Firmado</strong><br>
@@ -79,29 +70,38 @@ session_start();
     <?php endif; ?>
     
     <section class="registro">
-        <!-- El formulario envía los datos al script HacerElaboracion.php -->
         <form action="HacerIndi.php" method="POST" id="formulario">
-            <!-- Campo oculto para pasar el ID del registro a actualizar -->
-            <input type="hidden" value="<?= $row['id'] ?? '' ?>" name="id"> 
-        
+            <input type="hidden" value="<?= $row['id'] ?? '' ?>" name="id">
+            
             <div class="registro-container">
+                <!-- Columna 1 -->
                 <div class="registro-column">
+                    <div>
+                        <label for="Claveregis">Clave de Registro:</label>
+                        <input type="text" id="Claveregis" name="Claveregis" 
+                               value="<?= $row['Claveregis'] ?? '' ?>" 
+                               placeholder="Ingrese la Clave" 
+                               <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
+                               required>
+                    </div>
                     
                     <div>
-                        <div>
-                            <label for="Claveregis">Clave de Registro:</label>
-                            <input type="text" id="Claveregis" name="Claveregis" 
-                                   value="<?= $row['Claveregis'] ?? '' ?>" 
-                                   placeholder="Ingrese la Clave" 
-                                   <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
-                                   required>
-                        </div>
+                        <label for="FechaAct">Fecha de Actualización:</label>
+                        <input type="date" id="FechaAct" name="FechaAct" 
+                               value="<?= $row['FechaAct'] ?? '' ?>" 
+                               <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
+                               required>
+                    </div>
+                    
+                    <div>
                         <label for="Mes">Fecha de Elaboración:</label>
                         <input type="date" id="Mes" name="Mes" 
                                value="<?= $row['Mes'] ?? '' ?>" 
                                <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
                                required>
-                        
+                    </div>
+                    
+                    <div>
                         <label for="Periodo">Periodo:</label>
                         <input type="date" id="Periodo" name="Periodo" 
                                value="<?= $row['Periodo'] ?? '' ?>" 
@@ -109,11 +109,11 @@ session_start();
                                required>
                     </div>
                     
-                    <!-- Cumplimiento al Programa de Distribución Mensual de Leche -->
+                    <hr>
+                    
+                    <h4>Cumplimiento al Programa de Distribución Mensual de Leche del Programa de Abasto Social</h4>
+                    
                     <div>
-                        <hr>
-                        <label>Cumplimiento al Programa de Distribución Mensual de Leche del Programa de Abasto Social</label><br>
-                        <hr>
                         <label for="DBPAS">Despacho Brutos del Programa de Abasto Social:</label>
                         <input type="number" id="DBPAS" name="DBPAS" 
                                value="<?= $row['DBPAS'] ?? '' ?>" 
@@ -121,22 +121,25 @@ session_start();
                                <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
                                required step="any">
                     </div>
+                    
                     <div>
-                        <label for="PDOACP">Programa de Despacho Original Autorizado Por el Comite de Producción, Distribución y Comercialización y Abasto:</label>
+                        <label for="PDOACP">Programa de Despacho Original Autorizado Por el Comite de Producción:</label>
                         <input type="number" id="PDOACP" name="PDOACP" 
                                value="<?= $row['PDOACP'] ?? '' ?>" 
                                placeholder="Litros de Leche" 
                                <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
                                required step="any">
                     </div>
+                    
                     <div>
-                        <label for="LRAPMDOL">Litros Resultantes del Ajuste al Programa Mensual de Distribución Original de leche (+-):</label>
+                        <label for="LRAPMDOL">Litros Resultantes del Ajuste al Programa Mensual de Distribución Original:</label>
                         <input type="number" id="LRAPMDOL" name="LRAPMDOL" 
                                value="<?= $row['LRAPMDOL'] ?? '' ?>" 
                                placeholder="(+-) Litros de Leche" 
                                <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
                                required step="any">
                     </div>
+                    
                     <div>
                         <label for="PC">Porcentaje de Cumplimiento:</label>
                         <input type="number" id="PC" name="PC" 
@@ -145,13 +148,15 @@ session_start();
                                <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
                                required step="any">
                     </div>
+                    
                     <div>
                         <label for="MetaEsperadaDMLPS">Meta Esperada:</label>
-                        <textarea id="MetaEsperadaDMLPS" name="MetaEsperadaDMLPS"   
+                        <textarea id="MetaEsperadaDMLPS" name="MetaEsperadaDMLPS" 
                                   placeholder="La meta esperada es:" 
                                   <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
                                   required><?= $row['MetaEsperadaDMLPS'] ?? '' ?></textarea>
                     </div>
+                    
                     <div>
                         <label for="RangoAceptDMLPS">Rango de Aceptación:</label>
                         <input type="text" id="RangoAceptDMLPS" name="RangoAceptDMLPS" 
@@ -160,6 +165,7 @@ session_start();
                                <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
                                required>
                     </div>
+                    
                     <div>
                         <label for="TendenciaDeseadaDMLPS">Tendencia Deseada:</label>
                         <input type="text" id="TendenciaDeseadaDMLPS" name="TendenciaDeseadaDMLPS" 
@@ -168,19 +174,19 @@ session_start();
                                <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
                                required>
                     </div>
+                    <hr>
                     
-                    <!-- Entrega de Producto no Cubiertas -->
+                    <h4>Entrega de Producto no Cubiertas por Factores Imputable a la operación de Plantas</h4>
+                    
                     <div>
-                        <hr>
-                        <label>Entrega de Producto no Cubiertas por Factores Imputable a la operación de Plantas</label><br>
-                        <hr>
-                        <label for="CDLPAS">Cifra Generadora Directa: Leche del Programa de Abasto Social no Entregada a Distribución por Factores Atribuibles o Imputables a la Operación de Planta:</label>
+                        <label for="CDLPAS">Cifra Generadora Directa: Leche del Programa de Abasto Social no Entregada:</label>
                         <input type="number" id="CDLPAS" name="CDLPAS" 
                                value="<?= $row['CDLPAS'] ?? '' ?>" 
                                placeholder="Ej. 0" 
                                <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
                                required step="any">
                     </div>
+                    
                     <div>
                         <label for="MetaEsperadaEPNC">Meta Esperada:</label>
                         <textarea id="MetaEsperadaEPNC" name="MetaEsperadaEPNC" 
@@ -188,6 +194,7 @@ session_start();
                                   <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
                                   required><?= $row['MetaEsperadaEPNC'] ?? '' ?></textarea>
                     </div>
+                    
                     <div>
                         <label for="RangoAceptEPNC">Rango de Aceptación:</label>
                         <input type="text" id="RangoAceptEPNC" name="RangoAceptEPNC" 
@@ -196,6 +203,7 @@ session_start();
                                <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
                                required>
                     </div>
+                    
                     <div>
                         <label for="TendenciaDeseadaEPNC">Tendencia Deseada:</label>
                         <input type="text" id="TendenciaDeseadaEPNC" name="TendenciaDeseadaEPNC" 
@@ -204,12 +212,17 @@ session_start();
                                <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
                                required>
                     </div>
+                </div>
+                
+                <!-- Columna 2 -->
+                <div class="registro-column">
                     
-                    <!-- Cumplimiento Con la Producción Solicitada -->
+                    
+                    <hr>
+                    
+                    <h4>Cumplimiento Con la Producción Solicitada en el Programa de Distribución</h4>
+                    
                     <div>
-                        <hr>
-                        <label>Cumplimiento Con la Producción Solicitada en el Programa de Distribución</label><br>
-                        <hr>
                         <label for="DespaReal">Despacho Real:</label>
                         <input type="number" id="DespaReal" name="DespaReal" 
                                value="<?= $row['DespaReal'] ?? '' ?>" 
@@ -217,6 +230,7 @@ session_start();
                                <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
                                required step="any">
                     </div>
+                    
                     <div>
                         <label for="DespaProg">Despacho Programado:</label>
                         <input type="number" id="DespaProg" name="DespaProg" 
@@ -225,6 +239,7 @@ session_start();
                                <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
                                required step="any">
                     </div>
+                    
                     <div>
                         <label for="LechePrograma">Litros de Leche del Programa de Producción:</label>
                         <input type="number" id="LechePrograma" name="LechePrograma" 
@@ -233,6 +248,7 @@ session_start();
                                <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
                                required step="any">
                     </div>
+                    
                     <div>
                         <label for="PorcentajeProduccion">Porcentaje de Producción de leche:</label>
                         <input type="number" id="PorcentajeProduccion" name="PorcentajeProduccion" 
@@ -241,6 +257,7 @@ session_start();
                                <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
                                required step="any">
                     </div>
+                    
                     <div>
                         <label for="PPL">Porcentaje de Cumplimiento de Con la Producción Solicitada:</label>
                         <input type="number" id="PPL" name="PPL" 
@@ -249,6 +266,7 @@ session_start();
                                <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
                                required step="any">
                     </div>
+                    
                     <div>
                         <label for="MetaEsperadaCPSP">Meta Esperada:</label>
                         <textarea id="MetaEsperadaCPSP" name="MetaEsperadaCPSP" 
@@ -256,6 +274,7 @@ session_start();
                                   <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
                                   required><?= $row['MetaEsperadaCPSP'] ?? '' ?></textarea>
                     </div>
+                    
                     <div>
                         <label for="RangoAceptCPSP">Rango de Aceptación:</label>
                         <input type="text" id="RangoAceptCPSP" name="RangoAceptCPSP" 
@@ -264,6 +283,7 @@ session_start();
                                <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
                                required>
                     </div>
+                    
                     <div>
                         <label for="TendenciaDeseadaCPSP">Tendencia Deseada:</label>
                         <input type="text" id="TendenciaDeseadaCPSP" name="TendenciaDeseadaCPSP" 
@@ -272,53 +292,58 @@ session_start();
                                <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
                                required>
                     </div>
+                     <hr>
                     
-                    <!-- Calidad de la leche de Abasto - Grasa -->
-                    <div>
-                        <hr>
-                        <label>Calidad de la leche de Abasto</label><br>
-                        <label>(reporte mensual de control de calidad de leche pasteurizada)</label><br>
-                    </div>
-                    <div>
-                        <hr>
-                        <label>Grasa</label><br>
-                        <hr>
-                        <label for="GLCMGV">LCMGV:</label>
-                        <input type="number" id="GLCMGV" name="GLCMGV" 
-                               value="<?= $row['GLCMGV'] ?? '' ?>" 
-                               placeholder="g/l" 
-                               <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
-                               required step="any">
-                    </div>
-                    <div>
-                        <label for="GLPD">LPD:</label>
-                        <input type="number" id="GLPD" name="GLPD" 
-                               value="<?= $row['GLPD'] ?? '' ?>" 
-                               placeholder="g/l" 
-                               <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
-                               required step="any">
+                    <h4>Calidad de la leche de Abasto</h4>
+                    <h5>(reporte mensual de control de calidad de leche pasteurizada)</h5>
+                    
+                    <div class="sub-section">
+                        <h5>Grasa</h5>
+                        <div>
+                            <label for="GLCMGV">LCMGV:</label>
+                            <input type="number" id="GLCMGV" name="GLCMGV" 
+                                   value="<?= $row['GLCMGV'] ?? '' ?>" 
+                                   placeholder="g/l" 
+                                   <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
+                                   required step="any">
+                        </div>
+                        
+                        <div>
+                            <label for="GLPD">LPD:</label>
+                            <input type="number" id="GLPD" name="GLPD" 
+                                   value="<?= $row['GLPD'] ?? '' ?>" 
+                                   placeholder="g/l" 
+                                   <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
+                                   required step="any">
+                        </div>
                     </div>
                     
-                    <!-- Calidad de la leche de Abasto - Proteína -->
-                    <div>
-                        <hr>
-                        <label>Proteína</label><br>
-                        <hr>
-                        <label for="PLCMGV">LCMGV:</label>
-                        <input type="number" id="PLCMGV" name="PLCMGV" 
-                               value="<?= $row['PLCMGV'] ?? '' ?>" 
-                               placeholder="g/l" 
-                               <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
-                               required step="any">
+                    <div class="sub-section">
+                        <h5>Proteína</h5>
+                        <div>
+                            <label for="PLCMGV">LCMGV:</label>
+                            <input type="number" id="PLCMGV" name="PLCMGV" 
+                                   value="<?= $row['PLCMGV'] ?? '' ?>" 
+                                   placeholder="g/l" 
+                                   <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
+                                   required step="any">
+                        </div>
+                        
+                        <div>
+                            <label for="PLPD">LPD:</label>
+                            <input type="number" id="PLPD" name="PLPD" 
+                                   value="<?= $row['PLPD'] ?? '' ?>" 
+                                   placeholder="g/l" 
+                                   <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
+                                   required step="any">
+                        </div>
                     </div>
-                    <div>
-                        <label for="PLPD">LPD:</label>
-                        <input type="number" id="PLPD" name="PLPD" 
-                               value="<?= $row['PLPD'] ?? '' ?>" 
-                               placeholder="g/l" 
-                               <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
-                               required step="any">
-                    </div>
+                </div>
+                
+                <!-- Columna 3 -->
+                <div class="registro-column">
+                   
+                    
                     <div>
                         <label for="MetaEsperadaCLA">Meta Esperada:</label>
                         <textarea id="MetaEsperadaCLA" name="MetaEsperadaCLA" 
@@ -326,6 +351,7 @@ session_start();
                                   <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
                                   required><?= $row['MetaEsperadaCLA'] ?? '' ?></textarea>
                     </div>
+                    
                     <div>
                         <label for="RangoAceptCLA">Rango de Aceptación:</label>
                         <input type="text" id="RangoAceptCLA" name="RangoAceptCLA" 
@@ -334,6 +360,7 @@ session_start();
                                <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
                                required>
                     </div>
+                    
                     <div>
                         <label for="TendenciaDeseadaCLA">Tendencia Deseada:</label>
                         <input type="text" id="TendenciaDeseadaCLA" name="TendenciaDeseadaCLA" 
@@ -343,11 +370,12 @@ session_start();
                                required>
                     </div>
                     
-                    <!-- Cumplimiento de las Buenas Prácticas de Higiene -->
+                    <!-- Cumplimiento de las Buenas Prácticas de Higiene y Manufactura -->
+                    <hr>
+                    
+                    <h4>Cumplimiento de las Buenas Prácticas de Higiene y Manufactura</h4>
+                    
                     <div>
-                        <hr>
-                        <label>Cumplimiento de las Buenas Prácticas de Higiene y Manufactura</label><br>
-                        <hr>
                         <label for="PCBH">Porcentaje de Cumplimiento de la verificación Continua del PCC:</label>
                         <input type="number" id="PCBH" name="PCBH" 
                                value="<?= $row['PCBH'] ?? '' ?>" 
@@ -355,6 +383,7 @@ session_start();
                                <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
                                required step="any">
                     </div>
+                    
                     <div>
                         <label for="MetaEsperadaCBC">Meta Esperada:</label>
                         <textarea id="MetaEsperadaCBC" name="MetaEsperadaCBC" 
@@ -362,6 +391,7 @@ session_start();
                                   <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
                                   required><?= $row['MetaEsperadaCBC'] ?? '' ?></textarea>
                     </div>
+                    
                     <div>
                         <label for="RangoAceptCBC">Rango de Aceptación:</label>
                         <input type="text" id="RangoAceptCBC" name="RangoAceptCBC" 
@@ -370,6 +400,7 @@ session_start();
                                <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
                                required>
                     </div>
+                    
                     <div>
                         <label for="TendenciaDeseadaCBC">Tendencia Deseada:</label>
                         <input type="text" id="TendenciaDeseadaCBC" name="TendenciaDeseadaCBC" 
@@ -380,10 +411,11 @@ session_start();
                     </div>
                     
                     <!-- Cumplimiento a los Lineamientos Internos -->
+                    <hr>
+                    
+                    <h4>Cumplimiento a los Lineamientos Internos y Criterios de la NOM 251-SSA1-2009</h4>
+                    
                     <div>
-                        <hr>
-                        <label>Cumplimiento a los Lineamientos Internos y Criterios de la NOM 251-SSA1-2009</label><br>
-                        <hr>
                         <label for="PCCL">Porcentaje de Cumplimiento de los 129 Puntos (Recorrido de Comisión Mixta Seguridad e Higiene):</label>
                         <input type="number" id="PCCL" name="PCCL" 
                                value="<?= $row['PCCL'] ?? '' ?>" 
@@ -391,6 +423,7 @@ session_start();
                                <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
                                required step="any">
                     </div>
+                    
                     <div>
                         <label for="MetaEsperadaCLI">Meta Esperada:</label>
                         <textarea id="MetaEsperadaCLI" name="MetaEsperadaCLI" 
@@ -398,6 +431,7 @@ session_start();
                                   <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
                                   required><?= $row['MetaEsperadaCLI'] ?? '' ?></textarea>
                     </div>
+                    
                     <div>
                         <label for="RangoAceptCLI">Rango de Aceptación:</label>
                         <input type="text" id="RangoAceptCLI" name="RangoAceptCLI" 
@@ -406,6 +440,7 @@ session_start();
                                <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
                                required>
                     </div>
+                    
                     <div>
                         <label for="TendenciaDeseadaCLI">Tendencia Deseada:</label>
                         <input type="text" id="TendenciaDeseadaCLI" name="TendenciaDeseadaCLI" 
@@ -415,9 +450,11 @@ session_start();
                                required>
                     </div>
                     
-                    <!-- Información Adicional -->
+                    <hr>
+                    
+                    <h4>Responsable y Fuente</h4>
+                    
                     <div>
-                        <hr>
                         <label for="Responsable">Responsable:</label>
                         <input type="text" id="Responsable" name="Responsable" 
                                value="<?= $row['Responsable'] ?? '' ?>" 
@@ -425,19 +462,20 @@ session_start();
                                <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
                                required>
                     </div>
+                    
                     <div>
-                        <label for="Fuente">Fuente:</label><br><br>
-                        <textarea id="Fuente" name="Fuente" rows="4" 
-                                  placeholder="Fuente" 
+                        <label for="Fuente">Fuente:</label>
+                        <textarea id="Fuente" name="Fuente" rows="3" 
+                                  placeholder="Ingrese la fuente de información" 
                                   <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'readonly' : '' ?>
                                   required><?= $row['Fuente'] ?? '' ?></textarea>
                     </div>
                 </div>
             </div>
             
-            <!-- SECCIÓN DE FIRMA -->
-            <div class="firma-section mt-4 p-3 border rounded">
-                <h4>Firma Digital</h4>
+            <!-- SECCIÓN DE FIRMA CENTRADA -->
+            <div class="firma-section mt-4 p-3 border rounded" style="max-width: 800px; margin: 30px auto 20px auto;">
+                <h4 style="text-align: center;">Firma Digital</h4>
                 
                 <?php if ($row['permitir_firmar'] && !$formulario_firmado): ?>
                     <div class="row mb-3">
@@ -454,7 +492,7 @@ session_start();
                         </div>
                     </div>
                     
-                    <div class="form-check mb-3">
+                    <div class="form-check mb-3" style="text-align: center;">
                         <label class="form-check-label" for="firmar_documento" style="display:inline-flex;align-items:center;gap:6px;cursor:pointer;">
                             <input type="checkbox" id="firmar_documento" name="firmar_documento" class="form-check-input" required>
                             Deseo firmar este documento digitalmente
@@ -473,33 +511,33 @@ session_start();
                     </div>
                 <?php endif; ?>
             </div>
-            
-           <div class="form-buttons">
+
+            <div class="form-buttons">
                 <?php if (!$formulario_firmado): ?>
-                    <input type="submit" name="g" value="Guardar Cambios" class="btn btn-primary">
-                    <input type="button" value="Limpiar Campos" class="btn btn-secondary" onclick="limpiarCampos()"
+                    <input type="submit" name="g" value="Guardar Cambios" class="btn">
+                    <input type="button" value="Limpiar Campos" class="btn" onclick="limpiarCampos()"
                            <?= ($solo_firma) ? 'disabled' : '' ?>>
                 <?php else: ?>
-                    <input type="submit" name="g" value="Guardar Cambios" class="btn btn-primary" 
+                    <input type="submit" name="g" value="Guardar Cambios" class="btn" 
                            <?= $es_admin ? '' : 'disabled' ?>>
-                    <input type="button" value="Limpiar Campos" class="btn btn-secondary" onclick="limpiarCampos()"
-                           <?= ($solo_firma || $formulario_firmado) && !$es_admin ? 'disabled' : '' ?>>
+                    <input type="button" value="Limpiar Campos" class="btn" onclick="limpiarCampos()"
+                           <?= ($solo_firma || !$es_admin) ? 'disabled' : '' ?>>
                     
                     <?php if ($es_admin && $formulario_firmado): ?>
                         <form method="POST" action="HacerIndi.php" style="display:inline;">
                             <input type="hidden" name="id" value="<?= $row['id'] ?>">
                             <input type="hidden" name="action" value="undo_signature">
-                            <input type="submit" value="Deshacer Firma" class="btn btn-warning"
+                            <input type="submit" value="Deshacer Firma" class="btn"
                                    onclick="return confirm('¿Estás seguro de que deseas deshacer la firma de este formulario?')">
                         </form>
                     <?php endif; ?>
                     
-                        <?php if (!$es_admin): ?>
-                            <div class="alert alert-warning mt-3">
-                                Este formulario ya ha sido firmado y no puede ser modificado.
-                            </div>
-                        <?php endif; ?>
+                    <?php if (!$es_admin): ?>
+                        <div class="alert alert-warning mt-3">
+                            Este formulario ya ha sido firmado y no puede ser modificado.
+                        </div>
                     <?php endif; ?>
+                <?php endif; ?>
             </div>
         </form>
     </section>
@@ -510,7 +548,6 @@ session_start();
 </main>
 
 <script>
-    // Convertir automáticamente a mayúsculas en los campos relevantes
     (function() {
         function enableUppercase(id) {
             var el = document.getElementById(id);
@@ -519,7 +556,6 @@ session_start();
                 var start = this.selectionStart;
                 var end = this.selectionEnd;
                 this.value = this.value.toUpperCase();
-                // intentar restaurar la posición del cursor
                 if (typeof this.setSelectionRange === 'function') {
                     this.setSelectionRange(start, end);
                 }
